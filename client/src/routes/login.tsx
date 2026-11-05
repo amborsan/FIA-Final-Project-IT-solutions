@@ -7,10 +7,22 @@ import { useI18n } from "../i18n/I18nContext";
 import { errorMessage } from "../lib/api";
 
 const demos = [
-  { label: "auth.demoAdmin", email: "admin@orbit-it.de", password: "Admin12345!" },
-  { label: "auth.demoTech", email: "tech@orbit-it.de", password: "Tech12345!" },
-  { label: "auth.demoCustomer", email: "customer@orbit-it.de", password: "Customer12345!" },
-  { label: "auth.demoBusiness", email: "business@orbit-it.de", password: "Customer12345!" },
+  {
+    label: "auth.demoAdmin",
+    email: "admin@fia-it.de",
+    password: "Admin12345!",
+  },
+  { label: "auth.demoTech", email: "tech@fia-it.de", password: "Tech12345!" },
+  {
+    label: "auth.demoCustomer",
+    email: "customer@fia-it.de",
+    password: "Customer12345!",
+  },
+  {
+    label: "auth.demoBusiness",
+    email: "business@fia-it.de",
+    password: "Customer12345!",
+  },
 ] as const;
 
 export const Route = createFileRoute("/login")({
@@ -28,7 +40,12 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user) {
-      const to = user.role === "ADMIN" ? "/admin" : user.role === "TECHNICIAN" ? "/technician" : "/portal";
+      const to =
+        user.role === "ADMIN"
+          ? "/admin"
+          : user.role === "TECHNICIAN"
+            ? "/technician"
+            : "/portal";
       void navigate({ to });
     }
   }, [user, navigate]);
@@ -39,7 +56,12 @@ export default function LoginPage() {
     setError("");
     try {
       const account = await login({ email, password });
-      const to = account.role === "ADMIN" ? "/admin" : account.role === "TECHNICIAN" ? "/technician" : "/portal";
+      const to =
+        account.role === "ADMIN"
+          ? "/admin"
+          : account.role === "TECHNICIAN"
+            ? "/technician"
+            : "/portal";
       await navigate({ to });
     } catch (caught) {
       setError(errorMessage(caught, t("auth.invalid")));
@@ -56,11 +78,15 @@ export default function LoginPage() {
             <LogIn className="h-5 w-5" />
           </span>
           <h1 className="mt-4 text-2xl font-bold">{t("auth.loginTitle")}</h1>
-          <p className="mt-1 text-sm text-base-content/70">{t("auth.loginText")}</p>
+          <p className="mt-1 text-sm text-base-content/70">
+            {t("auth.loginText")}
+          </p>
 
           <form onSubmit={submit} className="mt-6 space-y-4">
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold">{t("auth.email")}</span>
+              <span className="mb-1 block text-xs font-semibold">
+                {t("auth.email")}
+              </span>
               <input
                 required
                 type="email"
@@ -71,7 +97,9 @@ export default function LoginPage() {
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold">{t("auth.password")}</span>
+              <span className="mb-1 block text-xs font-semibold">
+                {t("auth.password")}
+              </span>
               <input
                 required
                 type="password"
@@ -81,7 +109,9 @@ export default function LoginPage() {
                 className="input input-bordered w-full"
               />
             </label>
-            {error && <div className="alert alert-error py-2 text-sm">{error}</div>}
+            {error && (
+              <div className="alert alert-error py-2 text-sm">{error}</div>
+            )}
             <button disabled={loading} className="btn btn-primary w-full">
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               {t("auth.loginButton")}
@@ -95,14 +125,17 @@ export default function LoginPage() {
             </Link>
           </p>
           <p className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-base-content/70">
-            <ShieldCheck className="h-3.5 w-3.5" /> Secure session · CSRF protected
+            <ShieldCheck className="h-3.5 w-3.5" /> Secure session · CSRF
+            protected
           </p>
         </div>
 
         <div className="mx-auto w-full max-w-md">
           <div className="rounded-box border border-base-300 bg-base-100/80 p-6 backdrop-blur">
             <h2 className="text-base font-bold">{t("auth.demoTitle")}</h2>
-            <p className="mt-1 text-xs text-base-content/65">{t("auth.demoText")}</p>
+            <p className="mt-1 text-xs text-base-content/65">
+              {t("auth.demoText")}
+            </p>
             <div className="mt-4 grid gap-2">
               {demos.map((demo) => (
                 <button
@@ -115,8 +148,12 @@ export default function LoginPage() {
                   className="flex items-center justify-between gap-2 rounded-lg border border-base-300 px-3 py-2.5 text-left transition hover:border-primary/40 hover:bg-primary/5"
                 >
                   <span>
-                    <span className="block text-xs font-semibold">{t(demo.label)}</span>
-                    <span className="block text-[11px] text-base-content/70">{demo.email}</span>
+                    <span className="block text-xs font-semibold">
+                      {t(demo.label)}
+                    </span>
+                    <span className="block text-[11px] text-base-content/70">
+                      {demo.email}
+                    </span>
                   </span>
                   <span className="rounded bg-base-200 px-2 py-1 font-mono text-[10px] text-base-content/70">
                     {demo.password}

@@ -1,7 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { CheckCircle2, Clock, Loader2, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
+import {
+  CheckCircle2,
+  Clock,
+  Loader2,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Send,
+} from "lucide-react";
 import { api, errorMessage } from "../lib/api";
 import { useI18n } from "../i18n/I18nContext";
 
@@ -30,7 +39,14 @@ export default function ContactPage() {
     try {
       await api("/contact", { method: "POST", body: form });
       setSuccess(true);
-      setForm({ name: "", email: "", phone: "", subject: "", message: "", acceptPrivacy: false });
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+        acceptPrivacy: false,
+      });
     } catch (caught) {
       setError(errorMessage(caught, t("contact.error")));
     } finally {
@@ -43,8 +59,12 @@ export default function ContactPage() {
       <section className="hero-grid border-b border-base-300">
         <div className="container-page py-12 sm:py-16">
           <p className="eyebrow">{t("contact.eyebrow")}</p>
-          <h1 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">{t("contact.title")}</h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-base-content/65">{t("contact.text")}</p>
+          <h1 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
+            {t("contact.title")}
+          </h1>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-base-content/65">
+            {t("contact.text")}
+          </p>
         </div>
       </section>
 
@@ -67,7 +87,9 @@ export default function ContactPage() {
                 required
                 minLength={2}
                 value={form.name}
-                onChange={(event) => setForm({ ...form, name: event.target.value })}
+                onChange={(event) =>
+                  setForm({ ...form, name: event.target.value })
+                }
                 className="input input-bordered w-full"
               />
             </label>
@@ -79,7 +101,9 @@ export default function ContactPage() {
                 required
                 type="email"
                 value={form.email}
-                onChange={(event) => setForm({ ...form, email: event.target.value })}
+                onChange={(event) =>
+                  setForm({ ...form, email: event.target.value })
+                }
                 className="input input-bordered w-full"
               />
             </label>
@@ -89,7 +113,9 @@ export default function ContactPage() {
               </span>
               <input
                 value={form.phone}
-                onChange={(event) => setForm({ ...form, phone: event.target.value })}
+                onChange={(event) =>
+                  setForm({ ...form, phone: event.target.value })
+                }
                 className="input input-bordered w-full"
               />
             </label>
@@ -101,7 +127,9 @@ export default function ContactPage() {
                 required
                 minLength={3}
                 value={form.subject}
-                onChange={(event) => setForm({ ...form, subject: event.target.value })}
+                onChange={(event) =>
+                  setForm({ ...form, subject: event.target.value })
+                }
                 className="input input-bordered w-full"
               />
             </label>
@@ -115,7 +143,9 @@ export default function ContactPage() {
                 maxLength={4000}
                 rows={6}
                 value={form.message}
-                onChange={(event) => setForm({ ...form, message: event.target.value })}
+                onChange={(event) =>
+                  setForm({ ...form, message: event.target.value })
+                }
                 className="textarea textarea-bordered w-full"
               />
             </label>
@@ -125,7 +155,9 @@ export default function ContactPage() {
                 type="checkbox"
                 required
                 checked={form.acceptPrivacy}
-                onChange={(event) => setForm({ ...form, acceptPrivacy: event.target.checked })}
+                onChange={(event) =>
+                  setForm({ ...form, acceptPrivacy: event.target.checked })
+                }
                 className="checkbox checkbox-sm mt-0.5"
               />
               <span>
@@ -136,11 +168,19 @@ export default function ContactPage() {
               </span>
             </label>
 
-            {error && <div className="alert alert-error py-2 text-sm sm:col-span-2">{error}</div>}
+            {error && (
+              <div className="alert alert-error py-2 text-sm sm:col-span-2">
+                {error}
+              </div>
+            )}
 
             <div className="sm:col-span-2">
               <button disabled={loading} className="btn btn-primary">
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
                 {t("common.send")}
               </button>
             </div>
@@ -153,20 +193,30 @@ export default function ContactPage() {
             <div className="mt-4 space-y-4 text-sm">
               <p className="flex items-start gap-3">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <span>Hauptstraße 12<br />10115 Berlin, Germany</span>
+                <span>
+                  Hauptstraße 12
+                  <br />
+                  10115 Berlin, Germany
+                </span>
               </p>
               <p className="flex items-center gap-3">
                 <Phone className="h-4 w-4 shrink-0 text-primary" />
-                <a href="tel:+493055500100" className="hover:text-primary">+49 30 5550 0100</a>
+                <a href="tel:+493055500100" className="hover:text-primary">
+                  +49 30 5550 0100
+                </a>
               </p>
               <p className="flex items-center gap-3">
                 <Mail className="h-4 w-4 shrink-0 text-primary" />
-                <a href="mailto:hello@orbit-it.de" className="hover:text-primary">hello@orbit-it.de</a>
+                <a href="mailto:hello@fia-it.de" className="hover:text-primary">
+                  hello@fia-it.de
+                </a>
               </p>
               <p className="flex items-start gap-3">
                 <Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                 <span>
-                  <strong className="block text-xs">{t("contact.hours")}</strong>
+                  <strong className="block text-xs">
+                    {t("contact.hours")}
+                  </strong>
                   {t("contact.hoursValue")}
                 </span>
               </p>
@@ -181,9 +231,15 @@ export default function ContactPage() {
 
           <div className="rounded-box border border-base-300 bg-secondary/5 p-6">
             <MessageCircle className="h-6 w-6 text-secondary" />
-            <h3 className="mt-2 text-base font-bold">{t("contact.chatTitle")}</h3>
-            <p className="mt-1 text-sm text-base-content/70">{t("contact.chatText")}</p>
-            <p className="mt-3 text-xs text-base-content/70">{t("chat.online")}</p>
+            <h3 className="mt-2 text-base font-bold">
+              {t("contact.chatTitle")}
+            </h3>
+            <p className="mt-1 text-sm text-base-content/70">
+              {t("contact.chatText")}
+            </p>
+            <p className="mt-3 text-xs text-base-content/70">
+              {t("chat.online")}
+            </p>
           </div>
         </aside>
       </section>

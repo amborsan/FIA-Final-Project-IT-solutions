@@ -12,16 +12,16 @@ quotes, orders, content and users.
 
 ## 1. What is included
 
-| Area | Features |
-| --- | --- |
-| Public website | Home, 10 services, product shop, product details, about, insights/blog, contact, quote request |
-| Customer portal | Dashboard, requests, quotes (accept/reject), orders and invoices, tickets, appointments, service reports, chat, profile/privacy tools |
-| Technician area | Assigned requests, status updates, assigned tickets, appointments, service reports with file upload |
-| Admin area | Dashboard/KPIs, requests + quote builder + assignment, orders/invoices, tickets, catalog (services/products), CMS with rich editor, users/roles, chat, contact inbox, activity log |
-| Chat | Public guest chat widget, customer support chat, private staff chats |
-| Legal & privacy | Impressum, Privacy policy (GDPR), Terms (AGB), Withdrawal information, Cookie policy, cookie settings, consent timestamps, data export, account deletion |
-| Languages | English (primary) and German (secondary), switchable in the header and persisted in the browser |
-| Security | Argon2 passwords, server sessions, HTTP-only cookies, CSRF double-submit, role checks, rate limits, Zod validation, HTML sanitising, Helmet, upload allow-list |
+| Area            | Features                                                                                                                                                                           |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Public website  | Home, 10 services, product shop, product details, about, insights/blog, contact, quote request                                                                                     |
+| Customer portal | Dashboard, requests, quotes (accept/reject), orders and invoices, tickets, appointments, service reports, chat, profile/privacy tools                                              |
+| Technician area | Assigned requests, status updates, assigned tickets, appointments, service reports with file upload                                                                                |
+| Admin area      | Dashboard/KPIs, requests + quote builder + assignment, orders/invoices, tickets, catalog (services/products), CMS with rich editor, users/roles, chat, contact inbox, activity log |
+| Chat            | Public guest chat widget, customer support chat, private staff chats                                                                                                               |
+| Legal & privacy | Impressum, Privacy policy (GDPR), Terms (AGB), Withdrawal information, Cookie policy, cookie settings, consent timestamps, data export, account deletion                           |
+| Languages       | English (primary) and German (secondary), switchable in the header and persisted in the browser                                                                                    |
+| Security        | Argon2 passwords, server sessions, HTTP-only cookies, CSRF double-submit, role checks, rate limits, Zod validation, HTML sanitising, Helmet, upload allow-list                     |
 
 ---
 
@@ -40,6 +40,13 @@ Node/Express, PostgreSQL/Prisma) is used as-is.
 
 ## 3. Quick start
 
+> **Beginner-friendly walkthrough:** see [SETUP.md](SETUP.md) for the full
+> step-by-step setup, verification and troubleshooting guide.
+>
+> **Run Prisma commands from `server/` only.** Do not run `npx prisma` at the
+> repository root; `npx` may download Prisma 8 RC instead of the project's
+> Prisma 7. Use `npm run db:deploy` and `npm run db:generate` inside `server/`.
+
 ### Prerequisites
 
 - Node.js 22 or newer (tested on Node 24)
@@ -49,8 +56,8 @@ Node/Express, PostgreSQL/Prisma) is used as-is.
 ### 1. Create the database
 
 ```bash
-createdb orbit_platform
-# or: psql -U postgres -c "CREATE DATABASE orbit_platform;"
+createdb fia
+# or: psql -U postgres -c "CREATE DATABASE fia;"
 ```
 
 ### 2. Configure the backend
@@ -58,15 +65,16 @@ createdb orbit_platform
 ```bash
 cd server
 cp .env.example .env
-# edit DATABASE_URL if your PostgreSQL user/password differ
+# edit DATABASE_URL: postgresql://USER:PASSWORD@localhost:5432/fia?schema=public
 npm install
-npx prisma migrate deploy
-npx prisma generate
+npm run db:deploy
+npm run db:generate
 npm run db:seed
 ```
 
 `npm run db:seed` is safe to run again. It creates the demo accounts, services,
-products and sample workflows only when the database is empty.
+products and sample workflows only when the database is empty. If you changed
+the demo email domain, use a fresh database; existing users are not overwritten.
 
 ### 3. Start the API
 
@@ -105,13 +113,13 @@ Then open `http://localhost:3000`.
 
 ## 4. Demo accounts
 
-| Role | Email | Password |
-| --- | --- | --- |
-| Admin | `admin@orbit-it.de` | `Admin12345!` |
-| Technician | `tech@orbit-it.de` | `Tech12345!` |
-| Technician 2 | `tech2@orbit-it.de` | `Tech12345!` |
-| Customer (individual) | `customer@orbit-it.de` | `Customer12345!` |
-| Customer (business) | `business@orbit-it.de` | `Customer12345!` |
+| Role                  | Email                | Password         |
+| --------------------- | -------------------- | ---------------- |
+| Admin                 | `admin@fia-it.de`    | `Admin12345!`    |
+| Technician            | `tech@fia-it.de`     | `Tech12345!`     |
+| Technician 2          | `tech2@fia-it.de`    | `Tech12345!`     |
+| Customer (individual) | `customer@fia-it.de` | `Customer12345!` |
+| Customer (business)   | `business@fia-it.de` | `Customer12345!` |
 
 Demo cards on the login page fill these in automatically.
 
@@ -154,45 +162,45 @@ See [docs/frontend-starter.md](docs/frontend-starter.md).
 
 ### Server
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Generate Prisma client and start with watch mode |
-| `npm start` | Start without watch mode |
-| `npm run build` | Prisma generate + TypeScript type check |
-| `npm test` | Unit + API tests |
-| `npm run db:migrate` | Create/apply a migration in development |
-| `npm run db:deploy` | Apply migrations in production |
-| `npm run db:seed` | Load demo data |
-| `npm run db:studio` | Open Prisma Studio |
+| Command              | Purpose                                          |
+| -------------------- | ------------------------------------------------ |
+| `npm run dev`        | Generate Prisma client and start with watch mode |
+| `npm start`          | Start without watch mode                         |
+| `npm run build`      | Prisma generate + TypeScript type check          |
+| `npm test`           | Unit + API tests                                 |
+| `npm run db:migrate` | Create/apply a migration in development          |
+| `npm run db:deploy`  | Apply migrations in production                   |
+| `npm run db:seed`    | Load demo data                                   |
+| `npm run db:studio`  | Open Prisma Studio                               |
 
 ### Client
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Vite dev server |
-| `npm run build` | Type check + production build |
-| `npm run preview` | Preview the production build |
-| `npm run lint` | ESLint |
+| Command           | Purpose                       |
+| ----------------- | ----------------------------- |
+| `npm run dev`     | Vite dev server               |
+| `npm run build`   | Type check + production build |
+| `npm run preview` | Preview the production build  |
+| `npm run lint`    | ESLint                        |
 
 ---
 
 ## 7. Documentation
 
-| Document | Contents |
-| --- | --- |
-| [docs/project-description.md](docs/project-description.md) | Problem, goals, personas, scope, success criteria |
-| [docs/architecture.md](docs/architecture.md) | System diagram, request flow, folder map |
-| [docs/database-erd.md](docs/database-erd.md) | Mermaid ERD and data dictionary |
-| [docs/api.md](docs/api.md) | Endpoint reference and permissions |
-| [docs/security-privacy.md](docs/security-privacy.md) | Security controls, data map, GDPR rights |
-| [docs/legal-checklist-de.md](docs/legal-checklist-de.md) | German/EU legal launch checklist |
-| [docs/testing.md](docs/testing.md) | Test strategy and manual QA checklist |
-| [docs/presentation-outline.md](docs/presentation-outline.md) | Slide-by-slide presentation plan |
-| [docs/demo-script.md](docs/demo-script.md) | 10-minute live demo script |
-| [docs/team-workflow.md](docs/team-workflow.md) | Roles, Git workflow, handoffs |
-| [client/Agent.md](client/Agent.md) | Binding contract for frontend AI agents (no backend edits) |
-| [client/agents/](client/agents/) | Per-developer AI agent prompts |
-| [docs/handoffs/tickets/](docs/handoffs/tickets/) | Frontend → backend request ticket workflow |
+| Document                                                     | Contents                                                   |
+| ------------------------------------------------------------ | ---------------------------------------------------------- |
+| [docs/project-description.md](docs/project-description.md)   | Problem, goals, personas, scope, success criteria          |
+| [docs/architecture.md](docs/architecture.md)                 | System diagram, request flow, folder map                   |
+| [docs/database-erd.md](docs/database-erd.md)                 | Mermaid ERD and data dictionary                            |
+| [docs/api.md](docs/api.md)                                   | Endpoint reference and permissions                         |
+| [docs/security-privacy.md](docs/security-privacy.md)         | Security controls, data map, GDPR rights                   |
+| [docs/legal-checklist-de.md](docs/legal-checklist-de.md)     | German/EU legal launch checklist                           |
+| [docs/testing.md](docs/testing.md)                           | Test strategy and manual QA checklist                      |
+| [docs/presentation-outline.md](docs/presentation-outline.md) | Slide-by-slide presentation plan                           |
+| [docs/demo-script.md](docs/demo-script.md)                   | 10-minute live demo script                                 |
+| [docs/team-workflow.md](docs/team-workflow.md)               | Roles, Git workflow, handoffs                              |
+| [client/Agent.md](client/Agent.md)                           | Binding contract for frontend AI agents (no backend edits) |
+| [client/agents/](client/agents/)                             | Per-developer AI agent prompts                             |
+| [docs/handoffs/tickets/](docs/handoffs/tickets/)             | Frontend → backend request ticket workflow                 |
 
 ---
 

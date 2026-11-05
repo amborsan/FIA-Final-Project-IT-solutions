@@ -26,7 +26,7 @@ after(async () => {
   // Remove the short-lived sessions created by these tests.
   await app.locals.prisma.session.deleteMany({
     where: {
-      user: { email: { in: ["admin@orbit-it.de", "customer@orbit-it.de"] } },
+      user: { email: { in: ["admin@fia-it.de", "customer@fia-it.de"] } },
     },
   });
   await app.locals.prisma.$disconnect();
@@ -72,46 +72,61 @@ test("mutating requests without a CSRF token are rejected", async () => {
   const response = await fetch(`${baseUrl}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: "admin@orbit-it.de", password: "Admin12345!" }),
+    body: JSON.stringify({ email: "admin@fia-it.de", password: "Admin12345!" }),
   });
   assert.equal(response.status, 403);
 });
 
 test("admin can log in and read the admin dashboard", async () => {
-  const { response, cookie } = await login("admin@orbit-it.de", "Admin12345!");
+  const { response, cookie } = await login("admin@fia-it.de", "Admin12345!");
   assert.equal(response.status, 200);
   const loginData = (await response.json()) as { user: { role: string } };
   assert.equal(loginData.user.role, "ADMIN");
   assert.equal("passwordHash" in loginData.user, false);
 
-  const me = await fetch(`${baseUrl}/api/auth/me`, { headers: { Cookie: cookie } });
+  const me = await fetch(`${baseUrl}/api/auth/me`, {
+    headers: { Cookie: cookie },
+  });
   assert.equal(me.status, 200);
   const meData = (await me.json()) as { user: { email: string } };
-  assert.equal(meData.user.email, "admin@orbit-it.de");
+  assert.equal(meData.user.email, "admin@fia-it.de");
 
-  const stats = await fetch(`${baseUrl}/api/admin/stats`, { headers: { Cookie: cookie } });
+  const stats = await fetch(`${baseUrl}/api/admin/stats`, {
+    headers: { Cookie: cookie },
+  });
   assert.equal(stats.status, 200);
 });
 
 test("customer receives 403 on admin routes", async () => {
-  const { response, cookie } = await login("customer@orbit-it.de", "Customer12345!");
+  const { response, cookie } = await login(
+    "customer@fia-it.de",
+    "Customer12345!",
+  );
   assert.equal(response.status, 200);
 
-  const stats = await fetch(`${baseUrl}/api/admin/stats`, { headers: { Cookie: cookie } });
+  const stats = await fetch(`${baseUrl}/api/admin/stats`, {
+    headers: { Cookie: cookie },
+  });
   assert.equal(stats.status, 403);
 
-  const requests = await fetch(`${baseUrl}/api/requests`, { headers: { Cookie: cookie } });
+  const requests = await fetch(`${baseUrl}/api/requests`, {
+    headers: { Cookie: cookie },
+  });
   assert.equal(requests.status, 200);
-  const data = (await requests.json()) as { requests: { contactEmail: string }[] };
+  const data = (await requests.json()) as {
+    requests: { contactEmail: string }[];
+  };
   assert.ok(Array.isArray(data.requests));
   // Customers only see their own requests.
-  assert.ok(data.requests.every((request) =>
-    request.contactEmail === "customer@orbit-it.de",
-  ));
+  assert.ok(
+    data.requests.every(
+      (request) => request.contactEmail === "customer@fia-it.de",
+    ),
+  );
 });
 
 test("wrong passwords get a generic 401", async () => {
-  const { response } = await login("customer@orbit-it.de", "WrongPassword1");
+  const { response } = await login("customer@fia-it.de", "WrongPassword1");
   assert.equal(response.status, 401);
   const data = (await response.json()) as { error: string };
   assert.equal(data.error, "Email or password is incorrect.");

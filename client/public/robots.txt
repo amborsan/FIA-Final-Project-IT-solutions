@@ -6,4 +6,4 @@ Disallow: /admin
 Disallow: /messages
 Disallow: /cart
 
-Sitemap: https://www.orbit-it.de/sitemap.xml
+Sitemap: https://www.fia-it.de/sitemap.xml

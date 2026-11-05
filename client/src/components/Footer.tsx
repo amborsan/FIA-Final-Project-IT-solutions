@@ -30,13 +30,14 @@ export function Footer() {
           </p>
           <div className="mt-5 space-y-2 text-sm text-white/65">
             <p className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 shrink-0" /> Hauptstraße 12, 10115 Berlin
+              <MapPin className="h-4 w-4 shrink-0" /> Hauptstraße 12, 10115
+              Berlin
             </p>
             <p className="flex items-center gap-2">
               <Phone className="h-4 w-4 shrink-0" /> +49 30 5550 0100
             </p>
             <p className="flex items-center gap-2">
-              <Mail className="h-4 w-4 shrink-0" /> hello@orbit-it.de
+              <Mail className="h-4 w-4 shrink-0" /> hello@fia-it.de
             </p>
           </div>
         </div>
@@ -105,7 +106,10 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/legal/withdrawal" className="transition hover:text-white">
+              <Link
+                to="/legal/withdrawal"
+                className="transition hover:text-white"
+              >
                 {t("footer.withdrawal")}
               </Link>
             </li>
@@ -139,7 +143,10 @@ export function Footer() {
 
       <div className="border-t border-white/10">
         <div className="container-page flex flex-col items-center justify-between gap-2 py-5 text-xs text-white/65 sm:flex-row">
-          <p>© {new Date().getFullYear()} Orbit IT Solutions GmbH. {t("footer.rights")}</p>
+          <p>
+            © {new Date().getFullYear()} Orbit IT Solutions GmbH.{" "}
+            {t("footer.rights")}
+          </p>
           <p>{t("footer.madeIn")}</p>
         </div>
       </div>
