@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /portal
+Disallow: /technician
+Disallow: /admin
+Disallow: /messages
+Disallow: /cart
+
+Sitemap: https://www.orbit-it.de/sitemap.xml

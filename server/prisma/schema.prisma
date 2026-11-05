@@ -1,0 +1,588 @@
+// Orbit IT Solutions - database schema
+// This file is the single source of truth for the PostgreSQL database.
+// Run `npm run db:migrate` after changing it.
+
+generator client {
+  provider = "prisma-client-ts"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// -------------------------
+// Users and authentication
+// -------------------------
+
+enum UserRole {
+  ADMIN
+  TECHNICIAN
+  CUSTOMER
+}
+
+enum PreferredLanguage {
+  EN
+  DE
+}
+
+model User {
+  id                String            @id @default(uuid())
+  email             String            @unique
+  passwordHash      String
+  fullName          String
+  firstName         String?
+  lastName          String?
+  role              UserRole          @default(CUSTOMER)
+  phone             String?
+  companyName       String?
+  address           String?
+  preferredLanguage PreferredLanguage @default(EN)
+
+  // Legal acceptance (GDPR / German law). We store the time of consent.
+  acceptedTermsAt   DateTime?
+  acceptedPrivacyAt DateTime?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  sessions              Session[]
+  requestedServices     ServiceRequest[]          @relation("CustomerRequests")
+  assignedRequests      ServiceRequest[]          @relation("TechnicianRequests")
+  quotes                Quote[]                   @relation("QuoteCustomer")
+  createdQuotes         Quote[]                   @relation("QuoteCreator")
+  orders                Order[]
+  invoices              Invoice[]
+  appointments          Appointment[]             @relation("CustomerAppointments")
+  technicianAppointments Appointment[]            @relation("TechnicianAppointments")
+  tickets               Ticket[]                  @relation("CustomerTickets")
+  assignedTickets       Ticket[]                  @relation("TechnicianTickets")
+  ticketMessages        TicketMessage[]
+  reports               ServiceReport[]
+  conversationLinks     ConversationParticipant[]
+  sentMessages          Message[]
+  createdConversations  Conversation[]            @relation("ConversationCreator")
+  customerConversations Conversation[]            @relation("ConversationCustomer")
+  contentPages          ContentPage[]
+  activityLogs          ActivityLog[]
+  notifications         Notification[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  userAgent String?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+// -------------------------
+// Catalog (services and products)
+// -------------------------
+
+model Service {
+  id                 String   @id @default(uuid())
+  slug               String   @unique
+  nameEn             String
+  nameDe             String
+  descriptionEn      String
+  descriptionDe      String
+  icon               String   @default("network")
+  startingPrice      Decimal? @db.Decimal(10, 2)
+  active             Boolean  @default(true)
+  sortOrder          Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  requests ServiceRequest[]
+
+  @@map("services")
+}
+
+model ProductCategory {
+  id     String @id @default(uuid())
+  slug   String @unique
+  nameEn String
+  nameDe String
+
+  products Product[]
+
+  @@map("product_categories")
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  slug          String   @unique
+  sku           String   @unique
+  categoryId    String
+  nameEn        String
+  nameDe        String
+  descriptionEn String
+  descriptionDe String
+  price         Decimal  @db.Decimal(10, 2)
+  stock         Int      @default(0)
+  imageUrl      String?
+  active        Boolean  @default(true)
+  featured      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  category   ProductCategory @relation(fields: [categoryId], references: [id])
+  quoteItems QuoteItem[]
+  orderItems OrderItem[]
+
+  @@index([categoryId])
+  @@map("products")
+}
+
+// -------------------------
+// Service requests, quotes and orders
+// -------------------------
+
+enum RequestStatus {
+  NEW
+  REVIEWING
+  QUOTED
+  APPROVED
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model ServiceRequest {
+  id                    String        @id @default(uuid())
+  reference             String        @unique
+  customerId            String?
+  serviceId             String?
+  assignedTechnicianId  String?
+  title                 String
+  description           String
+  siteAddress           String?
+  preferredDate         DateTime?
+  budget                Decimal?      @db.Decimal(10, 2)
+  status                RequestStatus @default(NEW)
+
+  // A quote request can be sent by a visitor without an account.
+  contactName           String
+  contactEmail          String
+  contactPhone          String?
+  consentAt             DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customer      User?     @relation("CustomerRequests", fields: [customerId], references: [id])
+  technician    User?     @relation("TechnicianRequests", fields: [assignedTechnicianId], references: [id])
+  service       Service?  @relation(fields: [serviceId], references: [id])
+  quotes        Quote[]
+  appointments  Appointment[]
+  tickets       Ticket[]
+  reports       ServiceReport[]
+
+  @@index([customerId])
+  @@index([status])
+  @@map("service_requests")
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+model Quote {
+  id         String      @id @default(uuid())
+  reference  String      @unique
+  requestId  String
+  customerId String
+  createdById String
+  status     QuoteStatus @default(DRAFT)
+  validUntil DateTime
+  notes      String?
+  subtotal   Decimal     @db.Decimal(12, 2)
+  taxRate    Decimal     @db.Decimal(5, 2) @default(19)
+  taxAmount  Decimal     @db.Decimal(12, 2)
+  total      Decimal     @db.Decimal(12, 2)
+  sentAt     DateTime?
+  acceptedAt DateTime?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  request   ServiceRequest @relation(fields: [requestId], references: [id])
+  customer  User           @relation("QuoteCustomer", fields: [customerId], references: [id])
+  createdBy User           @relation("QuoteCreator", fields: [createdById], references: [id])
+  items     QuoteItem[]
+  order     Order?
+
+  @@index([customerId])
+  @@map("quotes")
+}
+
+model QuoteItem {
+  id          String  @id @default(uuid())
+  quoteId     String
+  productId   String?
+  description String
+  quantity    Int     @default(1)
+  unitPrice   Decimal @db.Decimal(12, 2)
+  total       Decimal @db.Decimal(12, 2)
+
+  quote   Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id])
+
+  @@map("quote_items")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  reference       String      @unique
+  customerId      String
+  quoteId         String?     @unique
+  status          OrderStatus @default(PENDING)
+  subtotal        Decimal     @db.Decimal(12, 2)
+  taxRate         Decimal     @db.Decimal(5, 2) @default(19)
+  taxAmount       Decimal     @db.Decimal(12, 2)
+  total           Decimal     @db.Decimal(12, 2)
+  shippingAddress String?
+  notes           String?
+  termsAcceptedAt DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  customer User        @relation(fields: [customerId], references: [id])
+  quote    Quote?      @relation(fields: [quoteId], references: [id])
+  items    OrderItem[]
+  invoice  Invoice?
+
+  @@index([customerId])
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String  @id @default(uuid())
+  orderId     String
+  productId   String?
+  description String
+  quantity    Int
+  unitPrice   Decimal @db.Decimal(12, 2)
+  total       Decimal @db.Decimal(12, 2)
+
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+enum InvoiceStatus {
+  ISSUED
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+model Invoice {
+  id         String        @id @default(uuid())
+  number     String        @unique
+  orderId    String        @unique
+  customerId String
+  status     InvoiceStatus @default(ISSUED)
+  amount     Decimal       @db.Decimal(12, 2)
+  issuedAt   DateTime      @default(now())
+  dueAt      DateTime
+  paidAt     DateTime?
+  createdAt  DateTime      @default(now())
+
+  order    Order @relation(fields: [orderId], references: [id])
+  customer User  @relation(fields: [customerId], references: [id])
+
+  @@index([customerId])
+  @@map("invoices")
+}
+
+// -------------------------
+// Appointments, tickets and reports
+// -------------------------
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+model Appointment {
+  id          String            @id @default(uuid())
+  customerId  String
+  technicianId String?
+  requestId   String?
+  title       String
+  notes       String?
+  startsAt    DateTime
+  endsAt      DateTime
+  location    String?
+  status      AppointmentStatus @default(SCHEDULED)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  customer   User            @relation("CustomerAppointments", fields: [customerId], references: [id])
+  technician User?           @relation("TechnicianAppointments", fields: [technicianId], references: [id])
+  request    ServiceRequest? @relation(fields: [requestId], references: [id])
+
+  @@index([customerId])
+  @@index([technicianId])
+  @@map("appointments")
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_CUSTOMER
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Ticket {
+  id                   String         @id @default(uuid())
+  reference            String         @unique
+  customerId           String
+  requestId            String?
+  assignedTechnicianId String?
+  subject              String
+  description          String
+  category             String?
+  priority             TicketPriority @default(MEDIUM)
+  status               TicketStatus   @default(OPEN)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+
+  customer   User             @relation("CustomerTickets", fields: [customerId], references: [id])
+  technician User?            @relation("TechnicianTickets", fields: [assignedTechnicianId], references: [id])
+  request    ServiceRequest?  @relation(fields: [requestId], references: [id])
+  messages   TicketMessage[]
+  reports    ServiceReport[]
+
+  @@index([customerId])
+  @@index([assignedTechnicianId])
+  @@map("tickets")
+}
+
+model TicketMessage {
+  id         String   @id @default(uuid())
+  ticketId   String
+  authorId   String?
+  authorName String?
+  body       String
+  isInternal Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author User?  @relation(fields: [authorId], references: [id])
+
+  @@index([ticketId])
+  @@map("ticket_messages")
+}
+
+enum ReportStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+}
+
+model ServiceReport {
+  id               String       @id @default(uuid())
+  requestId        String?
+  ticketId         String?
+  technicianId     String
+  title            String
+  workDone         String
+  hours            Decimal      @db.Decimal(6, 2)
+  materials        String?
+  fileUrl          String?
+  fileOriginalName String?
+  status           ReportStatus @default(SUBMITTED)
+  submittedAt      DateTime?
+  approvedAt       DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  request    ServiceRequest? @relation(fields: [requestId], references: [id])
+  ticket     Ticket?         @relation(fields: [ticketId], references: [id])
+  technician User            @relation(fields: [technicianId], references: [id])
+
+  @@index([technicianId])
+  @@map("service_reports")
+}
+
+// -------------------------
+// Chat
+// -------------------------
+
+enum ConversationType {
+  SUPPORT
+  DIRECT
+  GUEST
+}
+
+enum ConversationStatus {
+  OPEN
+  CLOSED
+}
+
+model Conversation {
+  id          String             @id @default(uuid())
+  subject     String
+  type        ConversationType   @default(SUPPORT)
+  status      ConversationStatus @default(OPEN)
+  customerId  String?
+  createdById String?
+  guestName   String?
+  guestEmail  String?
+  guestToken  String?            @unique
+  consentAt   DateTime?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  customer     User?                    @relation("ConversationCustomer", fields: [customerId], references: [id])
+  createdBy    User?                    @relation("ConversationCreator", fields: [createdById], references: [id])
+  participants ConversationParticipant[]
+  messages     Message[]
+
+  @@index([customerId])
+  @@map("conversations")
+}
+
+model ConversationParticipant {
+  id             String    @id @default(uuid())
+  conversationId String
+  userId         String
+  lastReadAt     DateTime?
+  createdAt      DateTime  @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@map("conversation_participants")
+}
+
+model Message {
+  id             String   @id @default(uuid())
+  conversationId String
+  senderId       String?
+  senderName     String?
+  body           String
+  createdAt      DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User?        @relation(fields: [senderId], references: [id])
+
+  @@index([conversationId])
+  @@map("messages")
+}
+
+// -------------------------
+// CMS, contact and activity
+// -------------------------
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model ContentPage {
+  id          String        @id @default(uuid())
+  slug        String        @unique
+  titleEn     String
+  titleDe     String
+  excerptEn   String?
+  excerptDe   String?
+  bodyEn      String
+  bodyDe      String
+  status      ContentStatus @default(DRAFT)
+  authorId    String?
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  author User? @relation(fields: [authorId], references: [id])
+
+  @@map("content_pages")
+}
+
+enum ContactStatus {
+  NEW
+  READ
+  REPLIED
+}
+
+model ContactMessage {
+  id        String        @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  status    ContactStatus @default(NEW)
+  consentAt DateTime?
+  createdAt DateTime      @default(now())
+
+  @@map("contact_messages")
+}
+
+model ActivityLog {
+  id          String   @id @default(uuid())
+  userId      String?
+  action      String
+  entityType  String?
+  entityId    String?
+  description String
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("activity_logs")
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notifications")
+}

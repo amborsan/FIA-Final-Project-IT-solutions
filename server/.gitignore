@@ -1,0 +1,10 @@
+node_modules
+# Environment variables
+.env
+
+# Generated Prisma client
+/src/generated/prisma
+
+# Uploaded service reports (keep the folder)
+/storage/reports/*
+!/storage/reports/.gitkeep
