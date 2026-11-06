@@ -7,16 +7,24 @@ import type { ServiceRequest, Ticket } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { usePortalNav } from "../components/nav";
 import { DashboardShell } from "../components/DashboardShell";
+import { ArchiveTabs, FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
 import { EmptyState, ErrorState, PageLoader, StatusBadge } from "../components/ui";
+import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
 
 export const Route = createFileRoute("/portal/tickets/")({
   component: TicketsPage,
 });
 
+const ticketStatuses = ["OPEN", "IN_PROGRESS", "WAITING_CUSTOMER", "RESOLVED", "CLOSED"];
+const priorities = ["LOW", "MEDIUM", "HIGH", "URGENT"];
+const archivedStatuses = new Set(["RESOLVED", "CLOSED"]);
+
 function TicketsPage() {
   const { t, pick, formatDate } = useI18n();
   const nav = usePortalNav();
   const queryClient = useQueryClient();
+  const controls = useListControls();
+  const [priority, setPriority] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
     subject: "",
@@ -38,6 +46,30 @@ function TicketsPage() {
   });
 
   const tickets = ticketsQuery.data?.tickets ?? [];
+
+  const filtered = filterByArchive(
+    tickets.filter(
+      (ticket) =>
+        (!controls.status || ticket.status === controls.status) &&
+        (!priority || ticket.priority === priority) &&
+        matchesSearch(
+          controls.search,
+          ticket.reference,
+          ticket.subject,
+          ticket.description,
+          ticket.technician?.fullName,
+        ),
+    ),
+    controls.archive,
+    (ticket) => archivedStatuses.has(ticket.status),
+  );
+
+  const pageData = paginate(filtered, controls.page, controls.pageSize);
+
+  function changePriority(value: string) {
+    setPriority(value);
+    controls.setPage(1);
+  }
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -145,48 +177,92 @@ function TicketsPage() {
         </form>
       )}
 
+      <ListToolbar>
+        <SearchField
+          value={controls.search}
+          onChange={controls.setSearch}
+          placeholder={t("list.searchTickets")}
+        />
+        <FilterSelect
+          value={controls.status}
+          onChange={controls.setStatus}
+          options={ticketStatuses.map((value) => ({
+            value,
+            label: t(`status.${value}` as "status.OPEN"),
+          }))}
+          allLabel={t("common.all")}
+          ariaLabel={t("common.status")}
+        />
+        <FilterSelect
+          value={priority}
+          onChange={changePriority}
+          options={priorities.map((value) => ({
+            value,
+            label: t(`priority.${value}` as "priority.LOW"),
+          }))}
+          allLabel={t("common.all")}
+          ariaLabel={t("tickets.priority")}
+        />
+        <ArchiveTabs value={controls.archive} onChange={controls.setArchive} />
+      </ListToolbar>
+
       {ticketsQuery.isLoading && <PageLoader />}
       {ticketsQuery.isError && <ErrorState onRetry={() => void ticketsQuery.refetch()} />}
-      {!ticketsQuery.isLoading && !ticketsQuery.isError && tickets.length === 0 && (
-        <EmptyState
-          title={t("tickets.noTickets")}
-          text={t("tickets.text")}
-          action={
-            <button onClick={() => setShowForm(true)} className="btn btn-primary btn-sm">
-              {t("tickets.new")}
-            </button>
-          }
-        />
+      {!ticketsQuery.isLoading && !ticketsQuery.isError && pageData.total === 0 && (
+        <div className="mt-5">
+          <EmptyState
+            title={t("tickets.noTickets")}
+            text={t("tickets.text")}
+            action={
+              <button onClick={() => setShowForm(true)} className="btn btn-primary btn-sm">
+                {t("tickets.new")}
+              </button>
+            }
+          />
+        </div>
       )}
 
-      <div className="space-y-3">
-        {tickets.map((ticket) => (
-          <Link
-            key={ticket.id}
-            to="/portal/tickets/$id"
-            params={{ id: ticket.id }}
-            className="flex flex-wrap items-center gap-4 rounded-box border border-base-300 bg-base-100 p-4 transition hover:border-primary/30 hover:bg-primary/5"
-          >
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10 text-secondary">
-              <LifeBuoy className="h-5 w-5" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-bold">{ticket.subject}</p>
-              <p className="text-[11px] text-base-content/70">
-                {ticket.reference} · {formatDate(ticket.createdAt)}
-                {ticket.technician ? ` · ${ticket.technician.fullName}` : ""}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="badge badge-outline badge-xs">
-                {t(`priority.${ticket.priority}` as "priority.LOW")}
+      {pageData.total > 0 && (
+        <div className="mt-5 space-y-3">
+          {pageData.items.map((ticket) => (
+            <Link
+              key={ticket.id}
+              to="/portal/tickets/$id"
+              params={{ id: ticket.id }}
+              className="flex flex-wrap items-center gap-4 rounded-box border border-base-300 bg-base-100 p-4 transition hover:border-primary/30 hover:bg-primary/5"
+            >
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10 text-secondary">
+                <LifeBuoy className="h-5 w-5" />
               </span>
-              <StatusBadge status={ticket.status} />
-              <ArrowRight className="h-4 w-4 text-base-content/65" />
-            </div>
-          </Link>
-        ))}
-      </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-bold">{ticket.subject}</p>
+                <p className="text-[11px] text-base-content/70">
+                  {ticket.reference} · {formatDate(ticket.createdAt)}
+                  {ticket.technician ? ` · ${ticket.technician.fullName}` : ""}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="badge badge-outline badge-xs">
+                  {t(`priority.${ticket.priority}` as "priority.LOW")}
+                </span>
+                <StatusBadge status={ticket.status} />
+                <ArrowRight className="h-4 w-4 text-base-content/65" />
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+
+      <Pagination
+        page={pageData.page}
+        totalPages={pageData.totalPages}
+        from={pageData.from}
+        to={pageData.to}
+        total={pageData.total}
+        pageSize={controls.pageSize}
+        onPageChange={controls.setPage}
+        onPageSizeChange={controls.setPageSize}
+      />
     </DashboardShell>
   );
 }

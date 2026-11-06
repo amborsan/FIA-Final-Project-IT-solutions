@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import { ThemeToggle } from "./ThemeToggle";
 import { useI18n } from "../i18n/I18nContext";
 import type { Language } from "../i18n/translations";
 
@@ -93,6 +94,8 @@ export function Header() {
             {languageButton("en", "EN")}
             {languageButton("de", "DE")}
           </div>
+
+          <ThemeToggle />
 
           <Link
             to="/cart"

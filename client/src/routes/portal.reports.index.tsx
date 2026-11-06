@@ -6,15 +6,21 @@ import type { ServiceReport } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { usePortalNav } from "../components/nav";
 import { DashboardShell, Panel } from "../components/DashboardShell";
+import { ArchiveTabs, FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
 import { EmptyState, ErrorState, PageLoader, StatusBadge } from "../components/ui";
+import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
 
 export const Route = createFileRoute("/portal/reports/")({
   component: ReportsPage,
 });
 
+const reportStatuses = ["SUBMITTED", "APPROVED"];
+
 function ReportsPage() {
   const { t, formatDate } = useI18n();
   const nav = usePortalNav();
+  const controls = useListControls(6);
+
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["reports"],
     queryFn: () => api<{ reports: ServiceReport[] }>("/reports"),
@@ -22,16 +28,58 @@ function ReportsPage() {
 
   const reports = data?.reports ?? [];
 
+  const filtered = filterByArchive(
+    reports.filter(
+      (report) =>
+        (!controls.status || report.status === controls.status) &&
+        matchesSearch(
+          controls.search,
+          report.title,
+          report.workDone,
+          report.materials,
+          report.request?.reference,
+          report.ticket?.reference,
+          report.technician?.fullName,
+        ),
+    ),
+    controls.archive,
+    (report) => report.status === "APPROVED",
+  );
+
+  const pageData = paginate(filtered, controls.page, controls.pageSize);
+
   return (
     <DashboardShell nav={nav} title={t("reports.title")} subtitle={t("reports.text")}>
+      <ListToolbar>
+        <SearchField
+          value={controls.search}
+          onChange={controls.setSearch}
+          placeholder={t("list.searchReports")}
+        />
+        <FilterSelect
+          value={controls.status}
+          onChange={controls.setStatus}
+          options={reportStatuses.map((value) => ({
+            value,
+            label: t(`status.${value}` as "status.SUBMITTED"),
+          }))}
+          allLabel={t("common.all")}
+          ariaLabel={t("common.status")}
+        />
+        <ArchiveTabs value={controls.archive} onChange={controls.setArchive} />
+      </ListToolbar>
+
       {isLoading && <PageLoader />}
       {isError && <ErrorState onRetry={() => void refetch()} />}
-      {!isLoading && !isError && reports.length === 0 && (
-        <EmptyState title={t("reports.noReports")} />
+      {!isLoading && !isError && pageData.total === 0 && (
+        <div className="mt-5">
+          <EmptyState title={t("reports.noReports")} />
+        </div>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        {reports.map((report) => (
+      {pageData.total > 0 && (
+        <div className="mt-5 grid gap-4 lg:grid-cols-2">
+          {pageData.items.map((report) => (
           <Panel key={report.id}>
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3">
@@ -87,8 +135,20 @@ function ReportsPage() {
               </button>
             )}
           </Panel>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
+
+      <Pagination
+        page={pageData.page}
+        totalPages={pageData.totalPages}
+        from={pageData.from}
+        to={pageData.to}
+        total={pageData.total}
+        pageSize={controls.pageSize}
+        onPageChange={controls.setPage}
+        onPageSizeChange={controls.setPageSize}
+      />
     </DashboardShell>
   );
 }

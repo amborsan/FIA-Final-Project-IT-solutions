@@ -16,7 +16,9 @@
 ## Backend conventions
 
 - Express 5, TypeScript, Prisma 7, PostgreSQL.
-- One route module per feature in `src/routes/`.
+- One route module per feature in `src/routes/`. Route files only wire paths,
+  middleware and controllers.
+- Keep request logic in `src/controllers/*.controller.ts`.
 - Validate every body/params with Zod in `src/validation/schemas.ts`.
 - Use `AppError` + `asyncHandler` for errors; the central handler maps Zod and
   Prisma errors.

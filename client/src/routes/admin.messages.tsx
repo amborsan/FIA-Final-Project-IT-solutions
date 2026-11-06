@@ -8,17 +8,22 @@ import { useAuth } from "../context/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
 import { useAdminNav } from "../components/nav";
 import { DashboardShell, Panel } from "../components/DashboardShell";
-import { PageLoader, StatusBadge } from "../components/ui";
+import { ArchiveTabs, FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
+import { EmptyState, PageLoader, StatusBadge } from "../components/ui";
+import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
 
 export const Route = createFileRoute("/admin/messages")({
   component: AdminMessagesPage,
 });
+
+const conversationStatuses = ["OPEN", "CLOSED"];
 
 function AdminMessagesPage() {
   const { user } = useAuth();
   const { t, formatDateTime, formatDate } = useI18n();
   const nav = useAdminNav();
   const queryClient = useQueryClient();
+  const controls = useListControls(8);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [reply, setReply] = useState("");
   const [sending, setSending] = useState(false);
@@ -46,6 +51,26 @@ function AdminMessagesPage() {
 
   const conversations = conversationsQuery.data?.conversations ?? [];
   const conversation = threadQuery.data?.conversation;
+
+  const filteredConversations = filterByArchive(
+    conversations.filter(
+      (entry) =>
+        (!controls.status || entry.status === controls.status) &&
+        matchesSearch(
+          controls.search,
+          entry.subject,
+          entry.customer?.fullName,
+          entry.customer?.email,
+          entry.guestName,
+          entry.guestEmail,
+          entry.messages[0]?.body,
+        ),
+    ),
+    controls.archive,
+    (entry) => entry.status === "CLOSED",
+  );
+
+  const pageData = paginate(filteredConversations, controls.page, controls.pageSize);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -181,34 +206,69 @@ function AdminMessagesPage() {
         </form>
       )}
 
-      <div className="grid gap-5 lg:grid-cols-[0.75fr_1.25fr]">
-        <div className="space-y-2">
-          {conversationsQuery.isLoading && <PageLoader />}
-          {conversations.map((entry) => (
-            <button
-              key={entry.id}
-              onClick={() => setSelectedId(entry.id)}
-              className={`w-full rounded-box border p-3 text-left transition ${
-                selectedId === entry.id
-                  ? "border-primary bg-primary/5"
-                  : "border-base-300 bg-base-100 hover:border-primary/30"
-              }`}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="badge badge-ghost badge-xs">
-                  {entry.type === "SUPPORT" ? t("chat.support") : entry.type === "DIRECT" ? t("chat.direct") : t("chat.guest")}
-                </span>
-                <span className="text-[10px] text-base-content/70">{formatDate(entry.updatedAt)}</span>
-              </div>
-              <p className="mt-1 truncate text-sm font-semibold">{entry.subject}</p>
-              <p className="text-[11px] text-base-content/70">
-                {entry.customer?.fullName || entry.guestName || t("chat.direct")}
-              </p>
-              <p className="mt-1 truncate text-[11px] text-base-content/65">
-                {entry.messages[0]?.body || t("chat.noReply")}
-              </p>
-            </button>
-          ))}
+      <ListToolbar>
+        <SearchField
+          value={controls.search}
+          onChange={controls.setSearch}
+          placeholder={t("list.searchMessages")}
+        />
+        <FilterSelect
+          value={controls.status}
+          onChange={controls.setStatus}
+          options={conversationStatuses.map((value) => ({
+            value,
+            label: t(`status.${value}` as "status.OPEN"),
+          }))}
+          allLabel={t("common.all")}
+          ariaLabel={t("common.status")}
+        />
+        <ArchiveTabs value={controls.archive} onChange={controls.setArchive} />
+      </ListToolbar>
+
+      <div className="mt-5 grid gap-5 lg:grid-cols-[0.75fr_1.25fr]">
+        <div>
+          <div className="space-y-2">
+            {conversationsQuery.isLoading && <PageLoader />}
+            {!conversationsQuery.isLoading && pageData.total === 0 && (
+              <EmptyState title={t("chat.noConversations")} />
+            )}
+            {pageData.items.map((entry) => (
+              <button
+                key={entry.id}
+                onClick={() => setSelectedId(entry.id)}
+                className={`w-full rounded-box border p-3 text-left transition ${
+                  selectedId === entry.id
+                    ? "border-primary bg-primary/5"
+                    : "border-base-300 bg-base-100 hover:border-primary/30"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="badge badge-ghost badge-xs">
+                    {entry.type === "SUPPORT" ? t("chat.support") : entry.type === "DIRECT" ? t("chat.direct") : t("chat.guest")}
+                  </span>
+                  <span className="text-[10px] text-base-content/70">{formatDate(entry.updatedAt)}</span>
+                </div>
+                <p className="mt-1 truncate text-sm font-semibold">{entry.subject}</p>
+                <p className="text-[11px] text-base-content/70">
+                  {entry.customer?.fullName || entry.guestName || t("chat.direct")}
+                </p>
+                <p className="mt-1 truncate text-[11px] text-base-content/65">
+                  {entry.messages[0]?.body || t("chat.noReply")}
+                </p>
+              </button>
+            ))}
+          </div>
+
+          <Pagination
+            page={pageData.page}
+            totalPages={pageData.totalPages}
+            from={pageData.from}
+            to={pageData.to}
+            total={pageData.total}
+            pageSize={controls.pageSize}
+            onPageChange={controls.setPage}
+            onPageSizeChange={controls.setPageSize}
+          />
         </div>
 
         <div>

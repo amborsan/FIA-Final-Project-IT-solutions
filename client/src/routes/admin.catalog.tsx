@@ -7,7 +7,9 @@ import type { Product, ProductCategory, Service } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { useAdminNav } from "../components/nav";
 import { DashboardShell } from "../components/DashboardShell";
-import { PageLoader } from "../components/ui";
+import { ArchiveTabs, ListToolbar, Pagination, SearchField } from "../components/ListControls";
+import { EmptyState, PageLoader } from "../components/ui";
+import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
 import { serviceIconOptions } from "../components/ServiceIcon";
 
 export const Route = createFileRoute("/admin/catalog")({
@@ -45,6 +47,8 @@ function AdminCatalogPage() {
   const { t, pick, formatMoney } = useI18n();
   const nav = useAdminNav();
   const queryClient = useQueryClient();
+  const serviceControls = useListControls();
+  const productControls = useListControls();
   const [tab, setTab] = useState<"services" | "products">("services");
   const [serviceForm, setServiceForm] = useState<typeof emptyService | null>(null);
   const [productForm, setProductForm] = useState<typeof emptyProduct | null>(null);
@@ -69,6 +73,32 @@ function AdminCatalogPage() {
 
   const services = servicesQuery.data?.services ?? [];
   const products = productsQuery.data?.products ?? [];
+
+  const filteredServices = filterByArchive(
+    services.filter((service) =>
+      matchesSearch(serviceControls.search, service.nameEn, service.nameDe, service.slug, service.icon),
+    ),
+    serviceControls.archive,
+    (service) => !service.active,
+  );
+  const servicePage = paginate(filteredServices, serviceControls.page, serviceControls.pageSize);
+
+  const filteredProducts = filterByArchive(
+    products.filter((product) =>
+      matchesSearch(
+        productControls.search,
+        product.nameEn,
+        product.nameDe,
+        product.sku,
+        product.slug,
+        product.category?.nameEn,
+        product.category?.nameDe,
+      ),
+    ),
+    productControls.archive,
+    (product) => !product.active,
+  );
+  const productPage = paginate(filteredProducts, productControls.page, productControls.pageSize);
 
   function startNewService() {
     setEditingServiceId(null);
@@ -348,48 +378,77 @@ function AdminCatalogPage() {
           )}
 
           {servicesQuery.isLoading && <PageLoader />}
-          <div className="overflow-x-auto rounded-box border border-base-300 bg-base-100">
-            <table className="table table-zebra">
-              <thead>
-                <tr>
-                  <th>{t("common.title")}</th>
-                  <th>{t("admin.slug")}</th>
-                  <th>{t("admin.startingPrice")}</th>
-                  <th>{t("common.status")}</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {services.map((service) => (
-                  <tr key={service.id}>
-                    <td className="font-semibold">{pick(service.nameEn, service.nameDe)}</td>
-                    <td className="font-mono text-[11px]">{service.slug}</td>
-                    <td className="text-xs">
-                      {service.startingPrice ? formatMoney(service.startingPrice) : "–"}
-                    </td>
-                    <td>
-                      <span className={`badge badge-sm ${service.active ? "badge-success" : "badge-ghost"}`}>
-                        {service.active ? t("common.active") : t("common.inactive")}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="flex gap-1">
-                        <button onClick={() => editService(service)} className="btn btn-ghost btn-xs">
-                          <Pencil className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          onClick={() => void archiveService(service.id)}
-                          className="btn btn-ghost btn-xs text-error"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </td>
+
+          <ListToolbar>
+            <SearchField
+              value={serviceControls.search}
+              onChange={serviceControls.setSearch}
+              placeholder={t("list.searchCatalog")}
+            />
+            <ArchiveTabs value={serviceControls.archive} onChange={serviceControls.setArchive} />
+          </ListToolbar>
+
+          {!servicesQuery.isLoading && servicePage.total === 0 && (
+            <div className="mt-5">
+              <EmptyState title={t("admin.noResults")} />
+            </div>
+          )}
+
+          {servicePage.total > 0 && (
+            <div className="mt-5 overflow-x-auto rounded-box border border-base-300 bg-base-100">
+              <table className="table table-zebra">
+                <thead>
+                  <tr>
+                    <th>{t("common.title")}</th>
+                    <th>{t("admin.slug")}</th>
+                    <th>{t("admin.startingPrice")}</th>
+                    <th>{t("common.status")}</th>
+                    <th />
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {servicePage.items.map((service) => (
+                    <tr key={service.id}>
+                      <td className="font-semibold">{pick(service.nameEn, service.nameDe)}</td>
+                      <td className="font-mono text-[11px]">{service.slug}</td>
+                      <td className="text-xs">
+                        {service.startingPrice ? formatMoney(service.startingPrice) : "–"}
+                      </td>
+                      <td>
+                        <span className={`badge badge-sm ${service.active ? "badge-success" : "badge-ghost"}`}>
+                          {service.active ? t("common.active") : t("common.inactive")}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="flex gap-1">
+                          <button onClick={() => editService(service)} className="btn btn-ghost btn-xs">
+                            <Pencil className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => void archiveService(service.id)}
+                            className="btn btn-ghost btn-xs text-error"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <Pagination
+            page={servicePage.page}
+            totalPages={servicePage.totalPages}
+            from={servicePage.from}
+            to={servicePage.to}
+            total={servicePage.total}
+            pageSize={serviceControls.pageSize}
+            onPageChange={serviceControls.setPage}
+            onPageSizeChange={serviceControls.setPageSize}
+          />
         </>
       )}
 
@@ -540,52 +599,81 @@ function AdminCatalogPage() {
           )}
 
           {productsQuery.isLoading && <PageLoader />}
-          <div className="overflow-x-auto rounded-box border border-base-300 bg-base-100">
-            <table className="table table-zebra">
-              <thead>
-                <tr>
-                  <th>{t("common.title")}</th>
-                  <th>{t("admin.sku")}</th>
-                  <th>{t("common.category")}</th>
-                  <th>{t("common.price")}</th>
-                  <th>{t("admin.stock")}</th>
-                  <th>{t("common.status")}</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((product) => (
-                  <tr key={product.id}>
-                    <td className="font-semibold">{pick(product.nameEn, product.nameDe)}</td>
-                    <td className="font-mono text-[11px]">{product.sku}</td>
-                    <td className="text-xs">{product.category ? pick(product.category.nameEn, product.category.nameDe) : "–"}</td>
-                    <td className="text-xs">{formatMoney(product.price)}</td>
-                    <td className={`text-xs ${product.stock <= 3 ? "font-bold text-warning" : ""}`}>
-                      {product.stock}
-                    </td>
-                    <td>
-                      <span className={`badge badge-sm ${product.active ? "badge-success" : "badge-ghost"}`}>
-                        {product.active ? t("common.active") : t("common.inactive")}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="flex gap-1">
-                        <button onClick={() => editProduct(product)} className="btn btn-ghost btn-xs">
-                          <Pencil className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          onClick={() => void archiveProduct(product.id)}
-                          className="btn btn-ghost btn-xs text-error"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </td>
+
+          <ListToolbar>
+            <SearchField
+              value={productControls.search}
+              onChange={productControls.setSearch}
+              placeholder={t("list.searchCatalog")}
+            />
+            <ArchiveTabs value={productControls.archive} onChange={productControls.setArchive} />
+          </ListToolbar>
+
+          {!productsQuery.isLoading && productPage.total === 0 && (
+            <div className="mt-5">
+              <EmptyState title={t("admin.noResults")} />
+            </div>
+          )}
+
+          {productPage.total > 0 && (
+            <div className="mt-5 overflow-x-auto rounded-box border border-base-300 bg-base-100">
+              <table className="table table-zebra">
+                <thead>
+                  <tr>
+                    <th>{t("common.title")}</th>
+                    <th>{t("admin.sku")}</th>
+                    <th>{t("common.category")}</th>
+                    <th>{t("common.price")}</th>
+                    <th>{t("admin.stock")}</th>
+                    <th>{t("common.status")}</th>
+                    <th />
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {productPage.items.map((product) => (
+                    <tr key={product.id}>
+                      <td className="font-semibold">{pick(product.nameEn, product.nameDe)}</td>
+                      <td className="font-mono text-[11px]">{product.sku}</td>
+                      <td className="text-xs">{product.category ? pick(product.category.nameEn, product.category.nameDe) : "–"}</td>
+                      <td className="text-xs">{formatMoney(product.price)}</td>
+                      <td className={`text-xs ${product.stock <= 3 ? "font-bold text-warning" : ""}`}>
+                        {product.stock}
+                      </td>
+                      <td>
+                        <span className={`badge badge-sm ${product.active ? "badge-success" : "badge-ghost"}`}>
+                          {product.active ? t("common.active") : t("common.inactive")}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="flex gap-1">
+                          <button onClick={() => editProduct(product)} className="btn btn-ghost btn-xs">
+                            <Pencil className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => void archiveProduct(product.id)}
+                            className="btn btn-ghost btn-xs text-error"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <Pagination
+            page={productPage.page}
+            totalPages={productPage.totalPages}
+            from={productPage.from}
+            to={productPage.to}
+            total={productPage.total}
+            pageSize={productControls.pageSize}
+            onPageChange={productControls.setPage}
+            onPageSizeChange={productControls.setPageSize}
+          />
         </>
       )}
     </DashboardShell>

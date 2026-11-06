@@ -7,7 +7,9 @@ import type { Conversation } from "../lib/types";
 import { useAuth } from "../context/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
 import { RequireRole } from "../components/RequireRole";
+import { ArchiveTabs, FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
 import { PageLoader, StatusBadge } from "../components/ui";
+import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
 
 export const Route = createFileRoute("/messages")({
   component: MessagesPage,
@@ -26,6 +28,7 @@ function MessagesContent() {
   const { t, formatDateTime, formatDate } = useI18n();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const controls = useListControls(8);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [reply, setReply] = useState("");
   const [showNew, setShowNew] = useState(false);
@@ -52,6 +55,24 @@ function MessagesContent() {
 
   const conversations = conversationsQuery.data?.conversations ?? [];
   const conversation = threadQuery.data?.conversation;
+
+  const filteredConversations = filterByArchive(
+    conversations.filter(
+      (entry) =>
+        (!controls.status || entry.status === controls.status) &&
+        matchesSearch(
+          controls.search,
+          entry.subject,
+          entry.customer?.fullName,
+          entry.guestName,
+          entry.messages[0]?.body,
+        ),
+    ),
+    controls.archive,
+    (entry) => entry.status === "CLOSED",
+  );
+
+  const pageData = paginate(filteredConversations, controls.page, controls.pageSize);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -143,36 +164,70 @@ function MessagesContent() {
         </form>
       )}
 
+      <div className="mt-5">
+        <ListToolbar>
+          <SearchField
+            value={controls.search}
+            onChange={controls.setSearch}
+            placeholder={t("list.searchMessages")}
+          />
+          <FilterSelect
+            value={controls.status}
+            onChange={controls.setStatus}
+            options={[
+              { value: "OPEN", label: t("status.OPEN") },
+              { value: "CLOSED", label: t("status.CLOSED") },
+            ]}
+            allLabel={t("common.all")}
+            ariaLabel={t("common.status")}
+          />
+          <ArchiveTabs value={controls.archive} onChange={controls.setArchive} />
+        </ListToolbar>
+      </div>
+
       <div className="mt-5 grid gap-5 lg:grid-cols-[0.35fr_0.65fr]">
-        <div className="space-y-2">
-          {conversationsQuery.isLoading && <PageLoader />}
-          {conversations.map((entry) => (
-            <button
-              key={entry.id}
-              onClick={() => setSelectedId(entry.id)}
-              className={`w-full rounded-box border p-3 text-left transition ${
-                selectedId === entry.id
-                  ? "border-primary bg-primary/5"
-                  : "border-base-300 bg-base-100 hover:border-primary/30"
-              }`}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="badge badge-ghost badge-xs">
-                  {entry.type === "SUPPORT" ? t("chat.support") : entry.type === "DIRECT" ? t("chat.direct") : t("chat.guest")}
-                </span>
-                <span className="text-[10px] text-base-content/70">{formatDate(entry.updatedAt)}</span>
+        <div>
+          <div className="space-y-2">
+            {conversationsQuery.isLoading && <PageLoader />}
+            {pageData.items.map((entry) => (
+              <button
+                key={entry.id}
+                onClick={() => setSelectedId(entry.id)}
+                className={`w-full rounded-box border p-3 text-left transition ${
+                  selectedId === entry.id
+                    ? "border-primary bg-primary/5"
+                    : "border-base-300 bg-base-100 hover:border-primary/30"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="badge badge-ghost badge-xs">
+                    {entry.type === "SUPPORT" ? t("chat.support") : entry.type === "DIRECT" ? t("chat.direct") : t("chat.guest")}
+                  </span>
+                  <span className="text-[10px] text-base-content/70">{formatDate(entry.updatedAt)}</span>
+                </div>
+                <p className="mt-1 truncate text-sm font-semibold">{entry.subject}</p>
+                <p className="mt-1 truncate text-[11px] text-base-content/65">
+                  {entry.messages[0]?.body || t("chat.noReply")}
+                </p>
+              </button>
+            ))}
+            {!conversationsQuery.isLoading && pageData.total === 0 && (
+              <div className="rounded-box border border-dashed border-base-300 bg-base-100 p-8 text-center text-xs text-base-content/70">
+                {t("chat.noConversations")}
               </div>
-              <p className="mt-1 truncate text-sm font-semibold">{entry.subject}</p>
-              <p className="mt-1 truncate text-[11px] text-base-content/65">
-                {entry.messages[0]?.body || t("chat.noReply")}
-              </p>
-            </button>
-          ))}
-          {!conversationsQuery.isLoading && conversations.length === 0 && (
-            <div className="rounded-box border border-dashed border-base-300 bg-base-100 p-8 text-center text-xs text-base-content/70">
-              {t("chat.noConversations")}
-            </div>
-          )}
+            )}
+          </div>
+
+          <Pagination
+            page={pageData.page}
+            totalPages={pageData.totalPages}
+            from={pageData.from}
+            to={pageData.to}
+            total={pageData.total}
+            pageSize={controls.pageSize}
+            onPageChange={controls.setPage}
+            onPageSizeChange={controls.setPageSize}
+          />
         </div>
 
         <div>
