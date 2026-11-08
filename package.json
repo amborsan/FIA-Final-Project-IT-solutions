@@ -1,0 +1,9 @@
+{
+  "name": "fia-final-project",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix client run dev",
+    "dev:client": "npm --prefix client run dev",
+    "dev:server": "npm --prefix server run dev"
+  }
+}
