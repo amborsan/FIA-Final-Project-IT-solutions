@@ -1,6 +1,10 @@
 import { prisma } from "../src/prisma.ts";
 import { hashPassword } from "../src/auth/password.ts";
-import { calculateTotals, createReference, daysFromNow } from "../src/utils/helpers.ts";
+import {
+  calculateTotals,
+  createReference,
+  daysFromNow,
+} from "../src/utils/helpers.ts";
 
 // ---------------------------------------------------------------------------
 // Demo data for the graduation project.
@@ -141,27 +145,209 @@ const services = [
 const categories = [
   { slug: "network", nameEn: "Network equipment", nameDe: "Netzwerkgeräte" },
   { slug: "surveillance", nameEn: "Surveillance", nameDe: "Videoüberwachung" },
-  { slug: "computers", nameEn: "Computers & laptops", nameDe: "Computer & Laptops" },
+  {
+    slug: "computers",
+    nameEn: "Computers & laptops",
+    nameDe: "Computer & Laptops",
+  },
   { slug: "servers", nameEn: "Servers & storage", nameDe: "Server & Speicher" },
   { slug: "communication", nameEn: "Communication", nameDe: "Kommunikation" },
   { slug: "accessories", nameEn: "Accessories", nameDe: "Zubehör" },
 ];
 
 const products = [
-  { slug: "unifi-6-pro", sku: "NET-U6P", category: "network", nameEn: "Ubiquiti UniFi 6 Pro Access Point", nameDe: "Ubiquiti UniFi 6 Pro Access Point", price: 189, stock: 24, featured: true, descriptionEn: "Wi-Fi 6 access point for offices with many devices. PoE powered and centrally managed.", descriptionDe: "Wi-Fi-6-Access-Point für Büros mit vielen Geräten. PoE-versorgt und zentral verwaltbar." },
-  { slug: "omada-switch-8", sku: "NET-OM8", category: "network", nameEn: "TP-Link Omada 8-Port Switch", nameDe: "TP-Link Omada 8-Port Switch", price: 89.9, stock: 40, featured: false, descriptionEn: "Managed gigabit switch with VLAN support for small office networks.", descriptionDe: "Managed-Gigabit-Switch mit VLAN-Unterstützung für kleine Büronetzwerke." },
-  { slug: "fritzbox-7590-ax", sku: "NET-FB7590", category: "network", nameEn: "FRITZ!Box 7590 AX Router", nameDe: "FRITZ!Box 7590 AX Router", price: 219, stock: 15, featured: true, descriptionEn: "Fast Wi-Fi 6 router with telephone system and mesh support.", descriptionDe: "Schneller Wi-Fi-6-Router mit Telefonanlage und Mesh-Unterstützung." },
-  { slug: "hikvision-dome-4mp", sku: "CAM-HD4", category: "surveillance", nameEn: "Hikvision 4 MP Dome Camera", nameDe: "Hikvision 4-MP-Dome-Kamera", price: 129, stock: 30, featured: false, descriptionEn: "Indoor/outdoor IP camera with night vision. Installation and privacy signage available.", descriptionDe: "IP-Kamera für innen/außen mit Nachtsicht. Installation und Datenschutzbeschilderung möglich." },
-  { slug: "hikvision-nvr-8", sku: "CAM-NVR8", category: "surveillance", nameEn: "Hikvision 8-Channel NVR", nameDe: "Hikvision 8-Kanal-NVR", price: 249, stock: 12, featured: false, descriptionEn: "Network video recorder for up to eight cameras and 8 TB storage.", descriptionDe: "Netzwerkvideorekorder für bis zu acht Kameras und 8 TB Speicher." },
-  { slug: "synology-ds223", sku: "SRV-DS223", category: "servers", nameEn: "Synology DiskStation DS223", nameDe: "Synology DiskStation DS223", price: 329, stock: 9, featured: true, descriptionEn: "Two-bay NAS for file sharing, backups and private cloud storage.", descriptionDe: "Zwei-Bay-NAS für Dateifreigabe, Backups und private Cloud-Speicherung." },
-  { slug: "dell-optiplex-7010", sku: "PC-OP7010", category: "computers", nameEn: "Dell OptiPlex 7010 Desktop", nameDe: "Dell OptiPlex 7010 Desktop", price: 749, stock: 7, featured: false, descriptionEn: "Business desktop with 16 GB RAM and 512 GB SSD, ready for office work.", descriptionDe: "Business-Desktop mit 16 GB RAM und 512 GB SSD, bereit für Büroarbeit." },
-  { slug: "lenovo-thinkpad-e14", sku: "PC-TPE14", category: "computers", nameEn: "Lenovo ThinkPad E14 Laptop", nameDe: "Lenovo ThinkPad E14 Laptop", price: 899, stock: 11, featured: true, descriptionEn: "Reliable 14-inch business laptop with 16 GB RAM and 512 GB SSD.", descriptionDe: "Zuverlässiges 14-Zoll-Business-Notebook mit 16 GB RAM und 512 GB SSD." },
-  { slug: "hp-laserjet-pro", sku: "PRN-HPLJ", category: "accessories", nameEn: "HP LaserJet Pro Printer", nameDe: "HP LaserJet Pro Drucker", price: 229, stock: 18, featured: false, descriptionEn: "Compact monochrome laser printer for small offices and home offices.", descriptionDe: "Kompakter Schwarzweiß-Laserdrucker für kleine Büros und Homeoffice." },
-  { slug: "apc-ups-1500", sku: "SRV-UPS1500", category: "servers", nameEn: "APC UPS 1500 VA", nameDe: "APC USV 1500 VA", price: 279, stock: 10, featured: false, descriptionEn: "Uninterruptible power supply to protect servers and network cabinets.", descriptionDe: "Unterbrechungsfreie Stromversorgung zum Schutz von Servern und Netzwerkschränken." },
-  { slug: "gigaset-voip-phone", sku: "COM-GSVOIP", category: "communication", nameEn: "Gigaset VoIP Desk Phone", nameDe: "Gigaset VoIP-Telefon", price: 79.9, stock: 25, featured: false, descriptionEn: "Desk phone for VoIP systems with HD voice and headset support.", descriptionDe: "Tischtelefon für VoIP-Anlagen mit HD-Stimme und Headset-Unterstützung." },
-  { slug: "cisco-rv260", sku: "NET-RV260", category: "network", nameEn: "Cisco RV260 VPN Router", nameDe: "Cisco RV260 VPN-Router", price: 199, stock: 8, featured: false, descriptionEn: "VPN router for secure connections between office and home office.", descriptionDe: "VPN-Router für sichere Verbindungen zwischen Büro und Homeoffice." },
-  { slug: "cat6-patch-2m", sku: "ACC-CAT6-2", category: "accessories", nameEn: "Cat.6 Patch Cable 2 m", nameDe: "Cat.6 Patchkabel 2 m", price: 6.9, stock: 200, featured: false, descriptionEn: "Quality copper patch cable for gigabit connections.", descriptionDe: "Hochwertiges Kupfer-Patchkabel für Gigabit-Verbindungen." },
-  { slug: "patch-panel-24", sku: "ACC-PP24", category: "accessories", nameEn: "24-Port Patch Panel", nameDe: "24-Port Patchpanel", price: 49, stock: 35, featured: false, descriptionEn: "Rack-mounted patch panel for tidy structured cabling.", descriptionDe: "Rack-Patchpanel für aufgeräumte strukturierte Verkabelung." },
+  {
+    slug: "unifi-6-pro",
+    sku: "NET-U6P",
+    category: "network",
+    nameEn: "Ubiquiti UniFi 6 Pro Access Point",
+    nameDe: "Ubiquiti UniFi 6 Pro Access Point",
+    price: 189,
+    stock: 24,
+    featured: true,
+    descriptionEn:
+      "Wi-Fi 6 access point for offices with many devices. PoE powered and centrally managed.",
+    descriptionDe:
+      "Wi-Fi-6-Access-Point für Büros mit vielen Geräten. PoE-versorgt und zentral verwaltbar.",
+  },
+  {
+    slug: "omada-switch-8",
+    sku: "NET-OM8",
+    category: "network",
+    nameEn: "TP-Link Omada 8-Port Switch",
+    nameDe: "TP-Link Omada 8-Port Switch",
+    price: 89.9,
+    stock: 40,
+    featured: false,
+    descriptionEn:
+      "Managed gigabit switch with VLAN support for small office networks.",
+    descriptionDe:
+      "Managed-Gigabit-Switch mit VLAN-Unterstützung für kleine Büronetzwerke.",
+  },
+  {
+    slug: "fritzbox-7590-ax",
+    sku: "NET-FB7590",
+    category: "network",
+    nameEn: "FRITZ!Box 7590 AX Router",
+    nameDe: "FRITZ!Box 7590 AX Router",
+    price: 219,
+    stock: 15,
+    featured: true,
+    descriptionEn:
+      "Fast Wi-Fi 6 router with telephone system and mesh support.",
+    descriptionDe:
+      "Schneller Wi-Fi-6-Router mit Telefonanlage und Mesh-Unterstützung.",
+  },
+  {
+    slug: "hikvision-dome-4mp",
+    sku: "CAM-HD4",
+    category: "surveillance",
+    nameEn: "Hikvision 4 MP Dome Camera",
+    nameDe: "Hikvision 4-MP-Dome-Kamera",
+    price: 129,
+    stock: 30,
+    featured: false,
+    descriptionEn:
+      "Indoor/outdoor IP camera with night vision. Installation and privacy signage available.",
+    descriptionDe:
+      "IP-Kamera für innen/außen mit Nachtsicht. Installation und Datenschutzbeschilderung möglich.",
+  },
+  {
+    slug: "hikvision-nvr-8",
+    sku: "CAM-NVR8",
+    category: "surveillance",
+    nameEn: "Hikvision 8-Channel NVR",
+    nameDe: "Hikvision 8-Kanal-NVR",
+    price: 249,
+    stock: 12,
+    featured: false,
+    descriptionEn:
+      "Network video recorder for up to eight cameras and 8 TB storage.",
+    descriptionDe:
+      "Netzwerkvideorekorder für bis zu acht Kameras und 8 TB Speicher.",
+  },
+  {
+    slug: "synology-ds223",
+    sku: "SRV-DS223",
+    category: "servers",
+    nameEn: "Synology DiskStation DS223",
+    nameDe: "Synology DiskStation DS223",
+    price: 329,
+    stock: 9,
+    featured: true,
+    descriptionEn:
+      "Two-bay NAS for file sharing, backups and private cloud storage.",
+    descriptionDe:
+      "Zwei-Bay-NAS für Dateifreigabe, Backups und private Cloud-Speicherung.",
+  },
+  {
+    slug: "dell-optiplex-7010",
+    sku: "PC-OP7010",
+    category: "computers",
+    nameEn: "Dell OptiPlex 7010 Desktop",
+    nameDe: "Dell OptiPlex 7010 Desktop",
+    price: 749,
+    stock: 7,
+    featured: false,
+    descriptionEn:
+      "Business desktop with 16 GB RAM and 512 GB SSD, ready for office work.",
+    descriptionDe:
+      "Business-Desktop mit 16 GB RAM und 512 GB SSD, bereit für Büroarbeit.",
+  },
+  {
+    slug: "lenovo-thinkpad-e14",
+    sku: "PC-TPE14",
+    category: "computers",
+    nameEn: "Lenovo ThinkPad E14 Laptop",
+    nameDe: "Lenovo ThinkPad E14 Laptop",
+    price: 899,
+    stock: 11,
+    featured: true,
+    descriptionEn:
+      "Reliable 14-inch business laptop with 16 GB RAM and 512 GB SSD.",
+    descriptionDe:
+      "Zuverlässiges 14-Zoll-Business-Notebook mit 16 GB RAM und 512 GB SSD.",
+  },
+  {
+    slug: "hp-laserjet-pro",
+    sku: "PRN-HPLJ",
+    category: "accessories",
+    nameEn: "HP LaserJet Pro Printer",
+    nameDe: "HP LaserJet Pro Drucker",
+    price: 229,
+    stock: 18,
+    featured: false,
+    descriptionEn:
+      "Compact monochrome laser printer for small offices and home offices.",
+    descriptionDe:
+      "Kompakter Schwarzweiß-Laserdrucker für kleine Büros und Homeoffice.",
+  },
+  {
+    slug: "apc-ups-1500",
+    sku: "SRV-UPS1500",
+    category: "servers",
+    nameEn: "APC UPS 1500 VA",
+    nameDe: "APC USV 1500 VA",
+    price: 279,
+    stock: 10,
+    featured: false,
+    descriptionEn:
+      "Uninterruptible power supply to protect servers and network cabinets.",
+    descriptionDe:
+      "Unterbrechungsfreie Stromversorgung zum Schutz von Servern und Netzwerkschränken.",
+  },
+  {
+    slug: "gigaset-voip-phone",
+    sku: "COM-GSVOIP",
+    category: "communication",
+    nameEn: "Gigaset VoIP Desk Phone",
+    nameDe: "Gigaset VoIP-Telefon",
+    price: 79.9,
+    stock: 25,
+    featured: false,
+    descriptionEn:
+      "Desk phone for VoIP systems with HD voice and headset support.",
+    descriptionDe:
+      "Tischtelefon für VoIP-Anlagen mit HD-Stimme und Headset-Unterstützung.",
+  },
+  {
+    slug: "cisco-rv260",
+    sku: "NET-RV260",
+    category: "network",
+    nameEn: "Cisco RV260 VPN Router",
+    nameDe: "Cisco RV260 VPN-Router",
+    price: 199,
+    stock: 8,
+    featured: false,
+    descriptionEn:
+      "VPN router for secure connections between office and home office.",
+    descriptionDe:
+      "VPN-Router für sichere Verbindungen zwischen Büro und Homeoffice.",
+  },
+  {
+    slug: "cat6-patch-2m",
+    sku: "ACC-CAT6-2",
+    category: "accessories",
+    nameEn: "Cat.6 Patch Cable 2 m",
+    nameDe: "Cat.6 Patchkabel 2 m",
+    price: 6.9,
+    stock: 200,
+    featured: false,
+    descriptionEn: "Quality copper patch cable for gigabit connections.",
+    descriptionDe: "Hochwertiges Kupfer-Patchkabel für Gigabit-Verbindungen.",
+  },
+  {
+    slug: "patch-panel-24",
+    sku: "ACC-PP24",
+    category: "accessories",
+    nameEn: "24-Port Patch Panel",
+    nameDe: "24-Port Patchpanel",
+    price: 49,
+    stock: 35,
+    featured: false,
+    descriptionEn: "Rack-mounted patch panel for tidy structured cabling.",
+    descriptionDe: "Rack-Patchpanel für aufgeräumte strukturierte Verkabelung.",
+  },
 ];
 
 async function seed() {
@@ -176,7 +362,7 @@ async function seed() {
     update: {},
     create: {
       id: adminId,
-      email: "admin@orbit-it.de",
+      email: "admin@fia-it.de",
       passwordHash: passwordAdmin,
       fullName: "Aylin Demir",
       firstName: "Aylin",
@@ -196,7 +382,7 @@ async function seed() {
     update: {},
     create: {
       id: techId,
-      email: "tech@orbit-it.de",
+      email: "tech@fia-it.de",
       passwordHash: passwordTech,
       fullName: "Jonas Weber",
       firstName: "Jonas",
@@ -215,7 +401,7 @@ async function seed() {
     update: {},
     create: {
       id: tech2Id,
-      email: "tech2@orbit-it.de",
+      email: "tech2@fia-it.de",
       passwordHash: passwordTech,
       fullName: "Marcel Koch",
       firstName: "Marcel",
@@ -234,7 +420,7 @@ async function seed() {
     update: {},
     create: {
       id: customerId,
-      email: "customer@orbit-it.de",
+      email: "customer@fia-it.de",
       passwordHash: passwordCustomer,
       fullName: "Sofia Reed",
       firstName: "Sofia",
@@ -253,7 +439,7 @@ async function seed() {
     update: {},
     create: {
       id: businessId,
-      email: "business@orbit-it.de",
+      email: "business@fia-it.de",
       passwordHash: passwordCustomer,
       fullName: "Liam Fischer",
       firstName: "Liam",
@@ -328,7 +514,7 @@ async function seed() {
       budget: 4500,
       status: "SCHEDULED",
       contactName: "Sofia Reed",
-      contactEmail: "customer@orbit-it.de",
+      contactEmail: "customer@fia-it.de",
       contactPhone: "+49 30 5550 0201",
       consentAt: new Date(),
     },
@@ -348,7 +534,7 @@ async function seed() {
       budget: 2800,
       status: "IN_PROGRESS",
       contactName: "Liam Fischer",
-      contactEmail: "business@orbit-it.de",
+      contactEmail: "business@fia-it.de",
       contactPhone: "+49 30 5550 0202",
       consentAt: new Date(),
     },
@@ -366,7 +552,7 @@ async function seed() {
       budget: 1600,
       status: "NEW",
       contactName: "Liam Fischer",
-      contactEmail: "business@orbit-it.de",
+      contactEmail: "business@fia-it.de",
       consentAt: new Date(),
     },
   });
@@ -374,7 +560,11 @@ async function seed() {
   const quoteItems1 = [
     { description: "UniFi 6 Pro access point", quantity: 3, unitPrice: 189 },
     { description: "Omada 8-port switch", quantity: 1, unitPrice: 89.9 },
-    { description: "Installation, cabling and configuration", quantity: 8, unitPrice: 95 },
+    {
+      description: "Installation, cabling and configuration",
+      quantity: 8,
+      unitPrice: 95,
+    },
   ];
   const totals1 = calculateTotals(quoteItems1, 19);
   const quote1 = await prisma.quote.create({
@@ -624,8 +814,14 @@ async function seed() {
       },
       messages: {
         create: [
-          { senderId: adminId, body: "Please check the site plan before Friday." },
-          { senderId: techId, body: "Will do. I will add my notes to the request." },
+          {
+            senderId: adminId,
+            body: "Please check the site plan before Friday.",
+          },
+          {
+            senderId: techId,
+            body: "Will do. I will add my notes to the request.",
+          },
         ],
       },
     },
@@ -652,9 +848,12 @@ async function seed() {
       {
         slug: "cybersecurity-checklist-small-business",
         titleEn: "A practical cybersecurity checklist for small businesses",
-        titleDe: "Eine praktische Cybersecurity-Checkliste für kleine Unternehmen",
-        excerptEn: "Six basic steps that protect most small teams without a big IT budget.",
-        excerptDe: "Sechs grundlegende Schritte, die die meisten kleinen Teams ohne großes IT-Budget schützen.",
+        titleDe:
+          "Eine praktische Cybersecurity-Checkliste für kleine Unternehmen",
+        excerptEn:
+          "Six basic steps that protect most small teams without a big IT budget.",
+        excerptDe:
+          "Sechs grundlegende Schritte, die die meisten kleinen Teams ohne großes IT-Budget schützen.",
         bodyEn:
           "<p>Security does not have to start with an expensive platform. These basics cover most everyday risks.</p><ul><li>Use a password manager and unique passwords.</li><li>Turn on multi-factor authentication for email and Microsoft 365.</li><li>Keep operating systems and browsers updated.</li><li>Test your backup restore once per quarter.</li><li>Separate guest Wi-Fi from the office network.</li><li>Write down who can access what.</li></ul><p>Need help? We can review your setup in a short workshop.</p>",
         bodyDe:
@@ -666,7 +865,8 @@ async function seed() {
       {
         slug: "privacy-compliant-cctv",
         titleEn: "Privacy-compliant CCTV in Germany: the basics",
-        titleDe: "Datenschutzkonforme Videoüberwachung in Deutschland: die Grundlagen",
+        titleDe:
+          "Datenschutzkonforme Videoüberwachung in Deutschland: die Grundlagen",
         excerptEn:
           "Video surveillance is useful, but it needs a purpose, signage and a clear retention period.",
         excerptDe:
@@ -730,19 +930,49 @@ async function seed() {
 
   await prisma.activityLog.createMany({
     data: [
-      { userId: adminId, action: "request.updated", description: "Assigned Jonas Weber to SR-2026-DEMO01", entityType: "ServiceRequest", entityId: request1.id },
-      { userId: customerId, action: "quote.viewed", description: "Viewed quote Q-2026-DEMO01", entityType: "Quote", entityId: quote1.id },
-      { userId: tech2Id, action: "report.submitted", description: "Submitted report for SR-2026-DEMO02", entityType: "ServiceReport", entityId: report.id },
-      { userId: adminId, action: "ticket.updated", description: `Replied to ${ticket1.reference}`, entityType: "Ticket", entityId: ticket1.id },
-      { userId: customerId, action: "chat.message", description: `Started chat "${conversation.subject}"`, entityType: "Conversation", entityId: conversation.id },
+      {
+        userId: adminId,
+        action: "request.updated",
+        description: "Assigned Jonas Weber to SR-2026-DEMO01",
+        entityType: "ServiceRequest",
+        entityId: request1.id,
+      },
+      {
+        userId: customerId,
+        action: "quote.viewed",
+        description: "Viewed quote Q-2026-DEMO01",
+        entityType: "Quote",
+        entityId: quote1.id,
+      },
+      {
+        userId: tech2Id,
+        action: "report.submitted",
+        description: "Submitted report for SR-2026-DEMO02",
+        entityType: "ServiceReport",
+        entityId: report.id,
+      },
+      {
+        userId: adminId,
+        action: "ticket.updated",
+        description: `Replied to ${ticket1.reference}`,
+        entityType: "Ticket",
+        entityId: ticket1.id,
+      },
+      {
+        userId: customerId,
+        action: "chat.message",
+        description: `Started chat "${conversation.subject}"`,
+        entityType: "Conversation",
+        entityId: conversation.id,
+      },
     ],
   });
 
   console.log("Seed complete.");
-  console.log("Admin:    admin@orbit-it.de / Admin12345!");
-  console.log("Tech:     tech@orbit-it.de / Tech12345!");
-  console.log("Customer: customer@orbit-it.de / Customer12345!");
-  console.log("Business: business@orbit-it.de / Customer12345!");
+  console.log("Admin:    admin@fia-it.de / Admin12345!");
+  console.log("Tech:     tech@fia-it.de / Tech12345!");
+  console.log("Customer: customer@fia-it.de / Customer12345!");
+  console.log("Business: business@fia-it.de / Customer12345!");
 
   await prisma.$disconnect();
 }

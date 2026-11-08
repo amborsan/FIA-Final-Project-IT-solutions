@@ -28,10 +28,15 @@ export function LegalShell({
       <section className="border-b border-base-300 bg-base-200/40">
         <div className="container-page py-10 sm:py-14">
           <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
-            <ShieldCheck className="h-4 w-4" /> {language === "de" ? "Rechtliches" : "Legal"}
+            <ShieldCheck className="h-4 w-4" />{" "}
+            {language === "de" ? "Rechtliches" : "Legal"}
           </p>
-          <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">{t(titleKey)}</h1>
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-base-content/65">{t(introKey)}</p>
+          <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
+            {t(titleKey)}
+          </h1>
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-base-content/65">
+            {t(introKey)}
+          </p>
           <p className="mt-3 text-[11px] text-base-content/70">
             {t("legal.lastUpdated")}:{" "}
             {language === "de" ? "1. November 2026" : "1 November 2026"}
@@ -45,7 +50,8 @@ export function LegalShell({
         <aside className="space-y-4 lg:sticky lg:top-24">
           <div className="rounded-box border border-base-300 bg-base-100 p-4">
             <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-base-content/65">
-              <FileText className="h-3.5 w-3.5" /> {language === "de" ? "Dokumente" : "Documents"}
+              <FileText className="h-3.5 w-3.5" />{" "}
+              {language === "de" ? "Dokumente" : "Documents"}
             </p>
             <nav className="mt-3 grid gap-1">
               {links.map((link) => (
@@ -53,7 +59,10 @@ export function LegalShell({
                   key={link.to}
                   to={link.to}
                   className="rounded-lg px-2.5 py-2 text-sm text-base-content/65 hover:bg-base-200 hover:text-primary"
-                  activeProps={{ className: "rounded-lg px-2.5 py-2 text-sm font-semibold bg-primary/10 text-primary" }}
+                  activeProps={{
+                    className:
+                      "rounded-lg px-2.5 py-2 text-sm font-semibold bg-primary/10 text-primary",
+                  }}
                 >
                   {t(link.key)}
                 </Link>
@@ -61,7 +70,9 @@ export function LegalShell({
             </nav>
             <button
               type="button"
-              onClick={() => window.dispatchEvent(new Event("orbit:open-cookie-settings"))}
+              onClick={() =>
+                window.dispatchEvent(new Event("orbit:open-cookie-settings"))
+              }
               className="mt-3 w-full rounded-lg bg-base-200 px-2.5 py-2 text-left text-xs font-semibold hover:bg-base-300"
             >
               {t("legal.cookieSettings")}
@@ -81,8 +92,8 @@ export function LegalShell({
         <div className="rounded-box bg-base-200 p-4 text-sm">
           <p className="font-semibold">{t("legal.questions")}</p>
           <p className="mt-1 text-xs text-base-content/70">
-            <a href="mailto:privacy@orbit-it.de" className="link link-primary">
-              privacy@orbit-it.de
+            <a href="mailto:privacy@fia-it.de" className="link link-primary">
+              privacy@fia-it.de
             </a>{" "}
             ·{" "}
             <Link to="/contact" className="link link-primary">

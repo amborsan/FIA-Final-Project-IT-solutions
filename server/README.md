@@ -31,7 +31,8 @@ src/
 │   ├── csrf.ts            Double-submit CSRF check
 │   ├── errors.ts          AppError + async wrapper
 │   └── rateLimits.ts      Login and form rate limits
-├── routes/                One file per feature area
+├── controllers/           One controller per feature area (request logic)
+├── routes/                HTTP paths, middleware and controller wiring
 ├── utils/                 References, totals, sanitising, activity/notifications
 ├── validation/schemas.ts  All Zod input schemas
 └── generated/prisma/      Generated Prisma Client (do not edit)

@@ -7,9 +7,11 @@ import type { ContentPage } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { useAdminNav } from "../components/nav";
 import { DashboardShell, Panel } from "../components/DashboardShell";
+import { FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
 import { RichEditor } from "../components/RichEditor";
 import { RichText } from "../components/RichText";
 import { EmptyState, PageLoader, StatusBadge } from "../components/ui";
+import { matchesSearch, paginate, useListControls } from "../lib/list";
 
 export const Route = createFileRoute("/admin/content")({
   component: AdminContentPage,
@@ -30,6 +32,7 @@ function AdminContentPage() {
   const { t, pick, formatDate } = useI18n();
   const nav = useAdminNav();
   const queryClient = useQueryClient();
+  const controls = useListControls();
   const [form, setForm] = useState<typeof emptyForm | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [preview, setPreview] = useState<ContentPage | null>(null);
@@ -43,6 +46,14 @@ function AdminContentPage() {
   });
 
   const pages = pagesQuery.data?.pages ?? [];
+
+  const filteredPages = pages.filter(
+    (page) =>
+      (!controls.status || page.status === controls.status) &&
+      matchesSearch(controls.search, page.titleEn, page.titleDe, page.slug),
+  );
+
+  const pageData = paginate(filteredPages, controls.page, controls.pageSize);
 
   function startNew() {
     setEditingId(null);
@@ -225,57 +236,92 @@ function AdminContentPage() {
         </Panel>
       )}
 
-      {pagesQuery.isLoading && <PageLoader />}
-      {!pagesQuery.isLoading && pages.length === 0 && <EmptyState title={t("blog.noPosts")} />}
+      <ListToolbar>
+        <SearchField
+          value={controls.search}
+          onChange={controls.setSearch}
+          placeholder={t("list.searchContent")}
+        />
+        <FilterSelect
+          value={controls.status}
+          onChange={controls.setStatus}
+          options={[
+            { value: "PUBLISHED", label: t("admin.published") },
+            { value: "DRAFT", label: t("admin.draft") },
+          ]}
+          allLabel={t("common.all")}
+          ariaLabel={t("admin.status")}
+        />
+      </ListToolbar>
 
-      <div className="overflow-x-auto rounded-box border border-base-300 bg-base-100">
-        <table className="table table-zebra">
-          <thead>
-            <tr>
-              <th>{t("common.title")}</th>
-              <th>{t("admin.slug")}</th>
-              <th>{t("common.status")}</th>
-              <th>{t("common.date")}</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {pages.map((page) => (
-              <tr key={page.id}>
-                <td className="font-semibold">{pick(page.titleEn, page.titleDe)}</td>
-                <td className="font-mono text-[11px]">{page.slug}</td>
-                <td>
-                  <StatusBadge status={page.status} />
-                </td>
-                <td className="text-xs">{formatDate(page.updatedAt)}</td>
-                <td>
-                  <div className="flex gap-1">
-                    <button onClick={() => setPreview(page)} className="btn btn-ghost btn-xs" title={t("admin.preview")}>
-                      <Eye className="h-3.5 w-3.5" />
-                    </button>
-                    {page.status === "PUBLISHED" && (
-                      <Link
-                        to="/blog/$slug"
-                        params={{ slug: page.slug }}
-                        className="btn btn-ghost btn-xs"
-                        title={t("common.open")}
-                      >
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </Link>
-                    )}
-                    <button onClick={() => edit(page)} className="btn btn-ghost btn-xs">
-                      <Pencil className="h-3.5 w-3.5" />
-                    </button>
-                    <button onClick={() => void remove(page.id)} className="btn btn-ghost btn-xs text-error">
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </td>
+      {pagesQuery.isLoading && <PageLoader />}
+      {!pagesQuery.isLoading && pageData.total === 0 && (
+        <div className="mt-5">
+          <EmptyState title={t("blog.noPosts")} />
+        </div>
+      )}
+
+      {pageData.total > 0 && (
+        <div className="mt-5 overflow-x-auto rounded-box border border-base-300 bg-base-100">
+          <table className="table table-zebra">
+            <thead>
+              <tr>
+                <th>{t("common.title")}</th>
+                <th>{t("admin.slug")}</th>
+                <th>{t("common.status")}</th>
+                <th>{t("common.date")}</th>
+                <th />
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {pageData.items.map((page) => (
+                <tr key={page.id}>
+                  <td className="font-semibold">{pick(page.titleEn, page.titleDe)}</td>
+                  <td className="font-mono text-[11px]">{page.slug}</td>
+                  <td>
+                    <StatusBadge status={page.status} />
+                  </td>
+                  <td className="text-xs">{formatDate(page.updatedAt)}</td>
+                  <td>
+                    <div className="flex gap-1">
+                      <button onClick={() => setPreview(page)} className="btn btn-ghost btn-xs" title={t("admin.preview")}>
+                        <Eye className="h-3.5 w-3.5" />
+                      </button>
+                      {page.status === "PUBLISHED" && (
+                        <Link
+                          to="/blog/$slug"
+                          params={{ slug: page.slug }}
+                          className="btn btn-ghost btn-xs"
+                          title={t("common.open")}
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" />
+                        </Link>
+                      )}
+                      <button onClick={() => edit(page)} className="btn btn-ghost btn-xs">
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
+                      <button onClick={() => void remove(page.id)} className="btn btn-ghost btn-xs text-error">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <Pagination
+        page={pageData.page}
+        totalPages={pageData.totalPages}
+        from={pageData.from}
+        to={pageData.to}
+        total={pageData.total}
+        pageSize={controls.pageSize}
+        onPageChange={controls.setPage}
+        onPageSizeChange={controls.setPageSize}
+      />
     </DashboardShell>
   );
 }

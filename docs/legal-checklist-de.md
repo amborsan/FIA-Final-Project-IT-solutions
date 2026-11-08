@@ -26,7 +26,7 @@ Legal basis: **§ 5 DDG** (Digitale-Dienste-Gesetz, replaced § 5 TMG in 2024),
 - [ ] Supervisory authority if the business is regulated (not applicable to normal IT services).
 
 **Demo placeholders to replace:** `HRB 000000 B`, `DE000000000`,
-`Hauptstraße 12`, `+49 30 5550 0100`, `hello@orbit-it.de`.
+`Hauptstraße 12`, `+49 30 5550 0100`, `hello@fia-it.de`.
 
 ---
 

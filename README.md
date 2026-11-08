@@ -40,6 +40,13 @@ Node/Express, PostgreSQL/Prisma) is used as-is.
 
 ## 3. Quick start
 
+> **Beginner-friendly walkthrough:** see [SETUP.md](SETUP.md) for the full
+> step-by-step setup, verification and troubleshooting guide.
+>
+> **Run Prisma commands from `server/` only.** Do not run `npx prisma` at the
+> repository root; `npx` may download Prisma 8 RC instead of the project's
+> Prisma 7. Use `npm run db:deploy` and `npm run db:generate` inside `server/`.
+
 ### Prerequisites
 
 - Node.js 22 or newer (tested on Node 24)
@@ -49,8 +56,8 @@ Node/Express, PostgreSQL/Prisma) is used as-is.
 ### 1. Create the database
 
 ```bash
-createdb orbit_platform
-# or: psql -U postgres -c "CREATE DATABASE orbit_platform;"
+createdb fia
+# or: psql -U postgres -c "CREATE DATABASE fia;"
 ```
 
 ### 2. Configure the backend
@@ -58,15 +65,16 @@ createdb orbit_platform
 ```bash
 cd server
 cp .env.example .env
-# edit DATABASE_URL if your PostgreSQL user/password differ
+# edit DATABASE_URL: postgresql://USER:PASSWORD@localhost:5432/fia?schema=public
 npm install
-npx prisma migrate deploy
-npx prisma generate
+npm run db:deploy
+npm run db:generate
 npm run db:seed
 ```
 
 `npm run db:seed` is safe to run again. It creates the demo accounts, services,
-products and sample workflows only when the database is empty.
+products and sample workflows only when the database is empty. If you changed
+the demo email domain, use a fresh database; existing users are not overwritten.
 
 ### 3. Start the API
 
@@ -105,6 +113,7 @@ Then open `http://localhost:3000`.
 
 ## 4. Demo accounts
 
+<<<<<<< HEAD
 | Role                  | Email                  | Password         |
 | --------------------- | ---------------------- | ---------------- |
 | Admin                 | `admin@orbit-it.de`    | `Admin12345!`    |
@@ -112,6 +121,15 @@ Then open `http://localhost:3000`.
 | Technician 2          | `tech2@orbit-it.de`    | `Tech12345!`     |
 | Customer (individual) | `customer@orbit-it.de` | `Customer12345!` |
 | Customer (business)   | `business@orbit-it.de` | `Customer12345!` |
+=======
+| Role                  | Email                | Password         |
+| --------------------- | -------------------- | ---------------- |
+| Admin                 | `admin@fia-it.de`    | `Admin12345!`    |
+| Technician            | `tech@fia-it.de`     | `Tech12345!`     |
+| Technician 2          | `tech2@fia-it.de`    | `Tech12345!`     |
+| Customer (individual) | `customer@fia-it.de` | `Customer12345!` |
+| Customer (business)   | `business@fia-it.de` | `Customer12345!` |
+>>>>>>> 712fadac637e8ff8369128dc9cc17c1abd0d54bc
 
 Demo cards on the login page fill these in automatically.
 

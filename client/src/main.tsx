@@ -4,6 +4,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
 import { I18nProvider } from "./i18n/I18nContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import "./index.css";
@@ -35,11 +36,13 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
-        <AuthProvider>
-          <CartProvider>
-            <RouterProvider router={router} />
-          </CartProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <CartProvider>
+              <RouterProvider router={router} />
+            </CartProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </I18nProvider>
     </QueryClientProvider>
   </StrictMode>,

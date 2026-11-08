@@ -8,19 +8,25 @@ import { useAuth } from "../context/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
 import { useAdminNav } from "../components/nav";
 import { DashboardShell, Panel } from "../components/DashboardShell";
+import { ArchiveTabs, FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
 import { EmptyState, ErrorState, PageLoader, StatusBadge } from "../components/ui";
+import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
 
 export const Route = createFileRoute("/admin/tickets")({
   component: AdminTicketsPage,
 });
 
 const statuses = ["OPEN", "IN_PROGRESS", "WAITING_CUSTOMER", "RESOLVED", "CLOSED"];
+const priorities = ["LOW", "MEDIUM", "HIGH", "URGENT"];
+const archivedStatuses = new Set(["RESOLVED", "CLOSED"]);
 
 function AdminTicketsPage() {
   const { user } = useAuth();
   const { t, formatDateTime, formatDate } = useI18n();
   const nav = useAdminNav();
   const queryClient = useQueryClient();
+  const controls = useListControls(8);
+  const [priority, setPriority] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [reply, setReply] = useState("");
   const [internal, setInternal] = useState(false);
@@ -45,6 +51,30 @@ function AdminTicketsPage() {
 
   const tickets = ticketsQuery.data?.tickets ?? [];
   const ticket = ticketQuery.data?.ticket;
+
+  const filteredTickets = filterByArchive(
+    tickets.filter(
+      (entry) =>
+        (!controls.status || entry.status === controls.status) &&
+        (!priority || entry.priority === priority) &&
+        matchesSearch(
+          controls.search,
+          entry.reference,
+          entry.subject,
+          entry.customer?.fullName,
+          entry.customer?.email,
+        ),
+    ),
+    controls.archive,
+    (entry) => archivedStatuses.has(entry.status),
+  );
+
+  const pageData = paginate(filteredTickets, controls.page, controls.pageSize);
+
+  function changePriority(value: string) {
+    setPriority(value);
+    controls.setPage(1);
+  }
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -98,34 +128,76 @@ function AdminTicketsPage() {
   return (
     <DashboardShell nav={nav} title={t("admin.tickets")} subtitle={t("tickets.text")}>
       {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+
+      <ListToolbar>
+        <SearchField
+          value={controls.search}
+          onChange={controls.setSearch}
+          placeholder={t("list.searchTickets")}
+        />
+        <FilterSelect
+          value={controls.status}
+          onChange={controls.setStatus}
+          options={statuses.map((value) => ({ value, label: t(`status.${value}` as "status.OPEN") }))}
+          allLabel={t("common.all")}
+          ariaLabel={t("common.status")}
+        />
+        <FilterSelect
+          value={priority}
+          onChange={changePriority}
+          options={priorities.map((value) => ({
+            value,
+            label: t(`priority.${value}` as "priority.LOW"),
+          }))}
+          allLabel={t("common.all")}
+          ariaLabel={t("tickets.priority")}
+        />
+        <ArchiveTabs value={controls.archive} onChange={controls.setArchive} />
+      </ListToolbar>
+
       {ticketsQuery.isLoading && <PageLoader />}
       {ticketsQuery.isError && <ErrorState onRetry={() => void ticketsQuery.refetch()} />}
-      {!ticketsQuery.isLoading && !ticketsQuery.isError && tickets.length === 0 && (
-        <EmptyState title={t("tickets.noTickets")} />
+      {!ticketsQuery.isLoading && !ticketsQuery.isError && pageData.total === 0 && (
+        <div className="mt-5">
+          <EmptyState title={t("tickets.noTickets")} />
+        </div>
       )}
 
-      <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
-        <div className="space-y-2">
-          {tickets.map((entry) => (
-            <button
-              key={entry.id}
-              onClick={() => setSelectedId(entry.id)}
-              className={`w-full rounded-box border p-3 text-left transition ${
-                selectedId === entry.id
-                  ? "border-primary bg-primary/5"
-                  : "border-base-300 bg-base-100 hover:border-primary/30"
-              }`}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="font-mono text-[10px] text-base-content/70">{entry.reference}</span>
-                <StatusBadge status={entry.status} />
-              </div>
-              <p className="mt-1 truncate text-sm font-semibold">{entry.subject}</p>
-              <p className="text-[11px] text-base-content/70">
-                {entry.customer?.fullName} · {formatDate(entry.createdAt)}
-              </p>
-            </button>
-          ))}
+      <div className="mt-5 grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
+        <div>
+          <div className="space-y-2">
+            {pageData.items.map((entry) => (
+              <button
+                key={entry.id}
+                onClick={() => setSelectedId(entry.id)}
+                className={`w-full rounded-box border p-3 text-left transition ${
+                  selectedId === entry.id
+                    ? "border-primary bg-primary/5"
+                    : "border-base-300 bg-base-100 hover:border-primary/30"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-mono text-[10px] text-base-content/70">{entry.reference}</span>
+                  <StatusBadge status={entry.status} />
+                </div>
+                <p className="mt-1 truncate text-sm font-semibold">{entry.subject}</p>
+                <p className="text-[11px] text-base-content/70">
+                  {entry.customer?.fullName} · {formatDate(entry.createdAt)}
+                </p>
+              </button>
+            ))}
+          </div>
+
+          <Pagination
+            page={pageData.page}
+            totalPages={pageData.totalPages}
+            from={pageData.from}
+            to={pageData.to}
+            total={pageData.total}
+            pageSize={controls.pageSize}
+            onPageChange={controls.setPage}
+            onPageSizeChange={controls.setPageSize}
+          />
         </div>
 
         <div>

@@ -6,21 +6,56 @@ import type { ServiceRequest } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { usePortalNav } from "../components/nav";
 import { DashboardShell } from "../components/DashboardShell";
+import { ArchiveTabs, FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
 import { EmptyState, ErrorState, PageLoader, StatusBadge } from "../components/ui";
+import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
 
 export const Route = createFileRoute("/portal/requests/")({
   component: RequestsPage,
 });
 
+const requestStatuses = [
+  "NEW",
+  "REVIEWING",
+  "QUOTED",
+  "APPROVED",
+  "SCHEDULED",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "CANCELLED",
+];
+
+const archivedStatuses = new Set(["COMPLETED", "CANCELLED"]);
+
 function RequestsPage() {
   const { t, pick, formatDate, formatMoney } = useI18n();
   const nav = usePortalNav();
+  const controls = useListControls();
+
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["requests"],
     queryFn: () => api<{ requests: ServiceRequest[] }>("/requests"),
   });
 
   const requests = data?.requests ?? [];
+
+  const filtered = filterByArchive(
+    requests.filter(
+      (request) =>
+        (!controls.status || request.status === controls.status) &&
+        matchesSearch(
+          controls.search,
+          request.reference,
+          request.title,
+          request.service?.nameEn,
+          request.service?.nameDe,
+        ),
+    ),
+    controls.archive,
+    (request) => archivedStatuses.has(request.status),
+  );
+
+  const pageData = paginate(filtered, controls.page, controls.pageSize);
 
   return (
     <DashboardShell
@@ -33,22 +68,43 @@ function RequestsPage() {
         </Link>
       }
     >
+      <ListToolbar>
+        <SearchField
+          value={controls.search}
+          onChange={controls.setSearch}
+          placeholder={t("list.searchRequests")}
+        />
+        <FilterSelect
+          value={controls.status}
+          onChange={controls.setStatus}
+          options={requestStatuses.map((value) => ({
+            value,
+            label: t(`status.${value}` as "status.NEW"),
+          }))}
+          allLabel={t("common.all")}
+          ariaLabel={t("common.status")}
+        />
+        <ArchiveTabs value={controls.archive} onChange={controls.setArchive} />
+      </ListToolbar>
+
       {isLoading && <PageLoader />}
       {isError && <ErrorState onRetry={() => void refetch()} />}
-      {!isLoading && !isError && requests.length === 0 && (
-        <EmptyState
-          title={t("requests.noQuotes")}
-          text={t("requests.text")}
-          action={
-            <Link to="/quote" search={{ service: undefined }} className="btn btn-primary btn-sm">
-              {t("requests.new")}
-            </Link>
-          }
-        />
+      {!isLoading && !isError && pageData.total === 0 && (
+        <div className="mt-5">
+          <EmptyState
+            title={t("requests.noQuotes")}
+            text={t("requests.text")}
+            action={
+              <Link to="/quote" search={{ service: undefined }} className="btn btn-primary btn-sm">
+                {t("requests.new")}
+              </Link>
+            }
+          />
+        </div>
       )}
 
-      {requests.length > 0 && (
-        <div className="overflow-x-auto rounded-box border border-base-300 bg-base-100">
+      {pageData.total > 0 && (
+        <div className="mt-5 overflow-x-auto rounded-box border border-base-300 bg-base-100">
           <table className="table table-zebra">
             <thead>
               <tr>
@@ -62,7 +118,7 @@ function RequestsPage() {
               </tr>
             </thead>
             <tbody>
-              {requests.map((request) => (
+              {pageData.items.map((request) => (
                 <tr key={request.id}>
                   <td className="font-mono text-xs">{request.reference}</td>
                   <td>
@@ -94,6 +150,17 @@ function RequestsPage() {
           </table>
         </div>
       )}
+
+      <Pagination
+        page={pageData.page}
+        totalPages={pageData.totalPages}
+        from={pageData.from}
+        to={pageData.to}
+        total={pageData.total}
+        pageSize={controls.pageSize}
+        onPageChange={controls.setPage}
+        onPageSizeChange={controls.setPageSize}
+      />
     </DashboardShell>
   );
 }

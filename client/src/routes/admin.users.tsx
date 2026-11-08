@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Plus, Search, UserPlus, X } from "lucide-react";
+import { Loader2, Plus, UserPlus, X } from "lucide-react";
 import { api, errorMessage } from "../lib/api";
 import type { User } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { useAdminNav } from "../components/nav";
 import { DashboardShell } from "../components/DashboardShell";
+import { FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
 import { EmptyState, ErrorState, PageLoader } from "../components/ui";
+import { matchesSearch, paginate, useListControls } from "../lib/list";
 
 export const Route = createFileRoute("/admin/users")({
   component: AdminUsersPage,
@@ -28,7 +30,7 @@ function AdminUsersPage() {
   const { t, formatDate } = useI18n();
   const nav = useAdminNav();
   const queryClient = useQueryClient();
-  const [search, setSearch] = useState("");
+  const controls = useListControls();
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
@@ -40,11 +42,15 @@ function AdminUsersPage() {
     queryFn: () => api<{ users: User[] }>("/admin/users"),
   });
 
-  const users = (data?.users ?? []).filter((user) =>
-    `${user.fullName} ${user.email} ${user.companyName ?? ""}`
-      .toLowerCase()
-      .includes(search.toLowerCase()),
+  const users = data?.users ?? [];
+
+  const filtered = users.filter(
+    (user) =>
+      (!controls.status || user.role === controls.status) &&
+      matchesSearch(controls.search, user.fullName, user.email, user.companyName),
   );
+
+  const pageData = paginate(filtered, controls.page, controls.pageSize);
 
   async function createUser(event: React.FormEvent) {
     event.preventDefault();
@@ -189,25 +195,34 @@ function AdminUsersPage() {
         </form>
       )}
 
-      <label className="input input-bordered flex max-w-md items-center gap-2">
-        <Search className="h-4 w-4 opacity-50" />
-        <input
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder={t("admin.searchUsers")}
-          className="grow"
+      <ListToolbar>
+        <SearchField
+          value={controls.search}
+          onChange={controls.setSearch}
+          placeholder={t("list.searchUsers")}
         />
-      </label>
+        <FilterSelect
+          value={controls.status}
+          onChange={controls.setStatus}
+          options={[
+            { value: "CUSTOMER", label: t("admin.roleCustomer") },
+            { value: "TECHNICIAN", label: t("admin.roleTechnician") },
+            { value: "ADMIN", label: t("admin.roleAdmin") },
+          ]}
+          allLabel={t("common.all")}
+          ariaLabel={t("admin.role")}
+        />
+      </ListToolbar>
 
       {isLoading && <PageLoader />}
       {isError && <ErrorState onRetry={() => void refetch()} />}
-      {!isLoading && !isError && users.length === 0 && (
+      {!isLoading && !isError && pageData.total === 0 && (
         <div className="mt-5">
           <EmptyState title={t("admin.noResults")} />
         </div>
       )}
 
-      {users.length > 0 && (
+      {pageData.total > 0 && (
         <div className="mt-5 overflow-x-auto rounded-box border border-base-300 bg-base-100">
           <table className="table table-zebra">
             <thead>
@@ -221,7 +236,7 @@ function AdminUsersPage() {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {pageData.items.map((user) => (
                 <tr key={user.id}>
                   <td className="font-semibold">{user.fullName}</td>
                   <td className="text-xs">{user.email}</td>
@@ -252,6 +267,17 @@ function AdminUsersPage() {
           </table>
         </div>
       )}
+
+      <Pagination
+        page={pageData.page}
+        totalPages={pageData.totalPages}
+        from={pageData.from}
+        to={pageData.to}
+        total={pageData.total}
+        pageSize={controls.pageSize}
+        onPageChange={controls.setPage}
+        onPageSizeChange={controls.setPageSize}
+      />
     </DashboardShell>
   );
 }

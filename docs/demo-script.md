@@ -13,7 +13,7 @@ cd client && npm run dev
 - Open `http://localhost:5173` in a clean profile.
 - Log in as customer in profile A, technician in B, admin in C.
 - Make sure the seed data exists (`npm run db:seed`).
-- Have `customer@orbit-it.de / Customer12345!` ready.
+- Have `customer@fia-it.de / Customer12345!` ready.
 
 If you prefer the production build:
 
@@ -43,12 +43,12 @@ the quote form is linked to it.”
 
 1. Open **Request a quote**.
 2. Use a short prefilled example (you can paste from a note):
-
    - Name: `Demo Visitor`
    - Email: `demo.visitor@example.com`
    - Title: `WLAN for 8 desks`
    - Description: `We need stable Wi-Fi and cabling for eight desks in one office.`
    - Service: Network
+
 3. Tick privacy, submit.
 4. Show the reference number.
 
@@ -64,9 +64,9 @@ appears in the admin area.”
 3. Point out the warning: it is a lead, not linked to a customer.
 4. Link it to the **customer** account, assign **Jonas Weber**, save.
 5. In **Create quote**, add two items:
-
    - `UniFi 6 Pro access point`, qty 3, unit price 189
    - `Installation and configuration`, qty 4, unit price 95
+
 6. Keep VAT 19 %, set validity +14 days, create the quote.
 7. Send the quote.
 
@@ -131,7 +131,7 @@ is in place.”
 If something fails:
 
 - Use the seeded demo request `SR-2026-DEMO01`, which already has a sent quote.
-- Use `customer@orbit-it.de` and accept it live.
+- Use `customer@fia-it.de` and accept it live.
 - If the database is empty, run `npm run db:seed` and reload.
 - If the dev server fails, use the already built app at `http://localhost:3000`
   (`cd server && npm start`).

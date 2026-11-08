@@ -1,7 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, CheckCircle2, Clock, Mail, Phone } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  Clock,
+  Mail,
+  Phone,
+} from "lucide-react";
 import { api } from "../lib/api";
 import type { Service } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
@@ -68,7 +75,9 @@ export default function ServiceDetailPage() {
               <div className="mt-6 flex flex-wrap items-center gap-4">
                 {service.startingPrice && (
                   <span className="rounded-lg bg-base-200 px-4 py-2 text-sm">
-                    <span className="text-base-content/65">{t("services.startingAt")}</span>{" "}
+                    <span className="text-base-content/65">
+                      {t("services.startingAt")}
+                    </span>{" "}
                     <strong>{formatMoney(service.startingPrice)}</strong>
                   </span>
                 )}
@@ -77,7 +86,8 @@ export default function ServiceDetailPage() {
                   search={{ service: service.id }}
                   className="btn btn-primary"
                 >
-                  {t("services.requestQuote")} <ArrowRight className="h-4 w-4" />
+                  {t("services.requestQuote")}{" "}
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             </div>
@@ -88,7 +98,9 @@ export default function ServiceDetailPage() {
                 {[1, 2, 3, 4].map((number) => (
                   <li key={number} className="flex items-start gap-2.5 text-sm">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-                    <span>{t(`services.scope${number}` as "services.scope1")}</span>
+                    <span>
+                      {t(`services.scope${number}` as "services.scope1")}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -97,7 +109,7 @@ export default function ServiceDetailPage() {
                   <Phone className="h-3.5 w-3.5" /> +49 30 5550 0100
                 </p>
                 <p className="flex items-center gap-2">
-                  <Mail className="h-3.5 w-3.5" /> hello@orbit-it.de
+                  <Mail className="h-3.5 w-3.5" /> hello@fia-it.de
                 </p>
                 <p className="flex items-center gap-2">
                   <Clock className="h-3.5 w-3.5" /> {t("quote.responseTime")}
