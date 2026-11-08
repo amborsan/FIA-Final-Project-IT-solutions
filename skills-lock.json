@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "hallmark": {
+      "source": "nutlope/hallmark",
+      "sourceType": "github",
+      "skillPath": "skills/hallmark/SKILL.md",
+      "computedHash": "1465546d7971f57d428a0cbccfe0fa0426d1c309bec28ceefeb70e76f38c640e"
+    },
+    "make-interfaces-feel-better": {
+      "source": "jakubkrehel/make-interfaces-feel-better",
+      "sourceType": "github",
+      "skillPath": "skills/make-interfaces-feel-better/SKILL.md",
+      "computedHash": "ee95073d274bd8f792f917a2b2c2963d46c1b31c81723e6ef3c63ffe33bd681c"
+    },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "3bf6ba3aead8c890cb3cb43480b8588a9dc292465204795b10a66b62504ad1d2"
+    }
+  }
+}
