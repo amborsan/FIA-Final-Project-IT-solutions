@@ -160,7 +160,7 @@ function AdminRequestDetailPage() {
     return (
       <DashboardShell nav={nav} title={t("admin.requestDetails")}>
         <ErrorState />
-        <Link to="/admin/requests" className="btn btn-outline btn-sm mt-4">
+        <Link to="/admin/requests" className="ds-btn ds-btn-outline ds-btn-sm mt-4">
           <ArrowLeft className="h-4 w-4" /> {t("common.back")}
         </Link>
       </DashboardShell>
@@ -173,13 +173,13 @@ function AdminRequestDetailPage() {
       title={request.title}
       subtitle={`${request.reference} · ${formatDate(request.createdAt)}`}
       actions={
-        <Link to="/admin/requests" className="btn btn-ghost btn-sm">
+        <Link to="/admin/requests" className="ds-btn ds-btn-ghost ds-btn-sm">
           <ArrowLeft className="h-4 w-4" /> {t("common.back")}
         </Link>
       }
     >
-      {message && <div className="alert alert-success mb-4 text-sm">{message}</div>}
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {message && <div role="status" className="ds-alert ds-alert-success mb-4 text-sm">{message}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mb-4 text-sm">{error}</div>}
 
       <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-5">
@@ -231,7 +231,7 @@ function AdminRequestDetailPage() {
                         <button
                           onClick={() => void sendQuote(quote.id)}
                           disabled={busy === quote.id}
-                          className="btn btn-primary btn-xs"
+                          className="ds-btn ds-btn-primary ds-btn-xs"
                         >
                           {busy === quote.id ? (
                             <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -269,7 +269,7 @@ function AdminRequestDetailPage() {
                       type="date"
                       value={quoteForm.validUntil}
                       onChange={(event) => setQuoteForm({ ...quoteForm, validUntil: event.target.value })}
-                      className="input input-bordered input-sm w-full"
+                      className="ds-input ds-input-bordered ds-input-sm w-full"
                     />
                   </label>
                   <label className="block">
@@ -281,7 +281,7 @@ function AdminRequestDetailPage() {
                       max={100}
                       value={quoteForm.taxRate}
                       onChange={(event) => setQuoteForm({ ...quoteForm, taxRate: event.target.value })}
-                      className="input input-bordered input-sm w-full"
+                      className="ds-input ds-input-bordered ds-input-sm w-full"
                     />
                   </label>
                 </div>
@@ -298,7 +298,7 @@ function AdminRequestDetailPage() {
                           items[index] = { ...item, description: event.target.value };
                           setQuoteForm({ ...quoteForm, items });
                         }}
-                        className="input input-bordered input-sm w-full"
+                        className="ds-input ds-input-bordered ds-input-sm w-full"
                       />
                       <input
                         required
@@ -310,7 +310,7 @@ function AdminRequestDetailPage() {
                           items[index] = { ...item, quantity: event.target.value };
                           setQuoteForm({ ...quoteForm, items });
                         }}
-                        className="input input-bordered input-sm w-full"
+                        className="ds-input ds-input-bordered ds-input-sm w-full"
                       />
                       <input
                         required
@@ -324,7 +324,7 @@ function AdminRequestDetailPage() {
                           items[index] = { ...item, unitPrice: event.target.value };
                           setQuoteForm({ ...quoteForm, items });
                         }}
-                        className="input input-bordered input-sm w-full"
+                        className="ds-input ds-input-bordered ds-input-sm w-full"
                       />
                       <button
                         type="button"
@@ -335,7 +335,7 @@ function AdminRequestDetailPage() {
                           })
                         }
                         disabled={quoteForm.items.length === 1}
-                        className="btn btn-ghost btn-sm text-error"
+                        className="ds-btn ds-btn-ghost ds-btn-sm text-error"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
@@ -350,7 +350,7 @@ function AdminRequestDetailPage() {
                       items: [...quoteForm.items, { description: "", quantity: "1", unitPrice: "" }],
                     })
                   }
-                  className="btn btn-outline btn-xs"
+                  className="ds-btn ds-btn-outline ds-btn-xs"
                 >
                   <Plus className="h-3.5 w-3.5" /> {t("admin.addItem")}
                 </button>
@@ -360,7 +360,7 @@ function AdminRequestDetailPage() {
                   placeholder={t("admin.quoteNotes")}
                   value={quoteForm.notes}
                   onChange={(event) => setQuoteForm({ ...quoteForm, notes: event.target.value })}
-                  className="textarea textarea-bordered w-full text-sm"
+                  className="ds-textarea ds-textarea-bordered w-full text-sm"
                 />
 
                 <div className="flex items-center justify-between rounded-lg bg-base-200 px-3 py-2 text-sm">
@@ -368,7 +368,7 @@ function AdminRequestDetailPage() {
                   <strong>{formatMoney(total)}</strong>
                 </div>
 
-                <button disabled={busy === "quote"} className="btn btn-primary btn-sm">
+                <button disabled={busy === "quote"} className="ds-btn ds-btn-primary ds-btn-sm">
                   {busy === "quote" && <Loader2 className="h-4 w-4 animate-spin" />}
                   {t("admin.createQuote")}
                 </button>
@@ -384,7 +384,7 @@ function AdminRequestDetailPage() {
               <select
                 value={currentTech}
                 onChange={(event) => setTechId(event.target.value)}
-                className="select select-bordered select-sm w-full"
+                className="ds-select ds-select-bordered ds-select-sm w-full"
               >
                 <option value="">{t("common.unassigned")}</option>
                 {(techniciansQuery.data?.users ?? []).map((technician) => (
@@ -399,7 +399,7 @@ function AdminRequestDetailPage() {
               <select
                 value={currentCustomer}
                 onChange={(event) => setCustomerId(event.target.value)}
-                className="select select-bordered select-sm w-full"
+                className="ds-select ds-select-bordered ds-select-sm w-full"
               >
                 <option value="">–</option>
                 {(customersQuery.data?.users ?? []).map((customer) => (
@@ -412,7 +412,7 @@ function AdminRequestDetailPage() {
             <button
               onClick={saveAssignment}
               disabled={busy === "assign"}
-              className="btn btn-primary btn-sm mt-3 w-full"
+              className="ds-btn ds-btn-primary ds-btn-sm mt-3 w-full"
             >
               {busy === "assign" ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
               {t("admin.assign")}
@@ -423,7 +423,7 @@ function AdminRequestDetailPage() {
             <select
               value={currentStatus}
               onChange={(event) => setStatus(event.target.value)}
-              className="select select-bordered select-sm w-full"
+              className="ds-select ds-select-bordered ds-select-sm w-full"
             >
               {statuses.map((value) => (
                 <option key={value} value={value}>
@@ -434,7 +434,7 @@ function AdminRequestDetailPage() {
             <button
               onClick={saveStatus}
               disabled={busy === "status"}
-              className="btn btn-primary btn-sm mt-3 w-full"
+              className="ds-btn ds-btn-primary ds-btn-sm mt-3 w-full"
             >
               {busy === "status" && <Loader2 className="h-4 w-4 animate-spin" />}
               {t("common.update")}

@@ -28,7 +28,7 @@ function RequestsPage() {
       title={t("requests.title")}
       subtitle={t("requests.text")}
       actions={
-        <Link to="/quote" search={{ service: undefined }} className="btn btn-primary btn-sm">
+        <Link to="/quote" search={{ service: undefined }} className="ds-btn ds-btn-primary ds-btn-sm">
           <Plus className="h-4 w-4" /> {t("requests.new")}
         </Link>
       }
@@ -40,7 +40,7 @@ function RequestsPage() {
           title={t("requests.noQuotes")}
           text={t("requests.text")}
           action={
-            <Link to="/quote" search={{ service: undefined }} className="btn btn-primary btn-sm">
+            <Link to="/quote" search={{ service: undefined }} className="ds-btn ds-btn-primary ds-btn-sm">
               {t("requests.new")}
             </Link>
           }
@@ -49,7 +49,7 @@ function RequestsPage() {
 
       {requests.length > 0 && (
         <div className="overflow-x-auto rounded-box border border-base-300 bg-base-100">
-          <table className="table table-zebra">
+          <table className="ds-table ds-table-zebra">
             <thead>
               <tr>
                 <th>{t("common.reference")}</th>
@@ -83,7 +83,7 @@ function RequestsPage() {
                     <Link
                       to="/portal/requests/$id"
                       params={{ id: request.id }}
-                      className="btn btn-ghost btn-xs"
+                      className="ds-btn ds-btn-ghost ds-btn-xs"
                     >
                       <ArrowRight className="h-4 w-4" />
                     </Link>

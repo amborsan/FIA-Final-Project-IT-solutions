@@ -97,7 +97,7 @@ function AdminTicketsPage() {
 
   return (
     <DashboardShell nav={nav} title={t("admin.tickets")} subtitle={t("tickets.text")}>
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mb-4 text-sm">{error}</div>}
       {ticketsQuery.isLoading && <PageLoader />}
       {ticketsQuery.isError && <ErrorState onRetry={() => void ticketsQuery.refetch()} />}
       {!ticketsQuery.isLoading && !ticketsQuery.isError && tickets.length === 0 && (
@@ -173,20 +173,20 @@ function AdminTicketsPage() {
                     onChange={(event) => setReply(event.target.value)}
                     required
                     rows={3}
-                    className="textarea textarea-bordered w-full text-sm"
+                    className="ds-textarea ds-textarea-bordered w-full text-sm"
                     placeholder={t("chat.replyPlaceholder")}
                   />
                   <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
                     <label className="flex items-center gap-2 text-xs text-base-content/70">
                       <input
                         type="checkbox"
-                        className="checkbox checkbox-xs"
+                        className="ds-checkbox ds-checkbox-xs"
                         checked={internal}
                         onChange={(event) => setInternal(event.target.checked)}
                       />
                       {t("tickets.internalNote")}
                     </label>
-                    <button disabled={sending || !reply.trim()} className="btn btn-primary btn-sm">
+                    <button disabled={sending || !reply.trim()} className="ds-btn ds-btn-primary ds-btn-sm">
                       {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                       {t("tickets.sendReply")}
                     </button>
@@ -201,7 +201,7 @@ function AdminTicketsPage() {
                     <select
                       value={ticket.status}
                       onChange={(event) => void updateStatus(event.target.value)}
-                      className="select select-bordered select-sm w-full"
+                      className="ds-select ds-select-bordered ds-select-sm w-full"
                     >
                       {statuses.map((value) => (
                         <option key={value} value={value}>
@@ -215,7 +215,7 @@ function AdminTicketsPage() {
                     <select
                       value={ticket.assignedTechnicianId ?? ""}
                       onChange={(event) => void assign(event.target.value)}
-                      className="select select-bordered select-sm w-full"
+                      className="ds-select ds-select-bordered ds-select-sm w-full"
                     >
                       <option value="">{t("common.unassigned")}</option>
                       {(techniciansQuery.data?.users ?? []).map((technician) => (

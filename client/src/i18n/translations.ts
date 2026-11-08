@@ -5,6 +5,19 @@
 export type Language = "en" | "de";
 
 const en = {
+  "feedback.sent": "Sent",
+  "home.demoMetrics": "Illustrative figures for this demo project.",
+  "motion.pause": "Pause animation",
+  "motion.resume": "Play animation",
+  "nav.skip": "Skip to content",
+  "nav.brand": "IT Solutions",
+  "home.designLine1": "Good IT.",
+  "home.designLine2": "Great work.",
+  "home.designSubtitle": "Technology that keeps your business moving.",
+  "home.designIntro": "From reliable networks to everyday support, we connect the systems, spaces and people your business depends on.",
+  "home.designShop": "Order online or ask us to include it in a project quote.",
+  "home.designEmpty": "More information will be available soon.",
+
   "nav.home": "Home",
   "nav.services": "Services",
   "nav.products": "Shop",
@@ -794,6 +807,19 @@ type EnglishKeys = keyof typeof en;
 type Dictionary = Record<EnglishKeys, string>;
 
 const de: Dictionary = {
+  "feedback.sent": "Gesendet",
+  "home.demoMetrics": "Beispielzahlen für dieses Demoprojekt.",
+  "motion.pause": "Animation pausieren",
+  "motion.resume": "Animation abspielen",
+  "nav.skip": "Zum Inhalt springen",
+  "nav.brand": "IT Solutions",
+  "home.designLine1": "Gute IT.",
+  "home.designLine2": "Gute Arbeit.",
+  "home.designSubtitle": "Technologie, die Ihr Unternehmen voranbringt.",
+  "home.designIntro": "Von zuverlässigen Netzwerken bis zum täglichen Support verbinden wir die Systeme, Räume und Menschen, auf die Ihr Unternehmen angewiesen ist.",
+  "home.designShop": "Online bestellen oder in ein Projektangebot aufnehmen lassen.",
+  "home.designEmpty": "Weitere Informationen stehen bald zur Verfügung.",
+
   "nav.home": "Start",
   "nav.services": "Leistungen",
   "nav.products": "Shop",

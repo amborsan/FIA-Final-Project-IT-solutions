@@ -31,7 +31,7 @@ function OrdersPage() {
           title={t("orders.noOrders")}
           text={t("products.text")}
           action={
-            <a href="/products" className="btn btn-primary btn-sm">
+            <a href="/products" className="ds-btn ds-btn-primary ds-btn-sm">
               {t("cart.continueShopping")}
             </a>
           }
@@ -57,7 +57,7 @@ function OrdersPage() {
             </div>
 
             <div className="mt-4 overflow-x-auto">
-              <table className="table table-xs">
+              <table className="ds-table ds-table-xs">
                 <thead>
                   <tr>
                     <th>{t("common.description")}</th>
@@ -123,7 +123,7 @@ function OrdersPage() {
                     <span className="text-sm font-bold">{formatMoney(order.invoice.amount)}</span>
                     <button
                       onClick={() => window.print()}
-                      className="btn btn-ghost btn-xs no-print"
+                      className="ds-btn ds-btn-ghost ds-btn-xs no-print"
                       title={t("common.print")}
                     >
                       <Printer className="h-3.5 w-3.5" />

@@ -47,7 +47,7 @@ export default function ProductsPage() {
 
       <section className="container-page py-10">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <label className="input input-bordered flex w-full max-w-md items-center gap-2">
+          <label className="ds-input ds-input-bordered flex w-full max-w-md items-center gap-2">
             <Search className="h-4 w-4 opacity-50" />
             <input
               value={search}
@@ -61,7 +61,7 @@ export default function ProductsPage() {
             <SlidersHorizontal className="h-4 w-4 shrink-0 text-base-content/70" />
             <button
               onClick={() => setCategory("")}
-              className={`btn btn-xs shrink-0 ${!category ? "btn-primary" : "btn-ghost"}`}
+              className={`ds-btn ds-btn-xs shrink-0 ${!category ? "ds-btn-primary" : "ds-btn-ghost"}`}
             >
               {t("common.all")}
             </button>
@@ -69,7 +69,7 @@ export default function ProductsPage() {
               <button
                 key={entry.id}
                 onClick={() => setCategory(entry.slug)}
-                className={`btn btn-xs shrink-0 ${category === entry.slug ? "btn-primary" : "btn-ghost"}`}
+                className={`ds-btn ds-btn-xs shrink-0 ${category === entry.slug ? "ds-btn-primary" : "ds-btn-ghost"}`}
               >
                 {pick(entry.nameEn, entry.nameDe)}
               </button>

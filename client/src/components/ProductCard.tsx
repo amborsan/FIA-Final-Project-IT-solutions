@@ -1,18 +1,11 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Check, ShoppingCart } from "lucide-react";
+import { Check, ShoppingCart, Network, Camera, Monitor, Server, Phone, Cable, Package } from "lucide-react";
 import type { Product } from "../lib/types";
 import { useCart } from "../context/CartContext";
 import { useI18n } from "../i18n/I18nContext";
 
-const categoryIcon: Record<string, string> = {
-  network: "📶",
-  surveillance: "📷",
-  computers: "💻",
-  servers: "🗄️",
-  communication: "☎️",
-  accessories: "🔌",
-};
+const categoryIcon = { network: Network, surveillance: Camera, computers: Monitor, servers: Server, communication: Phone, accessories: Cable };
 
 export function ProductVisual({
   product,
@@ -31,13 +24,12 @@ export function ProductVisual({
       />
     );
   }
+  const Icon = categoryIcon[product.category?.slug as keyof typeof categoryIcon] ?? Package;
   return (
     <div
-      className={`flex w-full items-center justify-center rounded-t-box bg-gradient-to-br from-base-200 via-base-100 to-primary/5 ${className}`}
+      className={`flex w-full items-center justify-center rounded-t-box bg-base-200 ${className}`}
     >
-      <span className="text-5xl opacity-80" aria-hidden="true">
-        {categoryIcon[product.category?.slug ?? ""] ?? "📦"}
-      </span>
+      <Icon className="h-14 w-14 text-primary" strokeWidth={1.5} aria-hidden="true" />
     </div>
   );
 }
@@ -54,7 +46,7 @@ export function ProductCard({ product }: { product: Product }) {
   }
 
   return (
-    <article className="card card-hover overflow-hidden border border-base-300 bg-base-100">
+    <article className="ds-card ds-card-hover overflow-hidden border border-base-300 bg-base-100">
       <Link
         to="/products/$slug"
         params={{ slug: product.slug }}
@@ -63,13 +55,13 @@ export function ProductCard({ product }: { product: Product }) {
       >
         <ProductVisual product={product} />
       </Link>
-      <div className="card-body gap-2 p-4">
+      <div className="ds-card-body gap-2 p-4">
         <div className="flex items-center justify-between gap-2">
           <span className="text-[11px] font-semibold uppercase tracking-wide text-base-content/70">
             {product.category ? pick(product.category.nameEn, product.category.nameDe) : product.sku}
           </span>
           {product.featured && (
-            <span className="badge badge-accent badge-xs">{t("products.featured")}</span>
+            <span className="ds-badge ds-badge-accent ds-badge-xs">{t("products.featured")}</span>
           )}
         </div>
         <Link to="/products/$slug" params={{ slug: product.slug }}>
@@ -93,7 +85,7 @@ export function ProductCard({ product }: { product: Product }) {
             type="button"
             disabled={product.stock <= 0}
             onClick={handleAdd}
-            className={`btn btn-sm ${added ? "btn-success" : "btn-primary"}`}
+            className={`ds-btn ds-btn-sm ${added ? "ds-btn-success" : "ds-btn-primary"}`}
             aria-label={t("products.addToCart")}
           >
             {added ? <Check className="h-4 w-4" /> : <ShoppingCart className="h-4 w-4" />}

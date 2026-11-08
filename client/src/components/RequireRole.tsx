@@ -36,7 +36,7 @@ export function RequireRole({ roles, children }: { roles: Role[]; children: Reac
           <ShieldAlert className="mx-auto h-12 w-12 text-warning" />
           <h1 className="mt-4 text-2xl font-bold">{t("forbidden.title")}</h1>
           <p className="mt-2 text-base-content/70">{t("forbidden.text")}</p>
-          <a href={dashboard} className="btn btn-primary mt-6">
+          <a href={dashboard} className="ds-btn ds-btn-primary mt-6">
             {t("forbidden.back")}
           </a>
         </div>

@@ -31,7 +31,7 @@ function EnglishCookies() {
         the basis of § 25(2) TDDDG (technically necessary) and Art. 6(1)(f) GDPR (secure operation).
       </p>
       <div className="overflow-x-auto">
-        <table className="table table-sm">
+        <table className="ds-table ds-table-sm">
           <thead>
             <tr>
               <th>Name</th>
@@ -60,7 +60,7 @@ function EnglishCookies() {
 
       <h2>Local storage</h2>
       <div className="overflow-x-auto">
-        <table className="table table-sm">
+        <table className="ds-table ds-table-sm">
           <thead>
             <tr>
               <th>Key</th>
@@ -117,7 +117,7 @@ function EnglishCookies() {
         <button
           type="button"
           onClick={() => window.dispatchEvent(new Event("orbit:open-cookie-settings"))}
-          className="btn btn-primary btn-sm"
+          className="ds-btn ds-btn-primary ds-btn-sm"
         >
           Open cookie settings
         </button>
@@ -149,7 +149,7 @@ function GermanCookies() {
         DSGVO (sicherer Betrieb) gesetzt.
       </p>
       <div className="overflow-x-auto">
-        <table className="table table-sm">
+        <table className="ds-table ds-table-sm">
           <thead>
             <tr>
               <th>Name</th>
@@ -178,7 +178,7 @@ function GermanCookies() {
 
       <h2>Lokaler Speicher</h2>
       <div className="overflow-x-auto">
-        <table className="table table-sm">
+        <table className="ds-table ds-table-sm">
           <thead>
             <tr>
               <th>Schlüssel</th>
@@ -236,7 +236,7 @@ function GermanCookies() {
         <button
           type="button"
           onClick={() => window.dispatchEvent(new Event("orbit:open-cookie-settings"))}
-          className="btn btn-primary btn-sm"
+          className="ds-btn ds-btn-primary ds-btn-sm"
         >
           Cookie-Einstellungen öffnen
         </button>

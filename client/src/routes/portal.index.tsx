@@ -65,10 +65,10 @@ function PortalDashboard() {
       subtitle={t("portal.welcome", { name: user?.firstName || user?.fullName || "" })}
       actions={
         <>
-          <Link to="/quote" search={{ service: undefined }} className="btn btn-primary btn-sm">
+          <Link to="/quote" search={{ service: undefined }} className="ds-btn ds-btn-primary ds-btn-sm">
             <Plus className="h-4 w-4" /> {t("portal.newRequest")}
           </Link>
-          <Link to="/portal/tickets" className="btn btn-outline btn-sm">
+          <Link to="/portal/tickets" className="ds-btn ds-btn-outline ds-btn-sm">
             <LifeBuoy className="h-4 w-4" /> {t("portal.newTicket")}
           </Link>
         </>
@@ -103,7 +103,7 @@ function PortalDashboard() {
             <Panel
               title={t("portal.recentRequests")}
               action={
-                <Link to="/portal/requests" className="link link-primary text-xs">
+                <Link to="/portal/requests" className="ds-link ds-link-primary text-xs">
                   {t("portal.viewAll")}
                 </Link>
               }
@@ -135,7 +135,7 @@ function PortalDashboard() {
             <Panel
               title={t("portal.upcoming")}
               action={
-                <Link to="/portal/appointments" className="link link-primary text-xs">
+                <Link to="/portal/appointments" className="ds-link ds-link-primary text-xs">
                   {t("portal.viewAll")}
                 </Link>
               }
@@ -165,7 +165,7 @@ function PortalDashboard() {
             <Panel
               title={t("portal.recentTickets")}
               action={
-                <Link to="/portal/tickets" className="link link-primary text-xs">
+                <Link to="/portal/tickets" className="ds-link ds-link-primary text-xs">
                   {t("portal.viewAll")}
                 </Link>
               }

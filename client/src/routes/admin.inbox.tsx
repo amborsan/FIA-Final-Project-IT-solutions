@@ -38,7 +38,7 @@ function AdminInboxPage() {
 
   return (
     <DashboardShell nav={nav} title={t("admin.inbox")} subtitle={t("contact.text")}>
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mb-4 text-sm">{error}</div>}
       {isLoading && <PageLoader />}
       {isError && <ErrorState onRetry={() => void refetch()} />}
       {!isLoading && !isError && messages.length === 0 && <EmptyState title={t("contact.formTitle")} />}
@@ -72,13 +72,13 @@ function AdminInboxPage() {
             </div>
 
             <div className="mt-3 flex flex-wrap gap-2 border-t border-base-200 pt-3">
-              <button onClick={() => void updateStatus(message.id, "READ")} className="btn btn-outline btn-xs">
+              <button onClick={() => void updateStatus(message.id, "READ")} className="ds-btn ds-btn-outline ds-btn-xs">
                 {t("admin.markRead")}
               </button>
-              <button onClick={() => void updateStatus(message.id, "REPLIED")} className="btn btn-success btn-xs">
+              <button onClick={() => void updateStatus(message.id, "REPLIED")} className="ds-btn ds-btn-success ds-btn-xs">
                 {t("admin.markReplied")}
               </button>
-              <a href={`mailto:${message.email}?subject=Re: ${encodeURIComponent(message.subject)}`} className="btn btn-primary btn-xs">
+              <a href={`mailto:${message.email}?subject=Re: ${encodeURIComponent(message.subject)}`} className="ds-btn ds-btn-primary ds-btn-xs">
                 {t("chat.reply")}
               </a>
             </div>

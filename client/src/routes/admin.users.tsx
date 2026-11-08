@@ -91,17 +91,17 @@ function AdminUsersPage() {
       title={t("admin.users")}
       subtitle={t("admin.manageUsers")}
       actions={
-        <button onClick={() => setShowForm((value) => !value)} className="btn btn-primary btn-sm">
+        <button onClick={() => setShowForm((value) => !value)} className="ds-btn ds-btn-primary ds-btn-sm">
           {showForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           {t("admin.addUser")}
         </button>
       }
     >
-      {message && <div className="alert alert-success mb-4 text-sm">{message}</div>}
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {message && <div role="status" className="ds-alert ds-alert-success mb-4 text-sm">{message}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mb-4 text-sm">{error}</div>}
 
       {showForm && (
-        <form onSubmit={createUser} className="mb-5 rounded-box border border-base-300 bg-base-100 p-5">
+        <form aria-busy={loading} onSubmit={createUser} className="mb-5 rounded-box border border-base-300 bg-base-100 p-5">
           <h2 className="flex items-center gap-2 text-base font-bold">
             <UserPlus className="h-4 w-4" /> {t("admin.newUser")}
           </h2>
@@ -112,7 +112,7 @@ function AdminUsersPage() {
                 required
                 value={form.firstName}
                 onChange={(event) => setForm({ ...form, firstName: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -121,7 +121,7 @@ function AdminUsersPage() {
                 required
                 value={form.lastName}
                 onChange={(event) => setForm({ ...form, lastName: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -131,7 +131,7 @@ function AdminUsersPage() {
                 type="email"
                 value={form.email}
                 onChange={(event) => setForm({ ...form, email: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -142,7 +142,7 @@ function AdminUsersPage() {
                 minLength={10}
                 value={form.password}
                 onChange={(event) => setForm({ ...form, password: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -150,7 +150,7 @@ function AdminUsersPage() {
               <select
                 value={form.role}
                 onChange={(event) => setForm({ ...form, role: event.target.value })}
-                className="select select-bordered w-full"
+                className="ds-select ds-select-bordered w-full"
               >
                 <option value="CUSTOMER">{t("admin.roleCustomer")}</option>
                 <option value="TECHNICIAN">{t("admin.roleTechnician")}</option>
@@ -162,7 +162,7 @@ function AdminUsersPage() {
               <input
                 value={form.phone}
                 onChange={(event) => setForm({ ...form, phone: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -170,7 +170,7 @@ function AdminUsersPage() {
               <input
                 value={form.companyName}
                 onChange={(event) => setForm({ ...form, companyName: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -178,18 +178,18 @@ function AdminUsersPage() {
               <input
                 value={form.address}
                 onChange={(event) => setForm({ ...form, address: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
           </div>
-          <button disabled={loading} className="btn btn-primary mt-4">
+          <button disabled={loading} className="ds-btn ds-btn-primary mt-4">
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             {t("common.create")}
           </button>
         </form>
       )}
 
-      <label className="input input-bordered flex max-w-md items-center gap-2">
+      <label className="ds-input ds-input-bordered flex max-w-md items-center gap-2">
         <Search className="h-4 w-4 opacity-50" />
         <input
           value={search}
@@ -209,7 +209,7 @@ function AdminUsersPage() {
 
       {users.length > 0 && (
         <div className="mt-5 overflow-x-auto rounded-box border border-base-300 bg-base-100">
-          <table className="table table-zebra">
+          <table className="ds-table ds-table-zebra">
             <thead>
               <tr>
                 <th>{t("common.name")}</th>
@@ -230,7 +230,7 @@ function AdminUsersPage() {
                     <select
                       value={user.role}
                       onChange={(event) => void updateRole(user.id, event.target.value)}
-                      className="select select-bordered select-xs"
+                      className="ds-select ds-select-bordered ds-select-xs"
                     >
                       <option value="CUSTOMER">{t("admin.roleCustomer")}</option>
                       <option value="TECHNICIAN">{t("admin.roleTechnician")}</option>
@@ -241,7 +241,7 @@ function AdminUsersPage() {
                   <td>
                     <button
                       onClick={() => void deactivate(user.id)}
-                      className="btn btn-ghost btn-xs text-error"
+                      className="ds-btn ds-btn-ghost ds-btn-xs text-error"
                     >
                       {t("admin.deactivate")}
                     </button>

@@ -1,3 +1,4 @@
+import { SubmitButton, useFormFeedback } from "../components/FormFeedback";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -5,8 +6,6 @@ import {
   CheckCircle2,
   ClipboardCheck,
   FileText,
-  Loader2,
-  Send,
   Sparkles,
 } from "lucide-react";
 import { api, errorMessage } from "../lib/api";
@@ -44,6 +43,7 @@ function QuotePage() {
     budget: "",
     acceptPrivacy: false,
   });
+  const notify = useFormFeedback();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [reference, setReference] = useState("");
@@ -56,6 +56,7 @@ function QuotePage() {
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (loading) return;
     setLoading(true);
     setError("");
     try {
@@ -69,8 +70,11 @@ function QuotePage() {
         },
       });
       setReference(data.reference);
+      notify("success", t("quote.successText", { reference: data.reference }));
     } catch (caught) {
-      setError(errorMessage(caught, t("quote.error")));
+      const message = errorMessage(caught, t("quote.error"));
+      setError(message);
+      notify("error", message);
     } finally {
       setLoading(false);
     }
@@ -87,10 +91,10 @@ function QuotePage() {
           </p>
           <p className="mt-4 rounded-lg bg-base-200 px-3 py-2 font-mono text-sm">{reference}</p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">
-            <Link to="/services" className="btn btn-primary">
+            <Link to="/services" className="ds-btn ds-btn-primary">
               {t("nav.services")}
             </Link>
-            <button className="btn btn-ghost" onClick={() => setReference("")}>
+            <button className="ds-btn ds-btn-ghost" onClick={() => setReference("")}>
               {t("quote.newRequest")}
             </button>
           </div>
@@ -110,7 +114,7 @@ function QuotePage() {
       </section>
 
       <section className="container-page grid gap-8 py-10 lg:grid-cols-[1.25fr_0.75fr] lg:items-start">
-        <form onSubmit={submit} className="rounded-box border border-base-300 bg-base-100 p-6">
+        <form aria-busy={loading} onSubmit={submit} className="rounded-box border border-base-300 bg-base-100 p-6">
           <h2 className="text-lg font-bold">{t("quote.formTitle")}</h2>
 
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -123,7 +127,7 @@ function QuotePage() {
                 minLength={2}
                 value={form.contactName}
                 onChange={(event) => setForm({ ...form, contactName: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -135,7 +139,7 @@ function QuotePage() {
                 type="email"
                 value={form.contactEmail}
                 onChange={(event) => setForm({ ...form, contactEmail: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -145,7 +149,7 @@ function QuotePage() {
               <input
                 value={form.contactPhone}
                 onChange={(event) => setForm({ ...form, contactPhone: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -155,7 +159,7 @@ function QuotePage() {
               <select
                 value={form.serviceId}
                 onChange={(event) => setForm({ ...form, serviceId: event.target.value })}
-                className="select select-bordered w-full"
+                className="ds-select ds-select-bordered w-full"
               >
                 <option value="">{t("quote.servicePlaceholder")}</option>
                 {(servicesQuery.data?.services ?? []).map((service) => (
@@ -178,7 +182,7 @@ function QuotePage() {
               value={form.title}
               onChange={(event) => setForm({ ...form, title: event.target.value })}
               placeholder={pick("New office network", "Neues Büronetzwerk")}
-              className="input input-bordered w-full"
+              className="ds-input ds-input-bordered w-full"
             />
           </label>
 
@@ -194,7 +198,7 @@ function QuotePage() {
               value={form.description}
               onChange={(event) => setForm({ ...form, description: event.target.value })}
               placeholder={t("quote.descriptionPlaceholder")}
-              className="textarea textarea-bordered w-full"
+              className="ds-textarea ds-textarea-bordered w-full"
             />
           </label>
 
@@ -206,7 +210,7 @@ function QuotePage() {
               <input
                 value={form.siteAddress}
                 onChange={(event) => setForm({ ...form, siteAddress: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -217,7 +221,7 @@ function QuotePage() {
                 type="date"
                 value={form.preferredDate}
                 onChange={(event) => setForm({ ...form, preferredDate: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -230,7 +234,7 @@ function QuotePage() {
                 step={50}
                 value={form.budget}
                 onChange={(event) => setForm({ ...form, budget: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
                 placeholder="2500"
               />
             </label>
@@ -242,27 +246,24 @@ function QuotePage() {
               required
               checked={form.acceptPrivacy}
               onChange={(event) => setForm({ ...form, acceptPrivacy: event.target.checked })}
-              className="checkbox checkbox-sm mt-0.5"
+              className="ds-checkbox ds-checkbox-sm mt-0.5"
             />
             <span>
               {t("quote.consent")}{" "}
-              <Link to="/legal/privacy" className="link link-primary">
+              <Link to="/legal/privacy" className="ds-link ds-link-primary">
                 {t("footer.privacy")}
               </Link>
             </span>
           </label>
 
-          {error && <div className="alert alert-error mt-4 py-2 text-sm">{error}</div>}
+          {error && <div role="alert" className="ds-alert ds-alert-error mt-4 py-2 text-sm">{error}</div>}
 
-          <button disabled={loading} className="btn btn-primary mt-5 w-full sm:w-auto">
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            {t("quote.submit")}
-          </button>
+          <SubmitButton state={loading ? "loading" : error ? "error" : "idle"} className="mt-5 w-full sm:w-auto">{t("quote.submit")}</SubmitButton>
 
           {!user && (
             <p className="mt-3 text-xs text-base-content/70">
               {t("quote.loginHint")}{" "}
-              <Link to="/login" className="link link-primary">
+              <Link to="/login" className="ds-link ds-link-primary">
                 {t("nav.login")}
               </Link>
             </p>
@@ -293,7 +294,7 @@ function QuotePage() {
             </div>
           </div>
 
-          <div className="rounded-box bg-gradient-to-br from-primary to-secondary p-6 text-primary-content">
+          <div className="rounded-box bg-accent p-6 text-primary-content">
             <FileText className="h-6 w-6" />
             <h3 className="mt-3 text-base font-bold">{t("services.included")}</h3>
             <ul className="mt-3 space-y-2 text-xs text-primary-content/85">

@@ -93,13 +93,13 @@ function AppointmentsPage() {
               <div className="mt-3 flex gap-2">
                 <button
                   onClick={() => void updateStatus(appointment.id, "CONFIRMED")}
-                  className="btn btn-success btn-xs"
+                  className="ds-btn ds-btn-success ds-btn-xs"
                 >
                   {t("appointments.confirm")}
                 </button>
                 <button
                   onClick={() => void updateStatus(appointment.id, "CANCELLED")}
-                  className="btn btn-ghost btn-xs text-error"
+                  className="ds-btn ds-btn-ghost ds-btn-xs text-error"
                 >
                   {t("appointments.cancel")}
                 </button>
@@ -113,7 +113,7 @@ function AppointmentsPage() {
 
   return (
     <DashboardShell nav={nav} title={t("appointments.title")} subtitle={t("appointments.text")}>
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mb-4 text-sm">{error}</div>}
       {isLoading && <PageLoader />}
       {isError && <ErrorState onRetry={() => void refetch()} />}
       {!isLoading && !isError && (

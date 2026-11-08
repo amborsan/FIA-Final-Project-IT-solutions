@@ -81,7 +81,7 @@ function ReportsPage() {
                     report.fileOriginalName || "service-report.pdf",
                   )
                 }
-                className="btn btn-outline btn-xs mt-3"
+                className="ds-btn ds-btn-outline ds-btn-xs mt-3"
               >
                 <Download className="h-3.5 w-3.5" /> {t("reports.download")}
               </button>

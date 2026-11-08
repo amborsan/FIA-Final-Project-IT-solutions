@@ -124,8 +124,8 @@ function ProfilePage() {
 
   return (
     <DashboardShell nav={nav} title={t("portal.profileTitle")} subtitle={t("portal.profileText")}>
-      {message && <div className="alert alert-success mb-4 text-sm">{message}</div>}
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {message && <div role="status" className="ds-alert ds-alert-success mb-4 text-sm">{message}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mb-4 text-sm">{error}</div>}
 
       <div className="grid gap-5 lg:grid-cols-2">
         <Panel title={t("portal.profileTitle")}>
@@ -136,7 +136,7 @@ function ProfilePage() {
                 required
                 value={profile.fullName}
                 onChange={(event) => setProfile({ ...profile, fullName: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -144,7 +144,7 @@ function ProfilePage() {
               <input
                 value={profile.phone}
                 onChange={(event) => setProfile({ ...profile, phone: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -152,7 +152,7 @@ function ProfilePage() {
               <input
                 value={profile.companyName}
                 onChange={(event) => setProfile({ ...profile, companyName: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block sm:col-span-2">
@@ -160,7 +160,7 @@ function ProfilePage() {
               <input
                 value={profile.address}
                 onChange={(event) => setProfile({ ...profile, address: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block sm:col-span-2">
@@ -170,14 +170,14 @@ function ProfilePage() {
                 onChange={(event) =>
                   setProfile({ ...profile, preferredLanguage: event.target.value as "EN" | "DE" })
                 }
-                className="select select-bordered w-full"
+                className="ds-select ds-select-bordered w-full"
               >
                 <option value="EN">English</option>
                 <option value="DE">Deutsch</option>
               </select>
             </label>
             <div className="sm:col-span-2">
-              <button disabled={busy === "profile"} className="btn btn-primary btn-sm">
+              <button disabled={busy === "profile"} className="ds-btn ds-btn-primary ds-btn-sm">
                 {busy === "profile" && <Loader2 className="h-4 w-4 animate-spin" />}
                 {t("portal.saveProfile")}
               </button>
@@ -197,7 +197,7 @@ function ProfilePage() {
                 onChange={(event) =>
                   setPasswords({ ...passwords, currentPassword: event.target.value })
                 }
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -209,11 +209,11 @@ function ProfilePage() {
                 autoComplete="new-password"
                 value={passwords.newPassword}
                 onChange={(event) => setPasswords({ ...passwords, newPassword: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
               <span className="mt-1 block text-[11px] text-base-content/70">{t("auth.passwordHint")}</span>
             </label>
-            <button disabled={busy === "password"} className="btn btn-primary btn-sm">
+            <button disabled={busy === "password"} className="ds-btn ds-btn-primary ds-btn-sm">
               <KeyRound className="h-4 w-4" />
               {t("portal.updatePassword")}
             </button>
@@ -223,7 +223,7 @@ function ProfilePage() {
         <Panel
           title={t("portal.notifications")}
           action={
-            <button onClick={markAllRead} className="link link-primary text-xs">
+            <button onClick={markAllRead} className="ds-link ds-link-primary text-xs">
               {t("portal.markAllRead")}
             </button>
           }
@@ -262,7 +262,7 @@ function ProfilePage() {
               <p className="mt-1 text-xs text-base-content/65">{t("portal.exportText")}</p>
               <button
                 onClick={() => void downloadFile("/privacy/export", "orbit-data.json")}
-                className="btn btn-outline btn-xs mt-2"
+                className="ds-btn ds-btn-outline ds-btn-xs mt-2"
               >
                 {t("common.download")}
               </button>
@@ -279,18 +279,18 @@ function ProfilePage() {
                   placeholder={t("portal.deletePassword")}
                   value={deletePassword}
                   onChange={(event) => setDeletePassword(event.target.value)}
-                  className="input input-bordered input-sm w-full"
+                  className="ds-input ds-input-bordered ds-input-sm w-full"
                 />
                 <input
                   placeholder={t("portal.deleteConfirm")}
                   value={deleteWord}
                   onChange={(event) => setDeleteWord(event.target.value)}
-                  className="input input-bordered input-sm w-full"
+                  className="ds-input ds-input-bordered ds-input-sm w-full"
                 />
                 <button
                   onClick={deleteAccount}
                   disabled={busy === "delete" || deleteWord !== "DELETE"}
-                  className="btn btn-error btn-xs"
+                  className="ds-btn ds-btn-error ds-btn-xs"
                 >
                   {busy === "delete" ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />

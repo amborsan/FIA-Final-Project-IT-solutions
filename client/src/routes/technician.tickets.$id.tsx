@@ -81,7 +81,7 @@ function TechnicianTicketDetail() {
     return (
       <DashboardShell nav={nav} title={t("tickets.details")}>
         <ErrorState />
-        <Link to="/technician/tickets" className="btn btn-outline btn-sm mt-4">
+        <Link to="/technician/tickets" className="ds-btn ds-btn-outline ds-btn-sm mt-4">
           <ArrowLeft className="h-4 w-4" /> {t("tickets.back")}
         </Link>
       </DashboardShell>
@@ -94,7 +94,7 @@ function TechnicianTicketDetail() {
       title={ticket.subject}
       subtitle={`${ticket.reference} · ${ticket.customer?.fullName}`}
       actions={
-        <Link to="/technician/tickets" className="btn btn-ghost btn-sm">
+        <Link to="/technician/tickets" className="ds-btn ds-btn-ghost ds-btn-sm">
           <ArrowLeft className="h-4 w-4" /> {t("common.back")}
         </Link>
       }
@@ -138,19 +138,19 @@ function TechnicianTicketDetail() {
               rows={3}
               maxLength={4000}
               placeholder={t("chat.replyPlaceholder")}
-              className="textarea textarea-bordered w-full text-sm"
+              className="ds-textarea ds-textarea-bordered w-full text-sm"
             />
             <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
               <label className="flex items-center gap-2 text-xs text-base-content/70">
                 <input
                   type="checkbox"
-                  className="checkbox checkbox-xs"
+                  className="ds-checkbox ds-checkbox-xs"
                   checked={internal}
                   onChange={(event) => setInternal(event.target.checked)}
                 />
                 {t("tickets.internalNote")}
               </label>
-              <button disabled={sending || !reply.trim()} className="btn btn-primary btn-sm">
+              <button disabled={sending || !reply.trim()} className="ds-btn ds-btn-primary ds-btn-sm">
                 {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                 {t("tickets.sendReply")}
               </button>
@@ -167,7 +167,7 @@ function TechnicianTicketDetail() {
             <select
               value={ticket.status}
               onChange={(event) => void updateStatus(event.target.value)}
-              className="select select-bordered select-sm w-full"
+              className="ds-select ds-select-bordered ds-select-sm w-full"
             >
               {statuses.map((status) => (
                 <option key={status} value={status}>
@@ -177,7 +177,7 @@ function TechnicianTicketDetail() {
             </select>
             <div className="flex items-center justify-between gap-2">
               <span className="text-xs text-base-content/65">{t("tickets.priority")}</span>
-              <span className="badge badge-outline badge-sm">
+              <span className="ds-badge ds-badge-outline ds-badge-sm">
                 {t(`priority.${ticket.priority}` as "priority.LOW")}
               </span>
             </div>

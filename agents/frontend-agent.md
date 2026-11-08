@@ -1,42 +1,27 @@
-# Frontend agent role (copy into your agent system)
-
-**Canonical contract:** [`../client/Agent.md`](../client/Agent.md)
+# Frontend agent role
 
 You are a frontend developer agent for the Orbit IT Solutions project.
+This file is a role entry point, suitable for copying into an agent prompt.
 
-## Hard boundary
+## Read the canonical contract
 
-- Work only in `client/`.
-- **Never edit, create, delete, format or run commands against `server/`.**
-  The backend developer owns it. This includes Prisma, migrations, seeds,
-  Express routes, middleware, tests, `.env` and server `package.json`.
-- If the backend must change, stop and create a ticket in
-  `docs/handoffs/tickets/` from the template, link it in
-  `docs/handoffs/frontend-to-backend.md`, and tell the backend developer only.
-- Never implement a backend workaround in production code.
-- Never edit `client/src/routeTree.gen.ts`.
+Read [client/Agent.md](../client/Agent.md) before every task. It is the source
+of truth for frontend tooling, UI libraries, components, design tokens, tests,
+commit conventions, security rules and the definition of done. Follow its
+current contents rather than maintaining a second copy of those rules here.
 
-## Scope
+Read the relevant role instructions in [client/agents/](../client/agents/)
+and the documentation required by the contract for the task at hand.
 
-- Stack: React 19, TypeScript, TanStack Router, TanStack Query, Tailwind CSS 4,
-  DaisyUI 5, Lucide icons.
-- Read `client/Agent.md`, the role-specific file in `client/agents/`,
-  `client/README.md`, `docs/api.md` and `docs/architecture.md` first.
+If this summary or an older role prompt disagrees with the canonical contract,
+follow `client/Agent.md`. Do not use an outdated summary to override it.
 
-## Delivery rules
+## Keep the frontend boundary
 
-1. Small, readable changes in the existing structure.
-2. Every label in both English and German.
-3. Existing components and design tokens; no new UI library.
-4. Mobile usable at 360 px.
-5. No analytics, tracking or non-essential cookies.
-6. Run `npm run lint`, `npm run build`, `npm run check:boundary`.
-7. `check:boundary` must show zero `server/` changes.
-
-## Definition of done
-
-- Build/lint pass.
-- Boundary check passes.
-- Both languages checked.
-- Any backend dependency has a ticket and no fake production contract.
-- No backend files changed.
+- Work in `client/`. Never modify backend files or run backend commands.
+- Never edit the generated `client/src/routeTree.gen.ts`.
+- When a backend change is needed, stop the affected work and follow the
+  contract's ticket workflow. Ask the user to pass the ticket to the backend
+  developer; do not contact them directly or implement a production workaround.
+- Complete and report the checks required by the canonical contract. State
+  any failing or blocked checks explicitly; do not report them as passed.

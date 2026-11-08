@@ -6,7 +6,6 @@ import {
   LogOut,
   Menu,
   MessageSquare,
-  Orbit,
   ShoppingCart,
   UserRound,
   X,
@@ -37,6 +36,7 @@ export function Header() {
   const { t, language, setLanguage } = useI18n();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
 
   async function handleLogout() {
     await logout();
@@ -63,15 +63,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-base-300/70 bg-base-100/90 backdrop-blur">
       <div className="container-page flex h-16 items-center justify-between gap-4">
         <Link to="/" className="flex shrink-0 items-center gap-2" onClick={() => setMobileOpen(false)}>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-content shadow-sm">
-            <Orbit className="h-5 w-5" />
-          </span>
-          <span className="leading-tight">
-            <span className="block text-sm font-bold tracking-tight sm:text-base">Orbit IT</span>
-            <span className="hidden text-[10px] font-medium uppercase tracking-[0.18em] text-base-content/65 sm:block">
-              Solutions
-            </span>
-          </span>
+          <span className="text-xl font-bold tracking-tight sm:text-2xl">{t("nav.brand")}</span>
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
@@ -96,20 +88,22 @@ export function Header() {
 
           <Link
             to="/cart"
-            className="btn btn-ghost btn-sm relative"
+            className="ds-btn ds-btn-ghost ds-btn-sm relative"
             aria-label={t("nav.cart")}
           >
             <ShoppingCart className="h-5 w-5" />
             {count > 0 && (
-              <span className="badge badge-primary badge-sm absolute -right-1 -top-1 min-w-5 px-1">
+              <span className="ds-badge ds-badge-primary ds-badge-sm absolute -right-1 -top-1 min-w-5 px-1">
                 {count}
               </span>
             )}
           </Link>
 
           {user ? (
-            <div className="dropdown dropdown-end hidden sm:block">
-              <button tabIndex={0} className="btn btn-ghost btn-sm gap-1.5">
+            <div className="ds-dropdown ds-dropdown-end hidden sm:block" data-open={accountOpen}
+              onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setAccountOpen(false); }}
+              onKeyDown={(event) => { if (event.key === "Escape") { setAccountOpen(false); event.currentTarget.querySelector("button")?.focus(); } }}>
+              <button type="button" aria-expanded={accountOpen} aria-controls="account-links" onClick={() => setAccountOpen(!accountOpen)} className="ds-btn ds-btn-ghost ds-btn-sm gap-1.5">
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-secondary/15 text-xs font-bold text-secondary">
                   {user.fullName
                     .split(" ")
@@ -121,10 +115,10 @@ export function Header() {
                 <ChevronDown className="h-3.5 w-3.5 opacity-60" />
               </button>
               <ul
-                tabIndex={0}
-                className="dropdown-content menu z-50 mt-2 w-56 rounded-box border border-base-300 bg-base-100 p-2 shadow-xl"
+                id="account-links" hidden={!accountOpen} onClick={() => setAccountOpen(false)}
+                className="ds-dropdown-content ds-menu z-50 mt-2 w-56 rounded-box border border-base-300 bg-base-100 p-2 shadow-xl"
               >
-                <li className="menu-title px-3 py-1 text-[11px] uppercase tracking-wide">
+                <li className="ds-menu-title px-3 py-1 text-[11px] uppercase tracking-wide">
                   {t(`role.${user.role}` as "role.ADMIN")}
                 </li>
                 <li>
@@ -155,10 +149,10 @@ export function Header() {
             </div>
           ) : (
             <div className="hidden items-center gap-1.5 sm:flex">
-              <Link to="/login" className="btn btn-ghost btn-sm">
+              <Link to="/login" className="ds-btn ds-btn-ghost ds-btn-sm">
                 {t("nav.login")}
               </Link>
-              <Link to="/quote" search={{ service: undefined }} className="btn btn-primary btn-sm">
+              <Link to="/quote" search={{ service: undefined }} className="ds-btn ds-btn-primary ds-btn-sm">
                 {t("nav.quote")}
               </Link>
             </div>
@@ -166,8 +160,9 @@ export function Header() {
 
           <button
             type="button"
-            className="btn btn-ghost btn-sm lg:hidden"
+            className="ds-btn ds-btn-ghost ds-btn-sm lg:hidden"
             onClick={() => setMobileOpen((open) => !open)}
+            onKeyDown={(event) => { if (event.key === "Escape") setMobileOpen(false); }}
             aria-label={t("nav.menu")}
             aria-expanded={mobileOpen}
           >
@@ -199,7 +194,7 @@ export function Header() {
             <Link
               to="/quote" search={{ service: undefined }}
               onClick={() => setMobileOpen(false)}
-              className="mt-2 btn btn-primary btn-sm"
+              className="mt-2 ds-btn ds-btn-primary ds-btn-sm"
             >
               {t("nav.quote")}
             </Link>

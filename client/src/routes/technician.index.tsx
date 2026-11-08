@@ -65,7 +65,7 @@ function TechnicianDashboard() {
       title={t("technician.dashboard")}
       subtitle={t("technician.welcome", { name: user?.firstName || user?.fullName || "" })}
       actions={
-        <Link to="/technician/reports" search={{ request: undefined }} className="btn btn-primary btn-sm">
+        <Link to="/technician/reports" search={{ request: undefined }} className="ds-btn ds-btn-primary ds-btn-sm">
           <FileText className="h-4 w-4" /> {t("technician.newReport")}
         </Link>
       }
@@ -95,7 +95,7 @@ function TechnicianDashboard() {
           <Panel
             title={t("technician.assignedRequests")}
             action={
-              <Link to="/technician/tasks" className="link link-primary text-xs">
+              <Link to="/technician/tasks" className="ds-link ds-link-primary text-xs">
                 {t("portal.viewAll")}
               </Link>
             }
@@ -127,7 +127,7 @@ function TechnicianDashboard() {
           <Panel
             title={t("technician.appointments")}
             action={
-              <Link to="/technician/appointments" className="link link-primary text-xs">
+              <Link to="/technician/appointments" className="ds-link ds-link-primary text-xs">
                 {t("portal.viewAll")}
               </Link>
             }
@@ -155,13 +155,13 @@ function TechnicianDashboard() {
 
         <Panel title={t("technician.quickLinks")}>
           <div className="grid gap-3 sm:grid-cols-3">
-            <Link to="/technician/tasks" className="btn btn-outline justify-between">
+            <Link to="/technician/tasks" className="ds-btn ds-btn-outline justify-between">
               {t("technician.assignedRequests")} <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/technician/tickets" className="btn btn-outline justify-between">
+            <Link to="/technician/tickets" className="ds-btn ds-btn-outline justify-between">
               {t("technician.assignedTickets")} <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/technician/reports" search={{ request: undefined }} className="btn btn-outline justify-between">
+            <Link to="/technician/reports" search={{ request: undefined }} className="ds-btn ds-btn-outline justify-between">
               {t("technician.newReport")} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

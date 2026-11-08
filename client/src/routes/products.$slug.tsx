@@ -45,7 +45,7 @@ export default function ProductDetailPage() {
     return (
       <div className="container-page py-10">
         <ErrorState message={t("products.notFound")} />
-        <Link to="/products" className="btn btn-outline btn-sm">
+        <Link to="/products" className="ds-btn ds-btn-outline ds-btn-sm">
           <ArrowLeft className="h-4 w-4" /> {t("nav.products")}
         </Link>
       </div>
@@ -96,13 +96,13 @@ export default function ProductDetailPage() {
 
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="badge badge-ghost badge-sm">
+              <span className="ds-badge ds-badge-ghost ds-badge-sm">
                 {product.category ? pick(product.category.nameEn, product.category.nameDe) : ""}
               </span>
               {product.featured && (
-                <span className="badge badge-accent badge-sm">{t("products.featured")}</span>
+                <span className="ds-badge ds-badge-accent ds-badge-sm">{t("products.featured")}</span>
               )}
-              <span className={`badge badge-sm ${product.stock > 0 ? "badge-success" : "badge-error"}`}>
+              <span className={`ds-badge ds-badge-sm ${product.stock > 0 ? "ds-badge-success" : "ds-badge-error"}`}>
                 {product.stock > 0 ? t("products.inStock") : t("products.outOfStock")}
               </span>
             </div>
@@ -127,19 +127,19 @@ export default function ProductDetailPage() {
               </div>
 
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                <div className="join">
+                <div className="ds-join">
                   <button
-                    className="btn btn-sm join-item"
+                    className="ds-btn ds-btn-sm ds-join-item"
                     onClick={() => setQuantity((value) => Math.max(1, value - 1))}
                     disabled={quantity <= 1}
                   >
                     −
                   </button>
-                  <span className="btn btn-sm join-item pointer-events-none w-12">
+                  <span className="ds-btn ds-btn-sm ds-join-item pointer-events-none w-12">
                     {quantity}
                   </span>
                   <button
-                    className="btn btn-sm join-item"
+                    className="ds-btn ds-btn-sm ds-join-item"
                     onClick={() => setQuantity((value) => Math.min(product.stock, value + 1))}
                     disabled={quantity >= product.stock}
                   >
@@ -149,7 +149,7 @@ export default function ProductDetailPage() {
                 <button
                   onClick={handleAdd}
                   disabled={product.stock <= 0}
-                  className={`btn flex-1 ${added ? "btn-success" : "btn-primary"}`}
+                  className={`ds-btn flex-1 ${added ? "ds-btn-success" : "ds-btn-primary"}`}
                 >
                   {added ? <Check className="h-4 w-4" /> : <ShoppingCart className="h-4 w-4" />}
                   {added ? t("products.added") : t("products.addToCart")}
@@ -176,10 +176,10 @@ export default function ProductDetailPage() {
               <p className="text-sm font-semibold">{t("products.advice")}</p>
               <p className="mt-1 text-xs text-base-content/70">{t("products.adviceText")}</p>
               <div className="mt-3 flex gap-2">
-                <Link to="/contact" className="btn btn-outline btn-xs">
+                <Link to="/contact" className="ds-btn ds-btn-outline ds-btn-xs">
                   {t("nav.contact")}
                 </Link>
-                <Link to="/quote" search={{ service: undefined }} className="btn btn-ghost btn-xs">
+                <Link to="/quote" search={{ service: undefined }} className="ds-btn ds-btn-ghost ds-btn-xs">
                   {t("nav.quote")} <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>

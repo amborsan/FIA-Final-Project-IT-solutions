@@ -111,7 +111,7 @@ function AccountContent() {
           </h1>
           <p className="mt-1 text-sm text-base-content/65">
             {profileQuery.data?.user.email} ·{" "}
-            <span className="badge badge-ghost badge-sm">
+            <span className="ds-badge ds-badge-ghost ds-badge-sm">
               {user ? t(`role.${user.role}` as "role.ADMIN") : ""}
             </span>
           </p>
@@ -119,20 +119,20 @@ function AccountContent() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => void downloadFile("/privacy/export", "orbit-data.json")}
-            className="btn btn-outline btn-sm"
+            className="ds-btn ds-btn-outline ds-btn-sm"
           >
             <Download className="h-4 w-4" /> {t("portal.exportData")}
           </button>
           {user?.role === "CUSTOMER" && (
-            <a href="/portal/profile" className="btn btn-ghost btn-sm">
+            <a href="/portal/profile" className="ds-btn ds-btn-ghost ds-btn-sm">
               {t("portal.privacyTitle")}
             </a>
           )}
         </div>
       </div>
 
-      {message && <div className="alert alert-success mt-4 text-sm">{message}</div>}
-      {error && <div className="alert alert-error mt-4 text-sm">{error}</div>}
+      {message && <div role="status" className="ds-alert ds-alert-success mt-4 text-sm">{message}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mt-4 text-sm">{error}</div>}
 
       <div className="mt-6 grid gap-5 lg:grid-cols-2">
         <section className="rounded-box border border-base-300 bg-base-100 p-5">
@@ -144,7 +144,7 @@ function AccountContent() {
                 required
                 value={profile.fullName}
                 onChange={(event) => setProfile({ ...profile, fullName: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -152,7 +152,7 @@ function AccountContent() {
               <input
                 value={profile.phone}
                 onChange={(event) => setProfile({ ...profile, phone: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -160,7 +160,7 @@ function AccountContent() {
               <input
                 value={profile.companyName}
                 onChange={(event) => setProfile({ ...profile, companyName: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block sm:col-span-2">
@@ -168,7 +168,7 @@ function AccountContent() {
               <input
                 value={profile.address}
                 onChange={(event) => setProfile({ ...profile, address: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block sm:col-span-2">
@@ -178,14 +178,14 @@ function AccountContent() {
                 onChange={(event) =>
                   setProfile({ ...profile, preferredLanguage: event.target.value as "EN" | "DE" })
                 }
-                className="select select-bordered w-full"
+                className="ds-select ds-select-bordered w-full"
               >
                 <option value="EN">English</option>
                 <option value="DE">Deutsch</option>
               </select>
             </label>
             <div className="sm:col-span-2">
-              <button disabled={busy === "profile"} className="btn btn-primary btn-sm">
+              <button disabled={busy === "profile"} className="ds-btn ds-btn-primary ds-btn-sm">
                 {busy === "profile" && <Loader2 className="h-4 w-4 animate-spin" />}
                 {t("portal.saveProfile")}
               </button>
@@ -205,7 +205,7 @@ function AccountContent() {
                 onChange={(event) =>
                   setPasswords({ ...passwords, currentPassword: event.target.value })
                 }
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -216,10 +216,10 @@ function AccountContent() {
                 minLength={10}
                 value={passwords.newPassword}
                 onChange={(event) => setPasswords({ ...passwords, newPassword: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
-            <button disabled={busy === "password"} className="btn btn-primary btn-sm">
+            <button disabled={busy === "password"} className="ds-btn ds-btn-primary ds-btn-sm">
               <KeyRound className="h-4 w-4" />
               {t("portal.updatePassword")}
             </button>
@@ -231,7 +231,7 @@ function AccountContent() {
             <h2 className="flex items-center gap-2 text-base font-bold">
               <Bell className="h-4 w-4 text-primary" /> {t("portal.notifications")}
             </h2>
-            <button onClick={markAllRead} className="link link-primary text-xs">
+            <button onClick={markAllRead} className="ds-link ds-link-primary text-xs">
               {t("portal.markAllRead")}
             </button>
           </div>

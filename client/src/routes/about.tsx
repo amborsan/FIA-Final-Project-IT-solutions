@@ -19,8 +19,8 @@ export default function AboutPage() {
 
   const team = [
     { initials: "AD", name: "Aylin Demir", role: t("about.roleAdmin"), color: "bg-primary" },
-    { initials: "JW", name: "Jonas Weber", role: t("about.roleTech"), color: "bg-teal-700" },
-    { initials: "MK", name: "Marcel Koch", role: t("about.roleTech2"), color: "bg-amber-700" },
+    { initials: "JW", name: "Jonas Weber", role: t("about.roleTech"), color: "bg-secondary" },
+    { initials: "MK", name: "Marcel Koch", role: t("about.roleTech2"), color: "bg-accent" },
     { initials: "SR", name: "Sofia Reed", role: t("about.roleCustomer"), color: "bg-neutral" },
   ];
 
@@ -59,7 +59,7 @@ export default function AboutPage() {
         </div>
 
         <div className="relative">
-          <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-primary/10 to-secondary/10 blur-2xl" />
+          <div className="absolute -inset-4 rounded-[2rem] bg-secondary/15" />
           <div className="relative grid gap-4 sm:grid-cols-2">
             {[
               { icon: Users, key: "value1" },
@@ -91,7 +91,7 @@ export default function AboutPage() {
                 className="rounded-box border border-base-300 bg-base-100 p-6 text-center"
               >
                 <span
-                  className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full text-lg font-bold text-white ${member.color}`}
+                  className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full text-lg font-bold text-base-content ${member.color}`}
                 >
                   {member.initials}
                 </span>
@@ -106,7 +106,7 @@ export default function AboutPage() {
       <section className="container-page py-14">
         <div className="flex flex-col items-start justify-between gap-4 rounded-box bg-primary p-8 text-primary-content sm:flex-row sm:items-center">
           <h2 className="text-2xl font-bold">{t("home.ctaTitle")}</h2>
-          <Link to="/quote" search={{ service: undefined }} className="btn btn-accent">
+          <Link to="/quote" search={{ service: undefined }} className="ds-btn ds-btn-accent">
             {t("about.cta")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

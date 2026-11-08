@@ -33,7 +33,7 @@ function AdminRequestsPage() {
   return (
     <DashboardShell nav={nav} title={t("admin.requests")} subtitle={t("requests.text")}>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <label className="input input-bordered flex w-full max-w-md items-center gap-2">
+        <label className="ds-input ds-input-bordered flex w-full max-w-md items-center gap-2">
           <Search className="h-4 w-4 opacity-50" />
           <input
             value={search}
@@ -45,7 +45,7 @@ function AdminRequestsPage() {
         <select
           value={status}
           onChange={(event) => setStatus(event.target.value)}
-          className="select select-bordered w-full sm:w-52"
+          className="ds-select ds-select-bordered w-full sm:w-52"
         >
           <option value="">{t("admin.all")}</option>
           {["NEW", "REVIEWING", "QUOTED", "APPROVED", "SCHEDULED", "IN_PROGRESS", "COMPLETED", "CANCELLED"].map(
@@ -68,7 +68,7 @@ function AdminRequestsPage() {
 
       {requests.length > 0 && (
         <div className="mt-5 overflow-x-auto rounded-box border border-base-300 bg-base-100">
-          <table className="table table-zebra">
+          <table className="ds-table ds-table-zebra">
             <thead>
               <tr>
                 <th>{t("common.reference")}</th>
@@ -104,7 +104,7 @@ function AdminRequestsPage() {
                     <Link
                       to="/admin/requests/$id"
                       params={{ id: request.id }}
-                      className="btn btn-ghost btn-xs"
+                      className="ds-btn ds-btn-ghost ds-btn-xs"
                     >
                       <ArrowRight className="h-4 w-4" />
                     </Link>

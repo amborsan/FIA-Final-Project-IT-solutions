@@ -39,7 +39,7 @@ function AdminDashboardPage() {
       title={t("admin.dashboard")}
       subtitle={t("admin.welcome", { name: user?.firstName || user?.fullName || "" })}
       actions={
-        <Link to="/admin/requests" className="btn btn-primary btn-sm">
+        <Link to="/admin/requests" className="ds-btn ds-btn-primary ds-btn-sm">
           <ClipboardList className="h-4 w-4" /> {t("admin.requests")}
         </Link>
       }
@@ -113,7 +113,7 @@ function AdminDashboardPage() {
             <Panel
               title={t("admin.recentRequests")}
               action={
-                <Link to="/admin/requests" className="link link-primary text-xs">
+                <Link to="/admin/requests" className="ds-link ds-link-primary text-xs">
                   {t("portal.viewAll")}
                 </Link>
               }
@@ -141,7 +141,7 @@ function AdminDashboardPage() {
             <Panel
               title={t("admin.recentTickets")}
               action={
-                <Link to="/admin/tickets" className="link link-primary text-xs">
+                <Link to="/admin/tickets" className="ds-link ds-link-primary text-xs">
                   {t("portal.viewAll")}
                 </Link>
               }
@@ -169,7 +169,7 @@ function AdminDashboardPage() {
           <Panel
             title={t("admin.recentActivity")}
             action={
-              <Link to="/admin/activity" className="link link-primary text-xs">
+              <Link to="/admin/activity" className="ds-link ds-link-primary text-xs">
                 {t("portal.viewAll")}
               </Link>
             }

@@ -70,14 +70,14 @@ export default function RegisterPage() {
           <h1 className="mt-4 text-2xl font-bold">{t("auth.registerTitle")}</h1>
           <p className="mt-1 text-sm text-base-content/70">{t("auth.registerText")}</p>
 
-          <form onSubmit={submit} className="mt-6 grid gap-4 sm:grid-cols-2">
+          <form aria-busy={loading} onSubmit={submit} className="mt-6 grid gap-4 sm:grid-cols-2">
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">{t("auth.firstName")}</span>
               <input
                 required
                 value={form.firstName}
                 onChange={(event) => setForm({ ...form, firstName: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
                 autoComplete="given-name"
               />
             </label>
@@ -87,7 +87,7 @@ export default function RegisterPage() {
                 required
                 value={form.lastName}
                 onChange={(event) => setForm({ ...form, lastName: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
                 autoComplete="family-name"
               />
             </label>
@@ -99,7 +99,7 @@ export default function RegisterPage() {
                 autoComplete="email"
                 value={form.email}
                 onChange={(event) => setForm({ ...form, email: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -111,7 +111,7 @@ export default function RegisterPage() {
                 autoComplete="new-password"
                 value={form.password}
                 onChange={(event) => setForm({ ...form, password: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
               <span className="mt-1 block text-[11px] text-base-content/70">{t("auth.passwordHint")}</span>
             </label>
@@ -124,7 +124,7 @@ export default function RegisterPage() {
                 autoComplete="new-password"
                 value={form.confirmPassword}
                 onChange={(event) => setForm({ ...form, confirmPassword: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -132,7 +132,7 @@ export default function RegisterPage() {
               <input
                 value={form.phone}
                 onChange={(event) => setForm({ ...form, phone: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
                 autoComplete="tel"
               />
             </label>
@@ -141,7 +141,7 @@ export default function RegisterPage() {
               <input
                 value={form.companyName}
                 onChange={(event) => setForm({ ...form, companyName: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
                 autoComplete="organization"
               />
             </label>
@@ -152,11 +152,11 @@ export default function RegisterPage() {
                 required
                 checked={form.acceptTerms}
                 onChange={(event) => setForm({ ...form, acceptTerms: event.target.checked })}
-                className="checkbox checkbox-sm mt-0.5"
+                className="ds-checkbox ds-checkbox-sm mt-0.5"
               />
               <span>
                 {t("auth.acceptTerms")}{" "}
-                <Link to="/legal/terms" className="link link-primary">
+                <Link to="/legal/terms" className="ds-link ds-link-primary">
                   {t("footer.terms")}
                 </Link>
               </span>
@@ -167,20 +167,20 @@ export default function RegisterPage() {
                 required
                 checked={form.acceptPrivacy}
                 onChange={(event) => setForm({ ...form, acceptPrivacy: event.target.checked })}
-                className="checkbox checkbox-sm mt-0.5"
+                className="ds-checkbox ds-checkbox-sm mt-0.5"
               />
               <span>
                 {t("auth.acceptPrivacy")}{" "}
-                <Link to="/legal/privacy" className="link link-primary">
+                <Link to="/legal/privacy" className="ds-link ds-link-primary">
                   {t("footer.privacy")}
                 </Link>
               </span>
             </label>
 
-            {error && <div className="alert alert-error py-2 text-sm sm:col-span-2">{error}</div>}
+            {error && <div role="alert" className="ds-alert ds-alert-error py-2 text-sm sm:col-span-2">{error}</div>}
 
             <div className="sm:col-span-2">
-              <button disabled={loading} className="btn btn-primary w-full sm:w-auto">
+              <button disabled={loading} className="ds-btn ds-btn-primary w-full sm:w-auto">
                 {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                 {t("auth.registerButton")}
               </button>
@@ -189,7 +189,7 @@ export default function RegisterPage() {
 
           <p className="mt-4 text-center text-sm text-base-content/65">
             {t("auth.hasAccount")}{" "}
-            <Link to="/login" className="link link-primary font-semibold">
+            <Link to="/login" className="ds-link ds-link-primary font-semibold">
               {t("auth.loginButton")}
             </Link>
           </p>

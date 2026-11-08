@@ -50,7 +50,7 @@ function TechnicianTasksPage() {
 
   return (
     <DashboardShell nav={nav} title={t("technician.assignedRequests")} subtitle={t("technician.welcomeText")}>
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mb-4 text-sm">{error}</div>}
       {isLoading && <PageLoader />}
       {isError && <ErrorState onRetry={() => void refetch()} />}
       {!isLoading && !isError && requests.length === 0 && <EmptyState title={t("technician.noTasks")} />}
@@ -74,7 +74,7 @@ function TechnicianTasksPage() {
                 <select
                   value={request.status}
                   onChange={(event) => void updateStatus(request.id, event.target.value)}
-                  className="select select-bordered select-xs"
+                  className="ds-select ds-select-bordered ds-select-xs"
                 >
                   {statuses.map((status) => (
                     <option key={status} value={status}>
@@ -85,7 +85,7 @@ function TechnicianTasksPage() {
                 <Link
                   to="/technician/reports"
                   search={{ request: request.id }}
-                  className="btn btn-outline btn-xs"
+                  className="ds-btn ds-btn-outline ds-btn-xs"
                 >
                   <FileText className="h-3.5 w-3.5" /> {t("technician.addReport")}
                 </Link>

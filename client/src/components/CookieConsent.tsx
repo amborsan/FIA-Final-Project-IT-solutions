@@ -62,7 +62,7 @@ export function CookieConsent() {
             <h2 className="text-sm font-bold sm:text-base">{t("cookie.title")}</h2>
             <p className="mt-1 text-xs leading-relaxed text-base-content/65 sm:text-sm">
               {t("cookie.text")}{" "}
-              <Link to="/legal/privacy" className="link link-primary">
+              <Link to="/legal/privacy" className="ds-link ds-link-primary">
                 {t("cookie.privacyLink")}
               </Link>
             </p>
@@ -74,27 +74,27 @@ export function CookieConsent() {
                     <p className="font-semibold">{t("cookie.essential")}</p>
                     <p className="text-base-content/70">{t("cookie.essentialText")}</p>
                   </div>
-                  <span className="badge badge-success badge-sm">ON</span>
+                  <span className="ds-badge ds-badge-success ds-badge-sm">ON</span>
                 </div>
                 <div className="flex items-start justify-between gap-4 border-t border-base-300 pt-2">
                   <div>
                     <p className="font-semibold">{t("cookie.analytics")}</p>
                     <p className="text-base-content/70">{t("cookie.analyticsText")}</p>
                   </div>
-                  <span className="badge badge-ghost badge-sm">OFF</span>
+                  <span className="ds-badge ds-badge-ghost ds-badge-sm">OFF</span>
                 </div>
               </div>
             )}
 
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button className="btn btn-primary btn-sm" onClick={() => save()}>
+              <button className="ds-btn ds-btn-primary ds-btn-sm" onClick={() => save()}>
                 {t("cookie.acceptAll")}
               </button>
-              <button className="btn btn-outline btn-sm" onClick={() => save()}>
+              <button className="ds-btn ds-btn-outline ds-btn-sm" onClick={() => save()}>
                 {t("cookie.essentialOnly")}
               </button>
               <button
-                className="btn btn-ghost btn-sm"
+                className="ds-btn ds-btn-ghost ds-btn-sm"
                 onClick={() => setDetails((value) => !value)}
               >
                 {t("cookie.settings")}

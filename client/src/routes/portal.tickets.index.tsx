@@ -65,14 +65,14 @@ function TicketsPage() {
       title={t("tickets.title")}
       subtitle={t("tickets.text")}
       actions={
-        <button onClick={() => setShowForm((value) => !value)} className="btn btn-primary btn-sm">
+        <button onClick={() => setShowForm((value) => !value)} className="ds-btn ds-btn-primary ds-btn-sm">
           {showForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           {t("tickets.new")}
         </button>
       }
     >
       {showForm && (
-        <form onSubmit={submit} className="mb-5 rounded-box border border-base-300 bg-base-100 p-5">
+        <form aria-busy={loading} onSubmit={submit} className="mb-5 rounded-box border border-base-300 bg-base-100 p-5">
           <h2 className="text-base font-bold">{t("tickets.new")}</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <label className="block sm:col-span-2">
@@ -82,7 +82,7 @@ function TicketsPage() {
                 minLength={4}
                 value={form.subject}
                 onChange={(event) => setForm({ ...form, subject: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -90,7 +90,7 @@ function TicketsPage() {
               <input
                 value={form.category}
                 onChange={(event) => setForm({ ...form, category: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
                 placeholder={pick("Network, billing…", "Netzwerk, Rechnung…")}
               />
             </label>
@@ -99,7 +99,7 @@ function TicketsPage() {
               <select
                 value={form.priority}
                 onChange={(event) => setForm({ ...form, priority: event.target.value })}
-                className="select select-bordered w-full"
+                className="ds-select ds-select-bordered w-full"
               >
                 {["LOW", "MEDIUM", "HIGH", "URGENT"].map((priority) => (
                   <option key={priority} value={priority}>
@@ -115,7 +115,7 @@ function TicketsPage() {
               <select
                 value={form.requestId}
                 onChange={(event) => setForm({ ...form, requestId: event.target.value })}
-                className="select select-bordered w-full"
+                className="ds-select ds-select-bordered w-full"
               >
                 <option value="">–</option>
                 {(requestsQuery.data?.requests ?? []).map((request) => (
@@ -133,12 +133,12 @@ function TicketsPage() {
                 rows={4}
                 value={form.description}
                 onChange={(event) => setForm({ ...form, description: event.target.value })}
-                className="textarea textarea-bordered w-full"
+                className="ds-textarea ds-textarea-bordered w-full"
               />
             </label>
           </div>
           {error && <p className="mt-3 text-xs text-error">{error}</p>}
-          <button disabled={loading} className="btn btn-primary mt-4">
+          <button disabled={loading} className="ds-btn ds-btn-primary mt-4">
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             {t("tickets.create")}
           </button>
@@ -152,7 +152,7 @@ function TicketsPage() {
           title={t("tickets.noTickets")}
           text={t("tickets.text")}
           action={
-            <button onClick={() => setShowForm(true)} className="btn btn-primary btn-sm">
+            <button onClick={() => setShowForm(true)} className="ds-btn ds-btn-primary ds-btn-sm">
               {t("tickets.new")}
             </button>
           }
@@ -178,7 +178,7 @@ function TicketsPage() {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="badge badge-outline badge-xs">
+              <span className="ds-badge ds-badge-outline ds-badge-xs">
                 {t(`priority.${ticket.priority}` as "priority.LOW")}
               </span>
               <StatusBadge status={ticket.status} />

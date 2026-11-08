@@ -81,11 +81,11 @@ export function LegalShell({
         <div className="rounded-box bg-base-200 p-4 text-sm">
           <p className="font-semibold">{t("legal.questions")}</p>
           <p className="mt-1 text-xs text-base-content/70">
-            <a href="mailto:privacy@orbit-it.de" className="link link-primary">
+            <a href="mailto:privacy@orbit-it.de" className="ds-link ds-link-primary">
               privacy@orbit-it.de
             </a>{" "}
             ·{" "}
-            <Link to="/contact" className="link link-primary">
+            <Link to="/contact" className="ds-link ds-link-primary">
               {t("nav.contact")}
             </Link>
           </p>

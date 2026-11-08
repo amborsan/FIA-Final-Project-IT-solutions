@@ -1,7 +1,8 @@
+import { SubmitButton, useFormFeedback } from "../components/FormFeedback";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { CheckCircle2, Clock, Loader2, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
+import { CheckCircle2, Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { api, errorMessage } from "../lib/api";
 import { useI18n } from "../i18n/I18nContext";
 
@@ -19,20 +20,26 @@ export default function ContactPage() {
     message: "",
     acceptPrivacy: false,
   });
+  const notify = useFormFeedback();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (loading) return;
+    setSuccess(false);
     setLoading(true);
     setError("");
     try {
       await api("/contact", { method: "POST", body: form });
       setSuccess(true);
+      notify("success", t("contact.success"));
       setForm({ name: "", email: "", phone: "", subject: "", message: "", acceptPrivacy: false });
     } catch (caught) {
-      setError(errorMessage(caught, t("contact.error")));
+      const message = errorMessage(caught, t("contact.error"));
+      setError(message);
+      notify("error", message);
     } finally {
       setLoading(false);
     }
@@ -53,12 +60,12 @@ export default function ContactPage() {
           <h2 className="text-lg font-bold">{t("contact.formTitle")}</h2>
 
           {success && (
-            <div className="alert alert-success mt-4 text-sm">
+            <div role="status" className="ds-alert ds-alert-success mt-4 text-sm">
               <CheckCircle2 className="h-5 w-5" /> {t("contact.success")}
             </div>
           )}
 
-          <form onSubmit={submit} className="mt-5 grid gap-4 sm:grid-cols-2">
+          <form aria-busy={loading} onSubmit={submit} className="mt-5 grid gap-4 sm:grid-cols-2">
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">
                 {t("common.name")} <span className="text-error">*</span>
@@ -68,7 +75,7 @@ export default function ContactPage() {
                 minLength={2}
                 value={form.name}
                 onChange={(event) => setForm({ ...form, name: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -80,7 +87,7 @@ export default function ContactPage() {
                 type="email"
                 value={form.email}
                 onChange={(event) => setForm({ ...form, email: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -90,7 +97,7 @@ export default function ContactPage() {
               <input
                 value={form.phone}
                 onChange={(event) => setForm({ ...form, phone: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -102,7 +109,7 @@ export default function ContactPage() {
                 minLength={3}
                 value={form.subject}
                 onChange={(event) => setForm({ ...form, subject: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block sm:col-span-2">
@@ -116,7 +123,7 @@ export default function ContactPage() {
                 rows={6}
                 value={form.message}
                 onChange={(event) => setForm({ ...form, message: event.target.value })}
-                className="textarea textarea-bordered w-full"
+                className="ds-textarea ds-textarea-bordered w-full"
               />
             </label>
 
@@ -126,23 +133,20 @@ export default function ContactPage() {
                 required
                 checked={form.acceptPrivacy}
                 onChange={(event) => setForm({ ...form, acceptPrivacy: event.target.checked })}
-                className="checkbox checkbox-sm mt-0.5"
+                className="ds-checkbox ds-checkbox-sm mt-0.5"
               />
               <span>
                 {t("contact.privacyNote")}{" "}
-                <Link to="/legal/privacy" className="link link-primary">
+                <Link to="/legal/privacy" className="ds-link ds-link-primary">
                   {t("footer.privacy")}
                 </Link>
               </span>
             </label>
 
-            {error && <div className="alert alert-error py-2 text-sm sm:col-span-2">{error}</div>}
+            {error && <div role="alert" className="ds-alert ds-alert-error py-2 text-sm sm:col-span-2">{error}</div>}
 
             <div className="sm:col-span-2">
-              <button disabled={loading} className="btn btn-primary">
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                {t("common.send")}
-              </button>
+              <SubmitButton state={loading ? "loading" : error ? "error" : success ? "success" : "idle"}>{t("common.send")}</SubmitButton>
             </div>
           </form>
         </div>

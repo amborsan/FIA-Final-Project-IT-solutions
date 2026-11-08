@@ -70,7 +70,7 @@ export function RichEditor({
         <button
           type="button"
           onClick={() => command("formatBlock", "h2")}
-          className="btn btn-ghost btn-xs font-bold"
+          className="ds-btn ds-btn-ghost ds-btn-xs font-bold"
           title="Heading 2"
         >
           H2
@@ -78,7 +78,7 @@ export function RichEditor({
         <button
           type="button"
           onClick={() => command("formatBlock", "h3")}
-          className="btn btn-ghost btn-xs font-bold"
+          className="ds-btn ds-btn-ghost ds-btn-xs font-bold"
           title="Heading 3"
         >
           H3
@@ -86,7 +86,7 @@ export function RichEditor({
         <button
           type="button"
           onClick={() => command("formatBlock", "p")}
-          className="btn btn-ghost btn-xs"
+          className="ds-btn ds-btn-ghost ds-btn-xs"
           title="Paragraph"
         >
           ¶
@@ -98,7 +98,7 @@ export function RichEditor({
             type="button"
             onClick={action}
             title={label}
-            className="btn btn-ghost btn-xs"
+            className="ds-btn ds-btn-ghost ds-btn-xs"
           >
             <Icon className="h-3.5 w-3.5" />
           </button>

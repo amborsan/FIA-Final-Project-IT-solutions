@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, CheckCircle2, Loader2, ShoppingBag, Trash2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Loader2, Package, ShoppingBag, Trash2 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
@@ -65,10 +65,10 @@ export default function CartPage() {
             {completed.reference}
           </p>
           <div className="mt-6 flex justify-center gap-2">
-            <Link to="/portal/orders" className="btn btn-primary">
+            <Link to="/portal/orders" className="ds-btn ds-btn-primary">
               {t("cart.viewOrders")}
             </Link>
-            <Link to="/products" className="btn btn-ghost">
+            <Link to="/products" className="ds-btn ds-btn-ghost">
               {t("cart.continueShopping")}
             </Link>
           </div>
@@ -86,7 +86,7 @@ export default function CartPage() {
             title={t("cart.empty")}
             text={t("cart.emptyText")}
             action={
-              <Link to="/products" className="btn btn-primary">
+              <Link to="/products" className="ds-btn ds-btn-primary">
                 {t("cart.continueShopping")}
               </Link>
             }
@@ -106,7 +106,7 @@ export default function CartPage() {
           <h1 className="text-3xl font-black">{t("cart.title")}</h1>
           <p className="mt-1 text-sm text-base-content/65">{t("cart.items", { count })}</p>
         </div>
-        <button onClick={clear} className="btn btn-ghost btn-sm text-error">
+        <button onClick={clear} className="ds-btn ds-btn-ghost ds-btn-sm text-error">
           <Trash2 className="h-4 w-4" /> {t("cart.clear")}
         </button>
       </div>
@@ -119,7 +119,7 @@ export default function CartPage() {
               className="flex flex-wrap items-center gap-4 rounded-box border border-base-300 bg-base-100 p-4"
             >
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-base-200 text-2xl">
-                📦
+                <Package className="h-6 w-6 text-primary" aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">
                 <Link
@@ -131,16 +131,16 @@ export default function CartPage() {
                 </Link>
                 <p className="mt-1 text-xs text-base-content/65">{formatMoney(item.price)}</p>
               </div>
-              <div className="join">
+              <div className="ds-join">
                 <button
-                  className="btn btn-xs join-item"
+                  className="ds-btn ds-btn-xs ds-join-item"
                   onClick={() => setQuantity(item.productId, item.quantity - 1)}
                 >
                   −
                 </button>
-                <span className="btn btn-xs join-item pointer-events-none w-10">{item.quantity}</span>
+                <span className="ds-btn ds-btn-xs ds-join-item pointer-events-none w-10">{item.quantity}</span>
                 <button
-                  className="btn btn-xs join-item"
+                  className="ds-btn ds-btn-xs ds-join-item"
                   onClick={() => setQuantity(item.productId, item.quantity + 1)}
                 >
                   +
@@ -151,7 +151,7 @@ export default function CartPage() {
               </p>
               <button
                 onClick={() => remove(item.productId)}
-                className="btn btn-ghost btn-xs text-error"
+                className="ds-btn ds-btn-ghost ds-btn-xs text-error"
                 aria-label={t("cart.remove")}
               >
                 <Trash2 className="h-3.5 w-3.5" />
@@ -184,7 +184,7 @@ export default function CartPage() {
           </div>
 
           {user ? (
-            <form onSubmit={placeOrder} className="rounded-box border border-base-300 bg-base-100 p-5">
+            <form aria-busy={loading} onSubmit={placeOrder} className="rounded-box border border-base-300 bg-base-100 p-5">
               <h2 className="text-base font-bold">{t("cart.checkoutTitle")}</h2>
               <p className="mt-1 text-xs text-base-content/65">{t("cart.checkoutText")}</p>
               <label className="mt-4 block">
@@ -195,7 +195,7 @@ export default function CartPage() {
                   rows={3}
                   value={address}
                   onChange={(event) => setAddress(event.target.value)}
-                  className="textarea textarea-bordered w-full text-sm"
+                  className="ds-textarea ds-textarea-bordered w-full text-sm"
                 />
               </label>
               <label className="mt-3 block">
@@ -206,7 +206,7 @@ export default function CartPage() {
                   rows={2}
                   value={notes}
                   onChange={(event) => setNotes(event.target.value)}
-                  className="textarea textarea-bordered w-full text-sm"
+                  className="ds-textarea ds-textarea-bordered w-full text-sm"
                   maxLength={1000}
                 />
               </label>
@@ -214,7 +214,7 @@ export default function CartPage() {
               <label className="mt-3 flex items-start gap-2 text-[11px] leading-relaxed text-base-content/70">
                 <input
                   type="checkbox"
-                  className="checkbox checkbox-xs mt-0.5"
+                  className="ds-checkbox ds-checkbox-xs mt-0.5"
                   checked={acceptTerms}
                   onChange={(event) => setAcceptTerms(event.target.checked)}
                   required
@@ -224,16 +224,16 @@ export default function CartPage() {
                     "I accept the Terms and Conditions and have read the Privacy Policy.",
                     "Ich akzeptiere die AGB und habe die Datenschutzerklärung gelesen.",
                   )}{" "}
-                  <Link to="/legal/terms" className="link link-primary">
+                  <Link to="/legal/terms" className="ds-link ds-link-primary">
                     {t("footer.terms")}
                   </Link>{" "}
                   ·{" "}
-                  <Link to="/legal/privacy" className="link link-primary">
+                  <Link to="/legal/privacy" className="ds-link ds-link-primary">
                     {t("footer.privacy")}
                   </Link>
                 </span>
               </label>
-              <button disabled={loading || !acceptTerms} className="btn btn-primary mt-4 w-full">
+              <button disabled={loading || !acceptTerms} className="ds-btn ds-btn-primary mt-4 w-full">
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingBag className="h-4 w-4" />}
                 {t("cart.placeOrder")}
               </button>
@@ -250,7 +250,7 @@ export default function CartPage() {
               <p className="mt-1 text-xs text-base-content/65">{t("cart.loginText")}</p>
               <button
                 onClick={() => void navigate({ to: "/login" })}
-                className="btn btn-primary mt-4 w-full"
+                className="ds-btn ds-btn-primary mt-4 w-full"
               >
                 {t("nav.login")}
               </button>

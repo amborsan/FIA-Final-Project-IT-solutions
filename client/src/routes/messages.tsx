@@ -107,13 +107,13 @@ function MessagesContent() {
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t("chat.conversations")}</h1>
           <p className="mt-1 text-sm text-base-content/65">{t("chat.subtitle")}</p>
         </div>
-        <button onClick={() => setShowNew((value) => !value)} className="btn btn-primary btn-sm">
+        <button onClick={() => setShowNew((value) => !value)} className="ds-btn ds-btn-primary ds-btn-sm">
           {showNew ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           {t("chat.newChat")}
         </button>
       </div>
 
-      {error && <div className="alert alert-error mt-4 text-sm">{error}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mt-4 text-sm">{error}</div>}
 
       {showNew && (
         <form onSubmit={startChat} className="mt-4 rounded-box border border-base-300 bg-base-100 p-5">
@@ -125,7 +125,7 @@ function MessagesContent() {
               value={newChat.subject}
               onChange={(event) => setNewChat({ ...newChat, subject: event.target.value })}
               placeholder={t("chat.subjectPlaceholder")}
-              className="input input-bordered input-sm w-full"
+              className="ds-input ds-input-bordered ds-input-sm w-full"
             />
             <textarea
               required
@@ -133,9 +133,9 @@ function MessagesContent() {
               value={newChat.message}
               onChange={(event) => setNewChat({ ...newChat, message: event.target.value })}
               placeholder={t("chat.message")}
-              className="textarea textarea-bordered w-full text-sm"
+              className="ds-textarea ds-textarea-bordered w-full text-sm"
             />
-            <button disabled={sending} className="btn btn-primary btn-sm w-fit">
+            <button disabled={sending} className="ds-btn ds-btn-primary ds-btn-sm w-fit">
               {sending && <Loader2 className="h-4 w-4 animate-spin" />}
               {t("chat.start")}
             </button>
@@ -157,7 +157,7 @@ function MessagesContent() {
               }`}
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="badge badge-ghost badge-xs">
+                <span className="ds-badge ds-badge-ghost ds-badge-xs">
                   {entry.type === "SUPPORT" ? t("chat.support") : entry.type === "DIRECT" ? t("chat.direct") : t("chat.guest")}
                 </span>
                 <span className="text-[10px] text-base-content/70">{formatDate(entry.updatedAt)}</span>
@@ -234,12 +234,12 @@ function MessagesContent() {
                     }}
                     rows={2}
                     placeholder={t("chat.replyPlaceholder")}
-                    className="textarea textarea-bordered flex-1 resize-none text-sm"
+                    className="ds-textarea ds-textarea-bordered flex-1 resize-none text-sm"
                   />
                   <button
                     onClick={send}
                     disabled={sending || !reply.trim()}
-                    className="btn btn-primary h-11 w-11 p-0"
+                    className="ds-btn ds-btn-primary h-11 w-11 p-0"
                   >
                     {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                   </button>

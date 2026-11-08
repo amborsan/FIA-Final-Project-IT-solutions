@@ -39,7 +39,7 @@ export default function ServicesPage() {
                 {t("services.text")}
               </p>
             </div>
-            <Link to="/quote" search={{ service: undefined }} className="btn btn-primary">
+            <Link to="/quote" search={{ service: undefined }} className="ds-btn ds-btn-primary">
               {t("nav.quote")} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -47,7 +47,7 @@ export default function ServicesPage() {
       </section>
 
       <section className="container-page py-10">
-        <label className="input input-bordered flex max-w-md items-center gap-2">
+        <label className="ds-input ds-input-bordered flex max-w-md items-center gap-2">
           <Search className="h-4 w-4 opacity-50" />
           <input
             value={search}
@@ -88,7 +88,7 @@ export default function ServicesPage() {
               )}
             </p>
           </div>
-          <Link to="/quote" search={{ service: undefined }} className="btn btn-primary">
+          <Link to="/quote" search={{ service: undefined }} className="ds-btn ds-btn-primary">
             {t("nav.quote")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

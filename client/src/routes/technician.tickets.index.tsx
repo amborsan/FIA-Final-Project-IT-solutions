@@ -40,7 +40,7 @@ function TechnicianTicketsPage() {
 
   return (
     <DashboardShell nav={nav} title={t("technician.assignedTickets")} subtitle={t("tickets.text")}>
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mb-4 text-sm">{error}</div>}
       {isLoading && <PageLoader />}
       {isError && <ErrorState onRetry={() => void refetch()} />}
       {!isLoading && !isError && tickets.length === 0 && (
@@ -62,14 +62,14 @@ function TechnicianTicketsPage() {
                 {ticket.reference} · {ticket.customer?.fullName} · {formatDate(ticket.createdAt)}
               </p>
             </div>
-            <span className="badge badge-outline badge-xs">
+            <span className="ds-badge ds-badge-outline ds-badge-xs">
               {t(`priority.${ticket.priority}` as "priority.LOW")}
             </span>
             <StatusBadge status={ticket.status} />
             <select
               value={ticket.status}
               onChange={(event) => void updateStatus(ticket.id, event.target.value)}
-              className="select select-bordered select-xs"
+              className="ds-select ds-select-bordered ds-select-xs"
             >
               {statuses.map((status) => (
                 <option key={status} value={status}>
@@ -80,7 +80,7 @@ function TechnicianTicketsPage() {
             <Link
               to="/technician/tickets/$id"
               params={{ id: ticket.id }}
-              className="btn btn-ghost btn-xs"
+              className="ds-btn ds-btn-ghost ds-btn-xs"
             >
               <ArrowRight className="h-4 w-4" />
             </Link>

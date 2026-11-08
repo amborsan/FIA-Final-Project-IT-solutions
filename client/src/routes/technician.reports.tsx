@@ -88,17 +88,17 @@ function TechnicianReportsPage() {
       title={t("technician.reports")}
       subtitle={t("reports.text")}
       actions={
-        <button onClick={() => setShowForm((value) => !value)} className="btn btn-primary btn-sm">
+        <button onClick={() => setShowForm((value) => !value)} className="ds-btn ds-btn-primary ds-btn-sm">
           {showForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           {t("technician.newReport")}
         </button>
       }
     >
-      {message && <div className="alert alert-success mb-4 text-sm">{message}</div>}
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {message && <div role="status" className="ds-alert ds-alert-success mb-4 text-sm">{message}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mb-4 text-sm">{error}</div>}
 
       {showForm && (
-        <form onSubmit={submit} className="mb-5 rounded-box border border-base-300 bg-base-100 p-5">
+        <form aria-busy={loading} onSubmit={submit} className="mb-5 rounded-box border border-base-300 bg-base-100 p-5">
           <h2 className="text-base font-bold">{t("technician.addReport")}</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <label className="block">
@@ -106,7 +106,7 @@ function TechnicianReportsPage() {
               <select
                 value={form.requestId}
                 onChange={(event) => setForm({ ...form, requestId: event.target.value, ticketId: "" })}
-                className="select select-bordered w-full"
+                className="ds-select ds-select-bordered w-full"
               >
                 <option value="">{t("technician.assignedRequests")}</option>
                 {(requestsQuery.data?.requests ?? []).map((request) => (
@@ -121,7 +121,7 @@ function TechnicianReportsPage() {
               <select
                 value={form.ticketId}
                 onChange={(event) => setForm({ ...form, ticketId: event.target.value, requestId: "" })}
-                className="select select-bordered w-full"
+                className="ds-select ds-select-bordered w-full"
               >
                 <option value="">{t("technician.assignedTickets")}</option>
                 {(ticketsQuery.data?.tickets ?? []).map((ticket) => (
@@ -138,7 +138,7 @@ function TechnicianReportsPage() {
                 minLength={3}
                 value={form.title}
                 onChange={(event) => setForm({ ...form, title: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block sm:col-span-2">
@@ -149,7 +149,7 @@ function TechnicianReportsPage() {
                 rows={4}
                 value={form.workDone}
                 onChange={(event) => setForm({ ...form, workDone: event.target.value })}
-                className="textarea textarea-bordered w-full"
+                className="ds-textarea ds-textarea-bordered w-full"
               />
             </label>
             <label className="block">
@@ -161,7 +161,7 @@ function TechnicianReportsPage() {
                 step={0.25}
                 value={form.hours}
                 onChange={(event) => setForm({ ...form, hours: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -169,7 +169,7 @@ function TechnicianReportsPage() {
               <input
                 value={form.materials}
                 onChange={(event) => setForm({ ...form, materials: event.target.value })}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block sm:col-span-2">
@@ -178,11 +178,11 @@ function TechnicianReportsPage() {
                 type="file"
                 accept="application/pdf,image/png,image/jpeg"
                 onChange={(event) => setFile(event.target.files?.[0] ?? null)}
-                className="file-input file-input-bordered w-full"
+                className="ds-file-input ds-file-input-bordered w-full"
               />
             </label>
           </div>
-          <button disabled={loading} className="btn btn-primary mt-4">
+          <button disabled={loading} className="ds-btn ds-btn-primary mt-4">
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             {t("technician.submitReport")}
           </button>
@@ -225,7 +225,7 @@ function TechnicianReportsPage() {
                     report.fileOriginalName || "report.pdf",
                   )
                 }
-                className="btn btn-outline btn-xs mt-3"
+                className="ds-btn ds-btn-outline ds-btn-xs mt-3"
               >
                 <Download className="h-3.5 w-3.5" /> {t("reports.download")}
               </button>

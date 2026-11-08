@@ -23,9 +23,9 @@ export function DashboardShell({
   actions?: ReactNode;
 }) {
   return (
-    <div className="container-page py-8">
-      <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
-        <aside className="lg:sticky lg:top-24 lg:self-start">
+    <div className="dashboard-workspace container-page py-8">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
+        <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
           <nav className="flex gap-1 overflow-x-auto rounded-box border border-base-300 bg-base-100 p-2 lg:flex-col lg:overflow-visible">
             {nav.map((item) => {
               const Icon = item.icon;
@@ -37,7 +37,7 @@ export function DashboardShell({
                   className="flex shrink-0 items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-base-content/65 transition hover:bg-base-200 hover:text-base-content"
                   activeProps={{
                     className:
-                      "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold bg-primary/10 text-primary",
+                      "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold bg-primary text-primary-content",
                   }}
                 >
                   <Icon className="h-4 w-4" />
@@ -48,7 +48,7 @@ export function DashboardShell({
           </nav>
         </aside>
 
-        <main className="min-w-0">
+        <div className="workspace-content min-w-0">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{title}</h1>
@@ -57,7 +57,7 @@ export function DashboardShell({
             {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
           </div>
           <div className="mt-6">{children}</div>
-        </main>
+        </div>
       </div>
     </div>
   );

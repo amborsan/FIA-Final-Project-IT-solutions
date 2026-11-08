@@ -34,7 +34,7 @@ validation change or a server bug fix:
 
 ## Frontend rules
 
-- Use the existing stack: React + TanStack Router/Query + Tailwind + DaisyUI.
+- Use the existing stack: React + TanStack Router/Query + shadcn/ui (Radix) + Tailwind CSS v4.
 - Add every user-facing string in both `en` and `de`.
 - Use `useI18n()` and `pick()`; never hardcode UI text.
 - Keep the existing components and design tokens.

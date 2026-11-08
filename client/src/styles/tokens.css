@@ -1,0 +1,76 @@
+/* Shared design tokens. Keep primitives, compatibility aliases and semantic mappings together. */
+
+/* Palette, typography and radii used by Tailwind utilities. */
+@theme {
+  --font-sans: "IBM Plex Sans", sans-serif;
+  --color-base-100: #FFFFFF;
+  --color-base-200: #FDFAF5;
+  --color-base-300: #D6D6D6;
+  --color-base-content: #383030;
+  --color-primary: #70A2E1;
+  --color-primary-content: #383030;
+  --color-secondary: #77C6B3;
+  --color-secondary-content: #383030;
+  --color-accent: #FFD37D;
+  --color-accent-content: #383030;
+  --color-neutral: #383030;
+  --color-neutral-content: #FFFFFF;
+  --color-info: #70A2E1;
+  --color-info-content: #383030;
+  --color-success: #77C6B3;
+  --color-success-content: #383030;
+  --color-warning: #FFD37D;
+  --color-warning-content: #383030;
+  --color-error: #FFBABA;
+  --color-error-content: #383030;
+  --color-cobalt: #3658D3;
+  --color-cloud: #D6E3EF;
+  --color-muted: #F2EEE8;
+  --color-soft-shadow: #3830300c;
+  --color-translucent-surface: #ffffff88;
+  --radius-box: 1.25rem;
+  --radius-field: .75rem;
+}
+
+/* Existing component aliases and the approved spacing scale. */
+:root {
+  --it-canvas: var(--color-base-200);
+  --it-ink: var(--color-base-content);
+  --it-blue: var(--color-primary);
+  --it-cobalt: var(--color-cobalt);
+  --it-yellow: var(--color-accent);
+  --it-pink: var(--color-error);
+  --it-mint: var(--color-secondary);
+  --it-muted: #655D57;
+  --it-border: var(--color-base-300);
+  --it-space-1: 4px;
+  --it-space-2: 8px;
+  --it-space-3: 12px;
+  --it-space-4: 16px;
+  --it-space-6: 24px;
+  --it-space-8: 32px;
+  --it-space-12: 48px;
+  --it-space-18: 72px;
+}
+
+/* shadcn semantic mappings; retain the existing palette and contrast. */
+@theme inline {
+ --color-background: var(--color-base-200);
+ --color-foreground: var(--color-base-content);
+ --color-card: var(--color-base-100);
+ --color-card-foreground: var(--color-base-content);
+ --color-popover: var(--color-base-100);
+ --color-popover-foreground: var(--color-base-content);
+ --color-primary-foreground: var(--color-primary-content);
+ --color-secondary-foreground: var(--color-secondary-content);
+ --color-accent-foreground: var(--color-accent-content);
+ --color-muted-foreground: var(--it-muted);
+ --color-destructive: #943B3B;
+ --color-border: var(--color-base-300);
+ --color-input: var(--color-base-300);
+ --color-ring: var(--color-cobalt);
+ --radius-sm: .5rem;
+ --radius-md: .75rem;
+ --radius-lg: 1.25rem;
+ --radius-xl: 1.5rem;
+}

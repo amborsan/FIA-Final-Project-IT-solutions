@@ -18,7 +18,7 @@ Typical pages:
 - `src/routes/account.tsx`, `src/routes/messages.tsx`
 - `src/context/**` — auth, cart
 - `src/lib/**` — API client and API types
-- `src/index.css` — Tailwind/DaisyUI theme
+- `src/index.css` — Tailwind tokens and shared design foundations
 - `vite.config.ts`, `eslint.config.js`, `tsconfig*.json`, `package.json`
 - frontend tests and QA checklists
 

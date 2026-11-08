@@ -32,7 +32,7 @@ export default function ServiceDetailPage() {
     return (
       <div className="container-page py-10">
         <ErrorState message={t("services.notFound")} />
-        <Link to="/services" className="btn btn-outline btn-sm">
+        <Link to="/services" className="ds-btn ds-btn-outline ds-btn-sm">
           <ArrowLeft className="h-4 w-4" /> {t("services.eyebrow")}
         </Link>
       </div>
@@ -75,7 +75,7 @@ export default function ServiceDetailPage() {
                 <Link
                   to="/quote"
                   search={{ service: service.id }}
-                  className="btn btn-primary"
+                  className="ds-btn ds-btn-primary"
                 >
                   {t("services.requestQuote")} <ArrowRight className="h-4 w-4" />
                 </Link>

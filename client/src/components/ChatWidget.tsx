@@ -150,7 +150,7 @@ export function ChatWidget() {
             {selectedId && user ? (
               <button
                 onClick={() => setSelectedId(null)}
-                className="btn btn-ghost btn-xs text-primary-content"
+                className="ds-btn ds-btn-ghost ds-btn-xs text-primary-content"
                 aria-label={t("common.back")}
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -167,7 +167,7 @@ export function ChatWidget() {
             </div>
             <button
               onClick={() => setOpen(false)}
-              className="btn btn-ghost btn-xs text-primary-content"
+              className="ds-btn ds-btn-ghost ds-btn-xs text-primary-content"
               aria-label={t("chat.close")}
             >
               <X className="h-4 w-4" />
@@ -204,7 +204,7 @@ export function ChatWidget() {
                   <p className="text-xs font-semibold uppercase tracking-wide text-base-content/65">
                     {t("chat.conversations")}
                   </p>
-                  <Link to="/messages" className="link link-primary text-xs">
+                  <Link to="/messages" className="ds-link ds-link-primary text-xs">
                     {t("chat.allChats")}
                   </Link>
                 </div>
@@ -216,7 +216,7 @@ export function ChatWidget() {
                   >
                     <div className="flex items-center justify-between gap-2">
                       <p className="truncate text-xs font-semibold">{conversation.subject}</p>
-                      <span className="badge badge-ghost badge-xs">{conversation.type}</span>
+                      <span className="ds-badge ds-badge-ghost ds-badge-xs">{conversation.type}</span>
                     </div>
                     <p className="mt-1 truncate text-[11px] text-base-content/65">
                       {conversation.messages[0]?.body || t("chat.noReply")}
@@ -237,7 +237,7 @@ export function ChatWidget() {
                 {guest && (
                   <div className="flex items-center justify-between gap-2 rounded-lg bg-base-200 px-2.5 py-2 text-[11px] text-base-content/70">
                     <span>{t("chat.guestNote")}</span>
-                    <button onClick={closeGuest} className="link link-primary shrink-0">
+                    <button onClick={closeGuest} className="ds-link ds-link-primary shrink-0">
                       {t("chat.newChat")}
                     </button>
                   </div>
@@ -282,12 +282,12 @@ export function ChatWidget() {
                   rows={2}
                   maxLength={4000}
                   placeholder={t("chat.placeholder")}
-                  className="textarea textarea-bordered min-h-12 flex-1 resize-none text-sm"
+                  className="ds-textarea ds-textarea-bordered min-h-12 flex-1 resize-none text-sm"
                 />
                 <button
                   onClick={() => void (user ? sendAuthenticated() : sendGuest())}
                   disabled={sending || !draft.trim()}
-                  className="btn btn-primary btn-sm h-11 w-11 p-0"
+                  className="ds-btn ds-btn-primary ds-btn-sm h-11 w-11 p-0"
                   aria-label={t("chat.send")}
                 >
                   {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
@@ -352,7 +352,7 @@ function GuestStart({ onStarted }: { onStarted: (session: GuestSession) => void 
       <input
         required
         minLength={2}
-        className="input input-bordered input-sm w-full"
+        className="ds-input ds-input-bordered ds-input-sm w-full"
         placeholder={t("chat.name")}
         value={form.name}
         onChange={(event) => setForm({ ...form, name: event.target.value })}
@@ -360,7 +360,7 @@ function GuestStart({ onStarted }: { onStarted: (session: GuestSession) => void 
       <input
         required
         type="email"
-        className="input input-bordered input-sm w-full"
+        className="ds-input ds-input-bordered ds-input-sm w-full"
         placeholder={t("chat.email")}
         value={form.email}
         onChange={(event) => setForm({ ...form, email: event.target.value })}
@@ -368,7 +368,7 @@ function GuestStart({ onStarted }: { onStarted: (session: GuestSession) => void 
       <input
         required
         minLength={3}
-        className="input input-bordered input-sm w-full"
+        className="ds-input ds-input-bordered ds-input-sm w-full"
         placeholder={t("chat.subject")}
         value={form.subject}
         onChange={(event) => setForm({ ...form, subject: event.target.value })}
@@ -377,7 +377,7 @@ function GuestStart({ onStarted }: { onStarted: (session: GuestSession) => void 
         required
         minLength={1}
         rows={3}
-        className="textarea textarea-bordered w-full text-sm"
+        className="ds-textarea ds-textarea-bordered w-full text-sm"
         placeholder={t("chat.message")}
         value={form.message}
         onChange={(event) => setForm({ ...form, message: event.target.value })}
@@ -386,19 +386,19 @@ function GuestStart({ onStarted }: { onStarted: (session: GuestSession) => void 
         <input
           type="checkbox"
           required
-          className="checkbox checkbox-xs mt-0.5"
+          className="ds-checkbox ds-checkbox-xs mt-0.5"
           checked={form.acceptPrivacy}
           onChange={(event) => setForm({ ...form, acceptPrivacy: event.target.checked })}
         />
         <span>
           {t("chat.consent")}{" "}
-          <Link to="/legal/privacy" className="link link-primary">
+          <Link to="/legal/privacy" className="ds-link ds-link-primary">
             {t("footer.privacy")}
           </Link>
         </span>
       </label>
       {error && <p className="text-xs text-error">{error}</p>}
-      <button disabled={loading} className="btn btn-primary btn-sm w-full">
+      <button disabled={loading} className="ds-btn ds-btn-primary ds-btn-sm w-full">
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("chat.start")}
       </button>
     </form>
@@ -438,7 +438,7 @@ function CustomerStart({ onStarted }: { onStarted: (id: string) => void }) {
       <input
         required
         minLength={3}
-        className="input input-bordered input-sm w-full"
+        className="ds-input ds-input-bordered ds-input-sm w-full"
         placeholder={t("chat.subjectPlaceholder")}
         value={subject}
         onChange={(event) => setSubject(event.target.value)}
@@ -446,13 +446,13 @@ function CustomerStart({ onStarted }: { onStarted: (id: string) => void }) {
       <textarea
         required
         rows={4}
-        className="textarea textarea-bordered w-full text-sm"
+        className="ds-textarea ds-textarea-bordered w-full text-sm"
         placeholder={t("chat.message")}
         value={message}
         onChange={(event) => setMessage(event.target.value)}
       />
       {error && <p className="text-xs text-error">{error}</p>}
-      <button disabled={loading} className="btn btn-primary btn-sm w-full">
+      <button disabled={loading} className="ds-btn ds-btn-primary ds-btn-sm w-full">
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("chat.start")}
       </button>
     </form>

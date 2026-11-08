@@ -81,7 +81,7 @@ function RequestDetailPage() {
     return (
       <DashboardShell nav={nav} title={t("requests.details")}>
         <ErrorState message={t("requests.notFound")} />
-        <Link to="/portal/requests" className="btn btn-outline btn-sm mt-4">
+        <Link to="/portal/requests" className="ds-btn ds-btn-outline ds-btn-sm mt-4">
           <ArrowLeft className="h-4 w-4" /> {t("requests.back")}
         </Link>
       </DashboardShell>
@@ -99,13 +99,13 @@ function RequestDetailPage() {
       title={request.title}
       subtitle={`${request.reference} · ${formatDate(request.createdAt)}`}
       actions={
-        <Link to="/portal/requests" className="btn btn-ghost btn-sm">
+        <Link to="/portal/requests" className="ds-btn ds-btn-ghost ds-btn-sm">
           <ArrowLeft className="h-4 w-4" /> {t("common.back")}
         </Link>
       }
     >
-      {message && <div className="alert alert-success mb-4 text-sm">{message}</div>}
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {message && <div role="status" className="ds-alert ds-alert-success mb-4 text-sm">{message}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mb-4 text-sm">{error}</div>}
 
       <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-5">
@@ -164,7 +164,7 @@ function RequestDetailPage() {
               <button
                 onClick={cancelRequest}
                 disabled={busy === "cancel"}
-                className="btn btn-ghost btn-xs mt-4 text-error"
+                className="ds-btn ds-btn-ghost ds-btn-xs mt-4 text-error"
               >
                 {busy === "cancel" && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                 {t("requests.cancelRequest")}
@@ -192,7 +192,7 @@ function RequestDetailPage() {
                   </div>
 
                   <div className="mt-3 overflow-x-auto">
-                    <table className="table table-xs">
+                    <table className="ds-table ds-table-xs">
                       <thead>
                         <tr>
                           <th>{t("common.description")}</th>
@@ -242,7 +242,7 @@ function RequestDetailPage() {
                       <button
                         onClick={() => void quoteAction(quote.id, "accept")}
                         disabled={!!busy}
-                        className="btn btn-success btn-sm"
+                        className="ds-btn ds-btn-success ds-btn-sm"
                       >
                         {busy === quote.id + "accept" ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
@@ -254,7 +254,7 @@ function RequestDetailPage() {
                       <button
                         onClick={() => void quoteAction(quote.id, "reject")}
                         disabled={!!busy}
-                        className="btn btn-ghost btn-sm text-error"
+                        className="ds-btn ds-btn-ghost ds-btn-sm text-error"
                       >
                         <XCircle className="h-4 w-4" />
                         {t("requests.rejectQuote")}
@@ -292,7 +292,7 @@ function RequestDetailPage() {
                             report.fileOriginalName || "report.pdf",
                           )
                         }
-                        className="btn btn-outline btn-xs mt-2"
+                        className="ds-btn ds-btn-outline ds-btn-xs mt-2"
                       >
                         <Download className="h-3.5 w-3.5" /> {t("requests.downloadReport")}
                       </button>
@@ -352,7 +352,7 @@ function RequestDetailPage() {
                 )}
               </p>
             </div>
-            <Link to="/portal/orders" className="btn btn-outline btn-xs mt-3">
+            <Link to="/portal/orders" className="ds-btn ds-btn-outline ds-btn-xs mt-3">
               {t("portal.orders")}
             </Link>
           </Panel>

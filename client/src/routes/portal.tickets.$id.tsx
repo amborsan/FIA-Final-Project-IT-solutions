@@ -68,7 +68,7 @@ function TicketDetailPage() {
     return (
       <DashboardShell nav={nav} title={t("tickets.details")}>
         <ErrorState message={t("common.error")} />
-        <Link to="/portal/tickets" className="btn btn-outline btn-sm mt-4">
+        <Link to="/portal/tickets" className="ds-btn ds-btn-outline ds-btn-sm mt-4">
           <ArrowLeft className="h-4 w-4" /> {t("tickets.back")}
         </Link>
       </DashboardShell>
@@ -83,7 +83,7 @@ function TicketDetailPage() {
       title={ticket.subject}
       subtitle={`${ticket.reference} · ${formatDateTime(ticket.createdAt)}`}
       actions={
-        <Link to="/portal/tickets" className="btn btn-ghost btn-sm">
+        <Link to="/portal/tickets" className="ds-btn ds-btn-ghost ds-btn-sm">
           <ArrowLeft className="h-4 w-4" /> {t("common.back")}
         </Link>
       }
@@ -127,9 +127,9 @@ function TicketDetailPage() {
                   rows={2}
                   maxLength={4000}
                   placeholder={t("chat.replyPlaceholder")}
-                  className="textarea textarea-bordered flex-1 resize-none text-sm"
+                  className="ds-textarea ds-textarea-bordered flex-1 resize-none text-sm"
                 />
-                <button disabled={sending || !reply.trim()} className="btn btn-primary h-12 w-12 p-0">
+                <button disabled={sending || !reply.trim()} className="ds-btn ds-btn-primary h-12 w-12 p-0">
                   {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                 </button>
               </div>
@@ -150,7 +150,7 @@ function TicketDetailPage() {
               </div>
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs text-base-content/65">{t("tickets.priority")}</span>
-                <span className="badge badge-outline badge-sm">
+                <span className="ds-badge ds-badge-outline ds-badge-sm">
                   {t(`priority.${ticket.priority}` as "priority.LOW")}
                 </span>
               </div>

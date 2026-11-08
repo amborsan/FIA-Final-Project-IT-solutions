@@ -3,37 +3,37 @@ import { useI18n } from "../i18n/I18nContext";
 import type { TranslationKey } from "../i18n/translations";
 
 const colors: Record<string, string> = {
-  NEW: "badge-info",
-  REVIEWING: "badge-warning",
-  QUOTED: "badge-info",
-  APPROVED: "badge-success",
-  SCHEDULED: "badge-info",
-  IN_PROGRESS: "badge-warning",
-  COMPLETED: "badge-success",
-  CANCELLED: "badge-error",
-  PENDING: "badge-warning",
-  CONFIRMED: "badge-info",
-  PROCESSING: "badge-warning",
-  DRAFT: "badge-ghost",
-  PUBLISHED: "badge-success",
-  SENT: "badge-info",
-  ACCEPTED: "badge-success",
-  REJECTED: "badge-error",
-  EXPIRED: "badge-ghost",
-  OPEN: "badge-warning",
-  WAITING_CUSTOMER: "badge-info",
-  RESOLVED: "badge-success",
-  CLOSED: "badge-ghost",
-  LOW: "badge-ghost",
-  MEDIUM: "badge-info",
-  HIGH: "badge-warning",
-  URGENT: "badge-error",
-  ISSUED: "badge-info",
-  PAID: "badge-success",
-  OVERDUE: "badge-error",
-  SUBMITTED: "badge-info",
-  READ: "badge-ghost",
-  REPLIED: "badge-success",
+  NEW: "ds-badge-info",
+  REVIEWING: "ds-badge-warning",
+  QUOTED: "ds-badge-info",
+  APPROVED: "ds-badge-success",
+  SCHEDULED: "ds-badge-info",
+  IN_PROGRESS: "ds-badge-info",
+  COMPLETED: "ds-badge-success",
+  CANCELLED: "ds-badge-error",
+  PENDING: "ds-badge-warning",
+  CONFIRMED: "ds-badge-info",
+  PROCESSING: "ds-badge-info",
+  DRAFT: "ds-badge-ghost",
+  PUBLISHED: "ds-badge-success",
+  SENT: "ds-badge-info",
+  ACCEPTED: "ds-badge-success",
+  REJECTED: "ds-badge-error",
+  EXPIRED: "ds-badge-ghost",
+  OPEN: "ds-badge-warning",
+  WAITING_CUSTOMER: "ds-badge-info",
+  RESOLVED: "ds-badge-success",
+  CLOSED: "ds-badge-ghost",
+  LOW: "ds-badge-ghost",
+  MEDIUM: "ds-badge-info",
+  HIGH: "ds-badge-warning",
+  URGENT: "ds-badge-error",
+  ISSUED: "ds-badge-info",
+  PAID: "ds-badge-success",
+  OVERDUE: "ds-badge-error",
+  SUBMITTED: "ds-badge-info",
+  READ: "ds-badge-ghost",
+  REPLIED: "ds-badge-success",
 };
 
 export function StatusBadge({ status }: { status: string }) {
@@ -41,7 +41,7 @@ export function StatusBadge({ status }: { status: string }) {
   const key = `status.${status}` as TranslationKey;
   const label = t(key);
   return (
-    <span className={`badge badge-sm whitespace-nowrap ${colors[status] ?? "badge-ghost"}`}>
+    <span className={`ds-badge ds-badge-sm whitespace-nowrap ${colors[status] ?? "ds-badge-ghost"}`}>
       {label === key ? status.replaceAll("_", " ").toLowerCase() : label}
     </span>
   );
@@ -50,8 +50,8 @@ export function StatusBadge({ status }: { status: string }) {
 export function PageLoader({ label }: { label?: string }) {
   const { t } = useI18n();
   return (
-    <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3">
-      <span className="loading loading-spinner loading-lg text-primary" />
+    <div role="status" aria-live="polite" className="flex min-h-[40vh] flex-col items-center justify-center gap-3">
+      <span aria-hidden="true" className="ds-loading ds-loading-spinner ds-loading-lg text-primary" />
       <p className="text-sm text-base-content/70">{label ?? t("common.loading")}</p>
     </div>
   );
@@ -60,10 +60,10 @@ export function PageLoader({ label }: { label?: string }) {
 export function ErrorState({ message, onRetry }: { message?: string; onRetry?: () => void }) {
   const { t } = useI18n();
   return (
-    <div className="alert alert-error my-6">
+    <div role="alert" className="ds-alert ds-alert-error my-6">
       <span>{message || t("common.error")}</span>
       {onRetry && (
-        <button className="btn btn-sm" onClick={onRetry}>
+        <button className="ds-btn ds-btn-sm" onClick={onRetry}>
           {t("common.retry")}
         </button>
       )}

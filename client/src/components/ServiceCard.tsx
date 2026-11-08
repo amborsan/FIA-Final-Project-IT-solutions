@@ -11,7 +11,7 @@ export function ServiceCard({ service }: { service: Service }) {
     <Link
       to="/services/$slug"
       params={{ slug: service.slug }}
-      className="card card-hover group border border-base-300 bg-base-100 p-5"
+      className="ds-card ds-card-hover group border border-base-300 bg-base-100 p-5"
     >
       <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary group-hover:text-primary-content">
         <ServiceIcon name={service.icon} />

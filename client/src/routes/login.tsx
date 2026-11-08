@@ -58,7 +58,7 @@ export default function LoginPage() {
           <h1 className="mt-4 text-2xl font-bold">{t("auth.loginTitle")}</h1>
           <p className="mt-1 text-sm text-base-content/70">{t("auth.loginText")}</p>
 
-          <form onSubmit={submit} className="mt-6 space-y-4">
+          <form aria-busy={loading} onSubmit={submit} className="mt-6 space-y-4">
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">{t("auth.email")}</span>
               <input
@@ -67,7 +67,7 @@ export default function LoginPage() {
                 autoComplete="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
             <label className="block">
@@ -78,11 +78,11 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="input input-bordered w-full"
+                className="ds-input ds-input-bordered w-full"
               />
             </label>
-            {error && <div className="alert alert-error py-2 text-sm">{error}</div>}
-            <button disabled={loading} className="btn btn-primary w-full">
+            {error && <div role="alert" className="ds-alert ds-alert-error py-2 text-sm">{error}</div>}
+            <button disabled={loading} className="ds-btn ds-btn-primary w-full">
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               {t("auth.loginButton")}
             </button>
@@ -90,7 +90,7 @@ export default function LoginPage() {
 
           <p className="mt-4 text-center text-sm text-base-content/65">
             {t("auth.noAccount")}{" "}
-            <Link to="/register" className="link link-primary font-semibold">
+            <Link to="/register" className="ds-link ds-link-primary font-semibold">
               {t("auth.registerButton")}
             </Link>
           </p>

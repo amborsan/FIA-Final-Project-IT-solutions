@@ -1,0 +1,59 @@
+/* Project-owned controls built from Tailwind utilities. No UI plugin required. */
+@layer components {
+  .ds-btn { @apply inline-flex shrink-0 items-center justify-center gap-2 border border-base-300 bg-base-100 px-5 py-2.5 text-sm leading-5 font-semibold transition-colors cursor-pointer; }
+  .ds-btn-sm { @apply px-3 py-2 text-xs; }
+  .ds-btn-xs { @apply px-2.5 py-1.5 text-xs; }
+  .ds-btn-circle { @apply aspect-square p-2.5; }
+  .ds-btn-ghost { @apply border-transparent bg-transparent hover:bg-base-200; }
+  .ds-btn-outline { @apply border-current bg-transparent; }
+  .ds-btn-accent { @apply border-transparent bg-accent text-accent-content hover:bg-accent/80; }
+  .ds-btn-success { @apply border-transparent bg-success text-success-content hover:bg-success/80; }
+  .ds-btn-error { @apply border-transparent bg-error text-error-content hover:bg-error/80; }
+  .ds-btn:disabled, .ds-btn-disabled { @apply cursor-not-allowed; }
+  .ds-input, .ds-select, .ds-textarea, .ds-file-input { @apply w-full px-3 py-2.5 text-sm leading-5; }
+  .ds-input, .ds-select, .ds-file-input { @apply h-11; }
+  .ds-select { @apply pr-8; appearance: auto; }
+  .ds-input-sm, .ds-select-sm, .ds-select-xs { @apply text-xs; }
+  .ds-input > input { @apply min-w-0 flex-1 bg-transparent outline-none; }
+  .ds-textarea { @apply min-h-28 resize-y; }
+  .ds-file-input { @apply px-0 py-0; }
+  .ds-file-input::file-selector-button { @apply mr-3 h-full border-0 bg-primary px-4 text-xs font-semibold text-primary-content cursor-pointer; }
+  .ds-checkbox { @apply size-5 shrink-0 rounded border border-base-300 accent-primary cursor-pointer; appearance: auto; }
+  .ds-checkbox-sm { @apply size-4; }
+  .ds-checkbox-xs { @apply size-4; }
+  .ds-badge { @apply inline-flex w-fit shrink-0 items-center justify-center border border-base-300 px-3 py-1 text-xs leading-4; }
+  .ds-badge-sm { @apply px-2 py-0.5 text-xs; }
+  .ds-badge-xs { @apply px-1.5 py-0.5 text-[10px]; }
+  .ds-badge-primary { @apply border-transparent bg-primary text-primary-content; }
+  .ds-badge-accent { @apply border-transparent bg-accent text-accent-content; }
+  .ds-badge-outline { @apply border-current bg-transparent; }
+  .ds-alert { @apply flex items-start gap-3 border border-base-300 p-4 text-sm; }
+  .ds-card { @apply relative flex flex-col overflow-hidden rounded-box bg-base-100; }
+  .ds-card-body { @apply flex flex-1 flex-col gap-3 p-6; }
+  .ds-link { @apply cursor-pointer underline underline-offset-4 hover:decoration-2; }
+  .ds-dropdown { @apply relative; }
+  .ds-dropdown-content { @apply absolute left-0 top-full hidden; }
+  .ds-dropdown-end > .ds-dropdown-content { @apply right-0 left-auto; }
+  .ds-dropdown:focus-within > .ds-dropdown-content { @apply block; }
+  .ds-menu { @apply flex flex-col gap-1 text-sm; }
+  .ds-menu li > :is(a, button) { @apply flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-base-200; }
+  .ds-menu-title { @apply font-semibold text-base-content/60; }
+  .ds-dropdown > .ds-dropdown-content { @apply hidden; }
+  .ds-dropdown:focus-within > .ds-dropdown-content { @apply block; }
+  .ds-tabs { @apply inline-flex max-w-full flex-wrap gap-1 rounded-full bg-base-200 p-1; }
+  .ds-tab { @apply inline-flex min-h-11 items-center justify-center rounded-full px-5 text-sm font-medium cursor-pointer hover:bg-base-100; }
+  .ds-tab-active { @apply bg-primary text-primary-content; }
+  .ds-join { @apply inline-flex items-center; }
+  .ds-join > .ds-join-item { @apply rounded-none; }
+  .ds-join > .ds-join-item:first-child { @apply rounded-l-full; }
+  .ds-join > .ds-join-item:last-child { @apply rounded-r-full; }
+  .ds-join > .ds-join-item + .ds-join-item { margin-left: -1px; }
+  .ds-table { @apply w-full border-collapse text-left; }
+  .ds-table :is(th, td) { @apply border-b border-base-300; }
+  .ds-table tbody tr:last-child > td { @apply border-b-0; }
+  .ds-table-zebra tbody tr:nth-child(even) { @apply bg-base-200; }
+  .ds-table :is(th, td):first-child { @apply pl-4; }
+  .ds-loading { @apply inline-block size-6 animate-spin rounded-full border-[3px] border-current border-r-transparent; }
+  .ds-loading-lg { @apply size-10; }
+  .dashboard-workspace .grid > * { min-width: 0; }
+}

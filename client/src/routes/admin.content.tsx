@@ -105,13 +105,13 @@ function AdminContentPage() {
       title={t("admin.contentTitle")}
       subtitle={t("admin.content")}
       actions={
-        <button onClick={startNew} className="btn btn-primary btn-sm">
+        <button onClick={startNew} className="ds-btn ds-btn-primary ds-btn-sm">
           <Plus className="h-4 w-4" /> {t("admin.newPage")}
         </button>
       }
     >
-      {message && <div className="alert alert-success mb-4 text-sm">{message}</div>}
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {message && <div role="status" className="ds-alert ds-alert-success mb-4 text-sm">{message}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mb-4 text-sm">{error}</div>}
 
       {form && (
         <form onSubmit={save} className="mb-5 rounded-box border border-base-300 bg-base-100 p-5">
@@ -119,7 +119,7 @@ function AdminContentPage() {
             <h2 className="text-base font-bold">
               {editingId ? t("admin.editPage") : t("admin.newPage")}
             </h2>
-            <button type="button" onClick={() => setForm(null)} className="btn btn-ghost btn-xs">
+            <button type="button" onClick={() => setForm(null)} className="ds-btn ds-btn-ghost ds-btn-xs">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -132,7 +132,7 @@ function AdminContentPage() {
                 pattern="[a-z0-9-]+"
                 value={form.slug}
                 onChange={(event) => setForm({ ...form, slug: event.target.value })}
-                className="input input-bordered input-sm w-full"
+                className="ds-input ds-input-bordered ds-input-sm w-full"
                 placeholder="network-upgrade-signs"
               />
             </label>
@@ -141,7 +141,7 @@ function AdminContentPage() {
               <select
                 value={form.status}
                 onChange={(event) => setForm({ ...form, status: event.target.value })}
-                className="select select-bordered select-sm w-full"
+                className="ds-select ds-select-bordered ds-select-sm w-full"
               >
                 <option value="DRAFT">{t("admin.draft")}</option>
                 <option value="PUBLISHED">{t("admin.publish")}</option>
@@ -153,7 +153,7 @@ function AdminContentPage() {
                 required
                 value={form.titleEn}
                 onChange={(event) => setForm({ ...form, titleEn: event.target.value })}
-                className="input input-bordered input-sm w-full"
+                className="ds-input ds-input-bordered ds-input-sm w-full"
               />
             </label>
             <label className="block">
@@ -162,7 +162,7 @@ function AdminContentPage() {
                 required
                 value={form.titleDe}
                 onChange={(event) => setForm({ ...form, titleDe: event.target.value })}
-                className="input input-bordered input-sm w-full"
+                className="ds-input ds-input-bordered ds-input-sm w-full"
               />
             </label>
             <label className="block">
@@ -171,7 +171,7 @@ function AdminContentPage() {
                 rows={2}
                 value={form.excerptEn}
                 onChange={(event) => setForm({ ...form, excerptEn: event.target.value })}
-                className="textarea textarea-bordered w-full text-sm"
+                className="ds-textarea ds-textarea-bordered w-full text-sm"
               />
             </label>
             <label className="block">
@@ -180,7 +180,7 @@ function AdminContentPage() {
                 rows={2}
                 value={form.excerptDe}
                 onChange={(event) => setForm({ ...form, excerptDe: event.target.value })}
-                className="textarea textarea-bordered w-full text-sm"
+                className="ds-textarea ds-textarea-bordered w-full text-sm"
               />
             </label>
           </div>
@@ -204,7 +204,7 @@ function AdminContentPage() {
             </div>
           </div>
 
-          <button disabled={busy} className="btn btn-primary btn-sm mt-4">
+          <button disabled={busy} className="ds-btn ds-btn-primary ds-btn-sm mt-4">
             {busy && <Loader2 className="h-4 w-4 animate-spin" />}
             {t("admin.save")}
           </button>
@@ -215,7 +215,7 @@ function AdminContentPage() {
         <Panel
           title={pick(preview.titleEn, preview.titleDe)}
           action={
-            <button onClick={() => setPreview(null)} className="btn btn-ghost btn-xs">
+            <button onClick={() => setPreview(null)} className="ds-btn ds-btn-ghost ds-btn-xs">
               <X className="h-4 w-4" /> {t("common.close")}
             </button>
           }
@@ -229,7 +229,7 @@ function AdminContentPage() {
       {!pagesQuery.isLoading && pages.length === 0 && <EmptyState title={t("blog.noPosts")} />}
 
       <div className="overflow-x-auto rounded-box border border-base-300 bg-base-100">
-        <table className="table table-zebra">
+        <table className="ds-table ds-table-zebra">
           <thead>
             <tr>
               <th>{t("common.title")}</th>
@@ -250,23 +250,23 @@ function AdminContentPage() {
                 <td className="text-xs">{formatDate(page.updatedAt)}</td>
                 <td>
                   <div className="flex gap-1">
-                    <button onClick={() => setPreview(page)} className="btn btn-ghost btn-xs" title={t("admin.preview")}>
+                    <button onClick={() => setPreview(page)} className="ds-btn ds-btn-ghost ds-btn-xs" title={t("admin.preview")}>
                       <Eye className="h-3.5 w-3.5" />
                     </button>
                     {page.status === "PUBLISHED" && (
                       <Link
                         to="/blog/$slug"
                         params={{ slug: page.slug }}
-                        className="btn btn-ghost btn-xs"
+                        className="ds-btn ds-btn-ghost ds-btn-xs"
                         title={t("common.open")}
                       >
                         <ExternalLink className="h-3.5 w-3.5" />
                       </Link>
                     )}
-                    <button onClick={() => edit(page)} className="btn btn-ghost btn-xs">
+                    <button onClick={() => edit(page)} className="ds-btn ds-btn-ghost ds-btn-xs">
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
-                    <button onClick={() => void remove(page.id)} className="btn btn-ghost btn-xs text-error">
+                    <button onClick={() => void remove(page.id)} className="ds-btn ds-btn-ghost ds-btn-xs text-error">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>

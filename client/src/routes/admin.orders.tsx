@@ -57,7 +57,7 @@ function AdminOrdersPage() {
 
   return (
     <DashboardShell nav={nav} title={t("admin.orders")} subtitle={t("orders.text")}>
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mb-4 text-sm">{error}</div>}
       {isLoading && <PageLoader />}
       {isError && <ErrorState onRetry={() => void refetch()} />}
       {!isLoading && !isError && orders.length === 0 && <EmptyState title={t("orders.noOrders")} />}
@@ -79,7 +79,7 @@ function AdminOrdersPage() {
                   value={order.status}
                   onChange={(event) => void updateOrder(order.id, event.target.value)}
                   disabled={busy === order.id}
-                  className="select select-bordered select-xs"
+                  className="ds-select ds-select-bordered ds-select-xs"
                 >
                   {orderStatuses.map((status) => (
                     <option key={status} value={status}>
@@ -111,7 +111,7 @@ function AdminOrdersPage() {
                     <button
                       onClick={() => void markPaid(order.invoice!.id)}
                       disabled={busy === order.invoice.id}
-                      className="btn btn-success btn-xs"
+                      className="ds-btn ds-btn-success ds-btn-xs"
                     >
                       {busy === order.invoice.id && <Loader2 className="h-3 w-3 animate-spin" />}
                       {t("admin.markPaid")}

@@ -25,7 +25,7 @@ export default function BlogDetailPage() {
     return (
       <div className="container-page py-10">
         <ErrorState message={t("blog.notFound")} />
-        <Link to="/blog" className="btn btn-outline btn-sm">
+        <Link to="/blog" className="ds-btn ds-btn-outline ds-btn-sm">
           <ArrowLeft className="h-4 w-4" /> {t("blog.back")}
         </Link>
       </div>
@@ -60,7 +60,7 @@ export default function BlogDetailPage() {
         </div>
         <div className="mt-10 flex flex-wrap items-center justify-between gap-3 rounded-box bg-base-200 p-5">
           <p className="text-sm font-semibold">{t("blog.cta")}</p>
-          <Link to="/contact" className="btn btn-primary btn-sm">
+          <Link to="/contact" className="ds-btn ds-btn-primary ds-btn-sm">
             {t("nav.contact")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

@@ -42,7 +42,7 @@ export default function BlogPage() {
               key={page.id}
               to="/blog/$slug"
               params={{ slug: page.slug }}
-              className="card card-hover border border-base-300 bg-base-100 p-6"
+              className="ds-card ds-card-hover border border-base-300 bg-base-100 p-6"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <BookOpen className="h-5 w-5" />

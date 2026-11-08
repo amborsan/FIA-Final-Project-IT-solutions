@@ -39,7 +39,7 @@ function TechnicianAppointmentsPage() {
 
   return (
     <DashboardShell nav={nav} title={t("technician.appointments")} subtitle={t("appointments.text")}>
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {error && <div role="alert" className="ds-alert ds-alert-error mb-4 text-sm">{error}</div>}
       {isLoading && <PageLoader />}
       {isError && <ErrorState onRetry={() => void refetch()} />}
       {!isLoading && !isError && appointments.length === 0 && (
@@ -70,7 +70,7 @@ function TechnicianAppointmentsPage() {
                 <select
                   value={appointment.status}
                   onChange={(event) => void updateStatus(appointment.id, event.target.value)}
-                  className="select select-bordered select-xs"
+                  className="ds-select ds-select-bordered ds-select-xs"
                 >
                   {statuses.map((status) => (
                     <option key={status} value={status}>
