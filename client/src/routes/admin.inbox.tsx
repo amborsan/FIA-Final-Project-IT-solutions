@@ -1,3 +1,6 @@
+import { Alert } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -6,10 +9,27 @@ import { api, errorMessage } from "../lib/api";
 import type { ContactMessage } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { useAdminNav } from "../components/nav";
-import { DashboardShell, Panel } from "../components/DashboardShell";
-import { ArchiveTabs, FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
-import { EmptyState, ErrorState, PageLoader, StatusBadge } from "../components/ui";
-import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
+import { Panel } from "../components/DashboardShell";
+import { AdminDashboardShell as DashboardShell } from "../components/AdminDashboardShell";
+import {
+  ArchiveTabs,
+  FilterSelect,
+  ListToolbar,
+  Pagination,
+  SearchField,
+} from "../components/ListControls";
+import {
+  EmptyState,
+  ErrorState,
+  PageLoader,
+  StatusBadge,
+} from "../components/ui";
+import {
+  filterByArchive,
+  matchesSearch,
+  paginate,
+  useListControls,
+} from "../lib/list";
 
 export const Route = createFileRoute("/admin/inbox")({
   component: AdminInboxPage,
@@ -62,8 +82,20 @@ function AdminInboxPage() {
   }
 
   return (
-    <DashboardShell nav={nav} title={t("admin.inbox")} subtitle={t("contact.text")}>
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+    <DashboardShell
+      nav={nav}
+      title={t("admin.inbox")}
+      subtitle={t("contact.text")}
+    >
+      {error && (
+        <Alert
+          className={cn(
+            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mb-4 text-sm",
+          )}
+        >
+          {error}
+        </Alert>
+      )}
 
       <ListToolbar>
         <SearchField
@@ -93,42 +125,64 @@ function AdminInboxPage() {
       )}
 
       {pageData.total > 0 && (
-        <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <div className="mt-5 grid gap-4 xl:grid-cols-2">
           {pageData.items.map((message) => (
             <Panel key={message.id}>
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
-                  <p className="text-sm font-bold">{message.subject}</p>
-                  <p className="text-[11px] text-base-content/70">
+                  <p className="text-sm font-medium">{message.subject}</p>
+                  <p className="text-xs text-ink-muted">
                     {message.name} · {formatDateTime(message.createdAt)}
                   </p>
                 </div>
                 <StatusBadge status={message.status} />
               </div>
 
-              <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-base-content/65">
+              <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-ink-muted">
                 {message.message}
               </p>
 
-              <div className="mt-3 flex flex-wrap gap-3 text-[11px] text-base-content/65">
-                <a href={`mailto:${message.email}`} className="flex items-center gap-1 hover:text-primary">
+              <div className="mt-3 flex flex-wrap gap-3 text-xs text-ink-muted">
+                <a
+                  href={`mailto:${message.email}`}
+                  className="flex items-center gap-1 hover:text-primary"
+                >
                   <Mail className="h-3.5 w-3.5" /> {message.email}
                 </a>
                 {message.phone && (
-                  <a href={`tel:${message.phone}`} className="flex items-center gap-1 hover:text-primary">
+                  <a
+                    href={`tel:${message.phone}`}
+                    className="flex items-center gap-1 hover:text-primary"
+                  >
                     <Phone className="h-3.5 w-3.5" /> {message.phone}
                   </a>
                 )}
               </div>
 
-              <div className="mt-3 flex flex-wrap gap-2 border-t border-base-200 pt-3">
-                <button onClick={() => void updateStatus(message.id, "READ")} className="btn btn-outline btn-xs">
+              <div className="mt-3 flex flex-wrap gap-2 border-t border-hairline pt-3">
+                <Button
+                  onClick={() => void updateStatus(message.id, "READ")}
+                  className={cn(
+                    " border-current bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs",
+                  )}
+                >
                   {t("admin.markRead")}
-                </button>
-                <button onClick={() => void updateStatus(message.id, "REPLIED")} className="btn btn-success btn-xs">
+                </Button>
+                <Button
+                  onClick={() => void updateStatus(message.id, "REPLIED")}
+                  className={cn(
+                    " bg-primary text-primary-content border-primary hover:bg-primary-hover h-6 px-2 text-xs",
+                  )}
+                >
                   {t("admin.markReplied")}
-                </button>
-                <a href={`mailto:${message.email}?subject=Re: ${encodeURIComponent(message.subject)}`} className="btn btn-primary btn-xs">
+                </Button>
+                <a
+                  href={`mailto:${message.email}?subject=Re: ${encodeURIComponent(message.subject)}`}
+                  className={cn(
+                    buttonVariants(),
+                    " bg-primary text-primary-content border-primary hover:bg-primary-hover h-6 px-2 text-xs",
+                  )}
+                >
                   {t("chat.reply")}
                 </a>
               </div>

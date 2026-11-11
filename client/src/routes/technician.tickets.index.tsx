@@ -1,3 +1,8 @@
+import { buttonVariants } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { NativeSelect } from "@/components/ui/native-select";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -6,16 +11,38 @@ import { api, errorMessage } from "../lib/api";
 import type { Ticket } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { useTechnicianNav } from "../components/nav";
-import { DashboardShell } from "../components/DashboardShell";
-import { ArchiveTabs, FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
-import { EmptyState, ErrorState, PageLoader, StatusBadge } from "../components/ui";
-import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
+import { TechnicianDashboardShell as DashboardShell } from "../components/TechnicianDashboardShell";
+import {
+  ArchiveTabs,
+  FilterSelect,
+  ListToolbar,
+  Pagination,
+  SearchField,
+} from "../components/ListControls";
+import {
+  EmptyState,
+  ErrorState,
+  PageLoader,
+  StatusBadge,
+} from "../components/ui";
+import {
+  filterByArchive,
+  matchesSearch,
+  paginate,
+  useListControls,
+} from "../lib/list";
 
 export const Route = createFileRoute("/technician/tickets/")({
   component: TechnicianTicketsPage,
 });
 
-const statuses = ["OPEN", "IN_PROGRESS", "WAITING_CUSTOMER", "RESOLVED", "CLOSED"];
+const statuses = [
+  "OPEN",
+  "IN_PROGRESS",
+  "WAITING_CUSTOMER",
+  "RESOLVED",
+  "CLOSED",
+];
 const priorities = ["LOW", "MEDIUM", "HIGH", "URGENT"];
 const archivedStatuses = new Set(["RESOLVED", "CLOSED"]);
 
@@ -69,8 +96,20 @@ function TechnicianTicketsPage() {
   }
 
   return (
-    <DashboardShell nav={nav} title={t("technician.assignedTickets")} subtitle={t("tickets.text")}>
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+    <DashboardShell
+      nav={nav}
+      title={t("technician.assignedTickets")}
+      subtitle={t("tickets.text")}
+    >
+      {error && (
+        <Alert
+          className={cn(
+            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mb-4 text-sm",
+          )}
+        >
+          {error}
+        </Alert>
+      )}
 
       <ListToolbar>
         <SearchField
@@ -81,7 +120,10 @@ function TechnicianTicketsPage() {
         <FilterSelect
           value={controls.status}
           onChange={controls.setStatus}
-          options={statuses.map((value) => ({ value, label: t(`status.${value}` as "status.OPEN") }))}
+          options={statuses.map((value) => ({
+            value,
+            label: t(`status.${value}` as "status.OPEN"),
+          }))}
           allLabel={t("common.all")}
           ariaLabel={t("common.status")}
         />
@@ -113,34 +155,42 @@ function TechnicianTicketsPage() {
               key={ticket.id}
               className="flex flex-wrap items-center gap-4 rounded-box border border-base-300 bg-base-100 p-4"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10 text-secondary">
+              <span className="flex h-10 w-10 items-center justify-center rounded-md bg-accent-sky text-ink">
                 <LifeBuoy className="h-5 w-5" />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-bold">{ticket.subject}</p>
-                <p className="text-[11px] text-base-content/70">
-                  {ticket.reference} · {ticket.customer?.fullName} · {formatDate(ticket.createdAt)}
+                <p className="truncate text-sm font-medium">{ticket.subject}</p>
+                <p className="text-xs text-ink-muted">
+                  {ticket.reference} · {ticket.customer?.fullName} ·{" "}
+                  {formatDate(ticket.createdAt)}
                 </p>
               </div>
-              <span className="badge badge-outline badge-xs">
+              <Badge
+                className={cn(" border-current bg-transparent h-4 text-xs")}
+              >
                 {t(`priority.${ticket.priority}` as "priority.LOW")}
-              </span>
+              </Badge>
               <StatusBadge status={ticket.status} />
-              <select
+              <NativeSelect
                 value={ticket.status}
-                onChange={(event) => void updateStatus(ticket.id, event.target.value)}
-                className="select select-bordered select-xs"
+                onChange={(event) =>
+                  void updateStatus(ticket.id, event.target.value)
+                }
+                className={cn(" h-6 px-2 text-xs")}
               >
                 {statuses.map((status) => (
                   <option key={status} value={status}>
                     {t(`status.${status}` as "status.OPEN")}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
               <Link
                 to="/technician/tickets/$id"
                 params={{ id: ticket.id }}
-                className="btn btn-ghost btn-xs"
+                className={cn(
+                  buttonVariants(),
+                  " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs",
+                )}
               >
                 <ArrowRight className="h-4 w-4" />
               </Link>

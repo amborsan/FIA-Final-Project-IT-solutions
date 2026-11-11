@@ -1,3 +1,8 @@
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -148,13 +153,13 @@ export function ChatWidget() {
         <div className="fixed bottom-20 right-3 z-50 flex h-[min(560px,calc(100vh-7rem))] w-[min(380px,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-box border border-base-300 bg-base-100 shadow-2xl sm:right-5">
           <div className="flex items-center gap-2 bg-primary px-4 py-3 text-primary-content">
             {selectedId && user ? (
-              <button
+              <Button
                 onClick={() => setSelectedId(null)}
-                className="btn btn-ghost btn-xs text-primary-content"
+                className={cn(" border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs text-primary-content")}
                 aria-label={t("common.back")}
               >
                 <ArrowLeft className="h-4 w-4" />
-              </button>
+              </Button>
             ) : (
               <MessagesSquare className="h-5 w-5" />
             )}
@@ -165,13 +170,13 @@ export function ChatWidget() {
                 {t("chat.online")}
               </p>
             </div>
-            <button
+            <Button
               onClick={() => setOpen(false)}
-              className="btn btn-ghost btn-xs text-primary-content"
+              className={cn(" border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs text-primary-content")}
               aria-label={t("chat.close")}
             >
               <X className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
 
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 chat-scroll">
@@ -204,7 +209,7 @@ export function ChatWidget() {
                   <p className="text-xs font-semibold uppercase tracking-wide text-base-content/65">
                     {t("chat.conversations")}
                   </p>
-                  <Link to="/messages" className="link link-primary text-xs">
+                  <Link to="/messages" className={cn("underline cursor-pointer text-primary text-xs")}>
                     {t("chat.allChats")}
                   </Link>
                 </div>
@@ -216,7 +221,7 @@ export function ChatWidget() {
                   >
                     <div className="flex items-center justify-between gap-2">
                       <p className="truncate text-xs font-semibold">{conversation.subject}</p>
-                      <span className="badge badge-ghost badge-xs">{conversation.type}</span>
+                      <Badge className={cn(" bg-base-200 text-base-content h-4 text-xs")}>{conversation.type}</Badge>
                     </div>
                     <p className="mt-1 truncate text-[11px] text-base-content/65">
                       {conversation.messages[0]?.body || t("chat.noReply")}
@@ -237,7 +242,7 @@ export function ChatWidget() {
                 {guest && (
                   <div className="flex items-center justify-between gap-2 rounded-lg bg-base-200 px-2.5 py-2 text-[11px] text-base-content/70">
                     <span>{t("chat.guestNote")}</span>
-                    <button onClick={closeGuest} className="link link-primary shrink-0">
+                    <button onClick={closeGuest} className={cn("underline cursor-pointer text-primary shrink-0")}>
                       {t("chat.newChat")}
                     </button>
                   </div>
@@ -270,7 +275,7 @@ export function ChatWidget() {
             <div className="border-t border-base-300 p-2.5">
               {error && <p className="mb-1.5 text-xs text-error">{error}</p>}
               <div className="flex items-end gap-2">
-                <textarea
+                <Textarea
                   value={draft}
                   onChange={(event) => setDraft(event.target.value)}
                   onKeyDown={(event) => {
@@ -282,16 +287,16 @@ export function ChatWidget() {
                   rows={2}
                   maxLength={4000}
                   placeholder={t("chat.placeholder")}
-                  className="textarea textarea-bordered min-h-12 flex-1 resize-none text-sm"
+                  className={cn(" min-h-12 flex-1 resize-none text-sm")}
                 />
-                <button
+                <Button
                   onClick={() => void (user ? sendAuthenticated() : sendGuest())}
                   disabled={sending || !draft.trim()}
-                  className="btn btn-primary btn-sm h-11 w-11 p-0"
+                  className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm h-11 w-11 p-0")}
                   aria-label={t("chat.send")}
                 >
                   {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -349,35 +354,35 @@ function GuestStart({ onStarted }: { onStarted: (session: GuestSession) => void 
         <p className="text-sm font-bold">{t("chat.guestTitle")}</p>
         <p className="text-xs text-base-content/70">{t("chat.guestText")}</p>
       </div>
-      <input
+      <Input
         required
         minLength={2}
-        className="input input-bordered input-sm w-full"
+        className={cn(" h-8 text-xs w-full")}
         placeholder={t("chat.name")}
         value={form.name}
         onChange={(event) => setForm({ ...form, name: event.target.value })}
       />
-      <input
+      <Input
         required
         type="email"
-        className="input input-bordered input-sm w-full"
+        className={cn(" h-8 text-xs w-full")}
         placeholder={t("chat.email")}
         value={form.email}
         onChange={(event) => setForm({ ...form, email: event.target.value })}
       />
-      <input
+      <Input
         required
         minLength={3}
-        className="input input-bordered input-sm w-full"
+        className={cn(" h-8 text-xs w-full")}
         placeholder={t("chat.subject")}
         value={form.subject}
         onChange={(event) => setForm({ ...form, subject: event.target.value })}
       />
-      <textarea
+      <Textarea
         required
         minLength={1}
         rows={3}
-        className="textarea textarea-bordered w-full text-sm"
+        className={cn(" w-full text-sm")}
         placeholder={t("chat.message")}
         value={form.message}
         onChange={(event) => setForm({ ...form, message: event.target.value })}
@@ -386,21 +391,21 @@ function GuestStart({ onStarted }: { onStarted: (session: GuestSession) => void 
         <input
           type="checkbox"
           required
-          className="checkbox checkbox-xs mt-0.5"
+          className={cn("appearance-auto accent-primary size-6 shrink-0 rounded-field border border-input focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary size-4 mt-0.5")}
           checked={form.acceptPrivacy}
           onChange={(event) => setForm({ ...form, acceptPrivacy: event.target.checked })}
         />
         <span>
           {t("chat.consent")}{" "}
-          <Link to="/legal/privacy" className="link link-primary">
+          <Link to="/legal/privacy" className={cn("underline cursor-pointer text-primary")}>
             {t("footer.privacy")}
           </Link>
         </span>
       </label>
       {error && <p className="text-xs text-error">{error}</p>}
-      <button disabled={loading} className="btn btn-primary btn-sm w-full">
+      <Button disabled={loading} className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm w-full")}>
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("chat.start")}
-      </button>
+      </Button>
     </form>
   );
 }
@@ -435,26 +440,26 @@ function CustomerStart({ onStarted }: { onStarted: (id: string) => void }) {
         <p className="text-sm font-bold">{t("chat.guestTitle")}</p>
         <p className="text-xs text-base-content/70">{t("chat.subtitle")}</p>
       </div>
-      <input
+      <Input
         required
         minLength={3}
-        className="input input-bordered input-sm w-full"
+        className={cn(" h-8 text-xs w-full")}
         placeholder={t("chat.subjectPlaceholder")}
         value={subject}
         onChange={(event) => setSubject(event.target.value)}
       />
-      <textarea
+      <Textarea
         required
         rows={4}
-        className="textarea textarea-bordered w-full text-sm"
+        className={cn(" w-full text-sm")}
         placeholder={t("chat.message")}
         value={message}
         onChange={(event) => setMessage(event.target.value)}
       />
       {error && <p className="text-xs text-error">{error}</p>}
-      <button disabled={loading} className="btn btn-primary btn-sm w-full">
+      <Button disabled={loading} className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm w-full")}>
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("chat.start")}
-      </button>
+      </Button>
     </form>
   );
 }

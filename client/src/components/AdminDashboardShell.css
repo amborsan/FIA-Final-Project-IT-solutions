@@ -1,0 +1,141 @@
+@reference "../index.css";
+
+.admin-dashboard {
+  @apply bg-canvas text-ink;
+}
+.admin-dashboard .container-page {
+  @apply py-10 lg:py-12;
+}
+.admin-dashboard .container-page > .grid {
+  @apply gap-8;
+}
+.admin-dashboard aside,
+.admin-dashboard main,
+.admin-dashboard main > div,
+.admin-dashboard main .grid > * {
+  @apply min-w-0;
+}
+.admin-dashboard aside nav {
+  @apply gap-2 border-hairline bg-surface p-2;
+}
+.admin-dashboard aside a {
+  @apply min-h-control gap-inline px-4 font-normal;
+}
+.admin-dashboard aside a:focus-visible {
+  @apply outline-2 outline-offset-2 outline-ring;
+}
+.admin-dashboard main > div:first-child {
+  @apply gap-6 border-b border-hairline pb-8;
+}
+.admin-dashboard h1 {
+  @apply text-3xl font-normal;
+  overflow-wrap: anywhere;
+}
+.admin-dashboard main > div:first-child > div:first-child {
+  @apply min-w-0;
+}
+.admin-dashboard main > div:first-child p {
+  @apply mt-3 max-w-2xl text-sm font-normal text-ink-muted;
+}
+.admin-dashboard main > div:nth-child(2) {
+  @apply mt-8;
+}
+.admin-dashboard main section,
+.admin-dashboard main > div > form {
+  @apply rounded-box border-hairline bg-surface p-6;
+}
+.admin-dashboard main h2 {
+  @apply text-2xl font-medium;
+}
+.admin-dashboard main p,
+.admin-dashboard main span,
+.admin-dashboard main label {
+  overflow-wrap: anywhere;
+}
+.admin-dashboard label > span {
+  @apply text-sm;
+}
+.admin-dashboard [data-slot="button"] {
+  @apply min-h-control rounded-pill text-sm font-medium tracking-button;
+}
+.admin-dashboard [data-slot="input"],
+.admin-dashboard [data-slot="native-select"] {
+  @apply min-h-control border-hairline text-base;
+}
+.admin-dashboard [data-slot="textarea"] {
+  @apply border-hairline text-base;
+}
+.admin-dashboard [data-slot="badge"] {
+  @apply h-auto min-h-6 py-1 text-xs font-medium;
+}
+.admin-dashboard [data-slot="tabs-list"] {
+  @apply h-auto flex-wrap gap-2 rounded-pill;
+}
+.admin-dashboard [data-slot="tabs-trigger"] {
+  @apply min-h-control rounded-pill px-4 text-sm;
+}
+.admin-dashboard [data-slot="table-container"] {
+  @apply rounded-md;
+}
+.admin-dashboard [data-slot="table"] {
+  @apply text-sm;
+}
+.admin-dashboard [data-slot="table"] :is(th, td) {
+  @apply border-hairline px-4 py-4;
+}
+.admin-dashboard [data-slot="table"] th {
+  @apply bg-canvas text-xs font-medium text-ink-muted;
+}
+.admin-dashboard [data-slot="table"] td {
+  @apply align-top;
+}
+.admin-dashboard [data-slot="table"] th:not(:first-child),
+.admin-dashboard [data-slot="table"] td:not(:first-child) {
+  white-space: nowrap;
+}
+.admin-dashboard label:has(> input:not([data-slot])) {
+  @apply min-h-control;
+}
+.admin-dashboard label > [data-slot="button"] {
+  @apply h-6 min-h-6 w-6 shrink-0 p-0;
+}
+.admin-dashboard .admin-stats {
+  @apply gap-4;
+}
+.admin-dashboard .admin-stat {
+  @apply rounded-md border-hairline bg-surface p-6;
+}
+.admin-dashboard .admin-stat > p:nth-child(2) {
+  @apply my-3 text-4xl font-normal tabular-nums;
+}
+.admin-dashboard .admin-revenue {
+  @apply rounded-box border-transparent bg-brand-indigo p-6 text-panel-foreground;
+}
+.admin-dashboard .admin-revenue > p:last-child {
+  @apply mt-4 text-2xl font-normal tabular-nums;
+}
+.admin-dashboard .admin-stock {
+  @apply rounded-md border-hairline bg-accent-sky p-6 text-ink;
+}
+.admin-dashboard .admin-stock > p {
+  @apply text-ink;
+}
+.admin-dashboard .rich-editor {
+  @apply text-base;
+}
+.admin-dashboard .rich-editor :is(h2, h3) {
+  @apply font-medium;
+}
+@media (min-width: 1024px) {
+  .admin-dashboard aside a span {
+    white-space: normal;
+  }
+}
+@media print {
+  .admin-dashboard aside {
+    display: none;
+  }
+  .admin-dashboard .container-page > .grid {
+    display: block;
+  }
+}

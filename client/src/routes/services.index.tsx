@@ -1,3 +1,5 @@
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -39,7 +41,7 @@ export default function ServicesPage() {
                 {t("services.text")}
               </p>
             </div>
-            <Link to="/quote" search={{ service: undefined }} className="btn btn-primary">
+            <Link to="/quote" search={{ service: undefined }} className={cn(buttonVariants(), " bg-primary text-primary-content border-primary hover:bg-primary-hover")}>
               {t("nav.quote")} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -47,13 +49,13 @@ export default function ServicesPage() {
       </section>
 
       <section className="container-page py-10">
-        <label className="input input-bordered flex max-w-md items-center gap-2">
+        <label className={cn("h-10 min-w-0 rounded-field border border-input bg-base-100 px-3 text-sm text-base-content outline-none focus-within:border-primary focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary disabled:opacity-50 flex max-w-md items-center gap-2")}>
           <Search className="h-4 w-4 opacity-50" />
           <input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder={t("services.searchPlaceholder")}
-            className="grow"
+            className="min-w-0 grow bg-transparent outline-none"
           />
         </label>
 
@@ -88,7 +90,7 @@ export default function ServicesPage() {
               )}
             </p>
           </div>
-          <Link to="/quote" search={{ service: undefined }} className="btn btn-primary">
+          <Link to="/quote" search={{ service: undefined }} className={cn(buttonVariants(), " bg-primary text-primary-content border-primary hover:bg-primary-hover")}>
             {t("nav.quote")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

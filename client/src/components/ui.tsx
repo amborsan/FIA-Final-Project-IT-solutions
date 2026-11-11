@@ -1,39 +1,43 @@
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import type { ReactNode } from "react";
 import { useI18n } from "../i18n/I18nContext";
 import type { TranslationKey } from "../i18n/translations";
 
 const colors: Record<string, string> = {
-  NEW: "badge-info",
-  REVIEWING: "badge-warning",
-  QUOTED: "badge-info",
-  APPROVED: "badge-success",
-  SCHEDULED: "badge-info",
-  IN_PROGRESS: "badge-warning",
-  COMPLETED: "badge-success",
-  CANCELLED: "badge-error",
-  PENDING: "badge-warning",
-  CONFIRMED: "badge-info",
-  PROCESSING: "badge-warning",
-  DRAFT: "badge-ghost",
-  PUBLISHED: "badge-success",
-  SENT: "badge-info",
-  ACCEPTED: "badge-success",
-  REJECTED: "badge-error",
-  EXPIRED: "badge-ghost",
-  OPEN: "badge-warning",
-  WAITING_CUSTOMER: "badge-info",
-  RESOLVED: "badge-success",
-  CLOSED: "badge-ghost",
-  LOW: "badge-ghost",
-  MEDIUM: "badge-info",
-  HIGH: "badge-warning",
-  URGENT: "badge-error",
-  ISSUED: "badge-info",
-  PAID: "badge-success",
-  OVERDUE: "badge-error",
-  SUBMITTED: "badge-info",
-  READ: "badge-ghost",
-  REPLIED: "badge-success",
+  NEW: "bg-info text-info-content border-info",
+  REVIEWING: "bg-warning text-warning-content border-warning",
+  QUOTED: "bg-info text-info-content border-info",
+  APPROVED: "bg-success text-success-content border-success",
+  SCHEDULED: "bg-info text-info-content border-info",
+  IN_PROGRESS: "bg-warning text-warning-content border-warning",
+  COMPLETED: "bg-success text-success-content border-success",
+  CANCELLED: "bg-error text-error-content border-error",
+  PENDING: "bg-warning text-warning-content border-warning",
+  CONFIRMED: "bg-info text-info-content border-info",
+  PROCESSING: "bg-warning text-warning-content border-warning",
+  DRAFT: "bg-base-200 text-base-content",
+  PUBLISHED: "bg-success text-success-content border-success",
+  SENT: "bg-info text-info-content border-info",
+  ACCEPTED: "bg-success text-success-content border-success",
+  REJECTED: "bg-error text-error-content border-error",
+  EXPIRED: "bg-base-200 text-base-content",
+  OPEN: "bg-warning text-warning-content border-warning",
+  WAITING_CUSTOMER: "bg-info text-info-content border-info",
+  RESOLVED: "bg-success text-success-content border-success",
+  CLOSED: "bg-base-200 text-base-content",
+  LOW: "bg-base-200 text-base-content",
+  MEDIUM: "bg-info text-info-content border-info",
+  HIGH: "bg-warning text-warning-content border-warning",
+  URGENT: "bg-error text-error-content border-error",
+  ISSUED: "bg-info text-info-content border-info",
+  PAID: "bg-success text-success-content border-success",
+  OVERDUE: "bg-error text-error-content border-error",
+  SUBMITTED: "bg-info text-info-content border-info",
+  READ: "bg-base-200 text-base-content",
+  REPLIED: "bg-success text-success-content border-success",
 };
 
 export function StatusBadge({ status }: { status: string }) {
@@ -41,17 +45,17 @@ export function StatusBadge({ status }: { status: string }) {
   const key = `status.${status}` as TranslationKey;
   const label = t(key);
   return (
-    <span className={`badge badge-sm whitespace-nowrap ${colors[status] ?? "badge-ghost"}`}>
+    <Badge className={cn(` h-5 text-xs whitespace-nowrap ${colors[status] ?? "bg-base-200 text-base-content"}`)}>
       {label === key ? status.replaceAll("_", " ").toLowerCase() : label}
-    </span>
+    </Badge>
   );
 }
 
 export function PageLoader({ label }: { label?: string }) {
   const { t } = useI18n();
   return (
-    <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3">
-      <span className="loading loading-spinner loading-lg text-primary" />
+    <div role="status" className="flex min-h-[40vh] flex-col items-center justify-center gap-3">
+      <span aria-hidden="true" className={cn("inline-block size-6 animate-spin rounded-full border-2 border-current border-r-transparent motion-reduce:animate-none size-10 text-primary")} />
       <p className="text-sm text-base-content/70">{label ?? t("common.loading")}</p>
     </div>
   );
@@ -60,14 +64,14 @@ export function PageLoader({ label }: { label?: string }) {
 export function ErrorState({ message, onRetry }: { message?: string; onRetry?: () => void }) {
   const { t } = useI18n();
   return (
-    <div className="alert alert-error my-6">
+    <Alert className={cn("flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error my-6")}>
       <span>{message || t("common.error")}</span>
       {onRetry && (
-        <button className="btn btn-sm" onClick={onRetry}>
+        <Button className={cn(" h-8 px-3 text-sm")} onClick={onRetry}>
           {t("common.retry")}
-        </button>
+        </Button>
       )}
-    </div>
+    </Alert>
   );
 }
 

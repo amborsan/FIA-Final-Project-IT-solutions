@@ -1,3 +1,5 @@
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Link, Outlet, createRootRoute, useRouterState } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { Header } from "../components/Header";
@@ -14,7 +16,7 @@ function NotFound() {
         <p className="text-7xl font-black text-primary/20">404</p>
         <h1 className="mt-2 text-2xl font-bold">{t("notFound.title")}</h1>
         <p className="mt-2 max-w-md text-base-content/70">{t("notFound.text")}</p>
-        <Link to="/" className="btn btn-primary mt-6">
+        <Link to="/" className={cn(buttonVariants(), " bg-primary text-primary-content border-primary hover:bg-primary-hover mt-6")}>
           {t("notFound.back")}
         </Link>
       </div>

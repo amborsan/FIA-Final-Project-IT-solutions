@@ -5,6 +5,14 @@
 export type Language = "en" | "de";
 
 const en = {
+  "footer.iconCredit": "Sphere icon by Ryan Spiering · The Noun Project",
+  "home.topicNetworks": "Connected teams",
+  "home.topicNetworksText": "Office networks and servers, from planning and setup to ongoing support.",
+  "home.topicSecurity": "Secure systems",
+  "home.topicSecurityText": "We protect your systems and back up your business data.",
+  "home.topicWebsites": "Your business online",
+  "home.topicWebsitesText": "We build and maintain websites for your business.",
+  "brand.name": "IT Solutions.",
   "nav.home": "Home",
   "nav.services": "Services",
   "nav.products": "Shop",
@@ -125,7 +133,8 @@ const en = {
   "home.heroTitle": "Technology that simply",
   "home.heroHighlight": "works.",
   "home.heroText":
-    "We plan, install and support networks, servers, security systems and websites for small teams in Berlin and across Germany. One partner for the whole IT stack.",
+    "We plan, install and support your networks, servers, security and websites.",
+  "home.heroLocation": "In Berlin and across Germany.",
   "home.ctaQuote": "Request a free quote",
   "home.ctaServices": "Explore our services",
   "home.statProjects": "Projects delivered",
@@ -161,7 +170,7 @@ const en = {
   "home.step7.text": "You receive a clear service report.",
   "home.step8.title": "Feedback",
   "home.step8.text": "We check in and stay available for support.",
-  "home.whyEyebrow": "Why Orbit",
+  "home.whyEyebrow": "Why IT Solutions.",
   "home.whyTitle": "Big-company know-how, small-team attention",
   "home.whyText":
     "You talk to the people who actually do the work. Clear language, clear prices, sensible technology.",
@@ -246,7 +255,7 @@ const en = {
   "about.eyebrow": "About us",
   "about.title": "A small team with a practical approach to IT",
   "about.text":
-    "Orbit IT Solutions is a fictional IT services company created for a graduation project. The scenarios, prices and people are demo data.",
+    "IT Solutions. is a fictional IT services company created for a graduation project. The scenarios, prices and people are demo data.",
   "about.storyTitle": "Our story",
   "about.story1":
     "We started in 2019 with a simple observation: many small businesses are sold either overpriced enterprise systems or fragile consumer hardware. Neither fits.",
@@ -476,7 +485,7 @@ const en = {
   "tickets.back": "Back to tickets",
   "tickets.messages": "Conversation",
   "tickets.customer": "Customer",
-  "tickets.staff": "Orbit team",
+  "tickets.staff": "IT Solutions. team",
   "tickets.internal": "Internal note",
   "tickets.category": "Category",
   "tickets.description": "Describe the issue",
@@ -682,7 +691,7 @@ const en = {
   "chat.loading": "Loading conversation…",
   "chat.closed": "This conversation is closed.",
   "chat.you": "You",
-  "chat.team": "Orbit team",
+  "chat.team": "IT Solutions. team",
   "chat.subjectPlaceholder": "How can we help?",
   "chat.back": "Back to conversations",
   "chat.startNew": "Start new chat",
@@ -709,7 +718,7 @@ const en = {
     "This policy explains what personal data we process when you use this website and our services.",
   "legal.termsTitle": "Terms and conditions",
   "legal.termsIntro":
-    "These terms apply to services and products ordered from Orbit IT Solutions GmbH.",
+    "These terms apply to services and products ordered from IT Solutions.",
   "legal.imprintTitle": "Legal notice (Impressum)",
   "legal.imprintIntro":
     "Information according to § 5 DDG (German Digital Services Act).",
@@ -821,6 +830,14 @@ type EnglishKeys = keyof typeof en;
 type Dictionary = Record<EnglishKeys, string>;
 
 const de: Dictionary = {
+  "footer.iconCredit": "Kugel-Icon von Ryan Spiering · The Noun Project",
+  "home.topicNetworks": "Vernetzte Teams",
+  "home.topicNetworksText": "Büronetzwerke und Server: von Planung und Einrichtung bis zur laufenden Betreuung.",
+  "home.topicSecurity": "Sichere Systeme",
+  "home.topicSecurityText": "Wir schützen Ihre Systeme und sichern Ihre Geschäftsdaten.",
+  "home.topicWebsites": "Ihr Auftritt im Web",
+  "home.topicWebsitesText": "Wir entwickeln und betreuen Websites für Ihr Unternehmen.",
+  "brand.name": "IT Solutions.",
   "nav.home": "Start",
   "nav.services": "Leistungen",
   "nav.products": "Shop",
@@ -941,7 +958,8 @@ const de: Dictionary = {
   "home.heroTitle": "Technologie, die einfach",
   "home.heroHighlight": "funktioniert.",
   "home.heroText":
-    "Wir planen, installieren und betreuen Netzwerke, Server, Sicherheitssysteme und Websites für kleine Teams in Berlin und ganz Deutschland. Ein Partner für den gesamten IT-Stack.",
+    "Wir planen, installieren und betreuen Ihre Netzwerke, Server, Sicherheitssysteme und Websites.",
+  "home.heroLocation": "In Berlin und ganz Deutschland.",
   "home.ctaQuote": "Kostenloses Angebot anfordern",
   "home.ctaServices": "Leistungen entdecken",
   "home.statProjects": "Umgesetzte Projekte",
@@ -977,7 +995,7 @@ const de: Dictionary = {
   "home.step7.text": "Sie erhalten einen klaren Servicebericht.",
   "home.step8.title": "Feedback",
   "home.step8.text": "Wir fragen nach und bleiben für Support erreichbar.",
-  "home.whyEyebrow": "Warum Orbit",
+  "home.whyEyebrow": "Warum IT Solutions.",
   "home.whyTitle": "Know-how großer Anbieter, Aufmerksamkeit eines kleinen Teams",
   "home.whyText":
     "Sie sprechen mit den Menschen, die die Arbeit tatsächlich machen. Klare Sprache, klare Preise, sinnvolle Technik.",
@@ -1062,7 +1080,7 @@ const de: Dictionary = {
   "about.eyebrow": "Über uns",
   "about.title": "Ein kleines Team mit praktischer IT-Philosophie",
   "about.text":
-    "Orbit IT Solutions ist ein fiktives IT-Dienstleistungsunternehmen für ein Abschlussprojekt. Szenarien, Preise und Personen sind Demodaten.",
+    "IT Solutions. ist ein fiktives IT-Dienstleistungsunternehmen für ein Abschlussprojekt. Szenarien, Preise und Personen sind Demodaten.",
   "about.storyTitle": "Unsere Geschichte",
   "about.story1":
     "2019 begannen wir mit einer einfachen Beobachtung: Vielen kleinen Unternehmen werden entweder überteuerte Enterprise-Systeme oder fragile Consumer-Hardware verkauft. Beides passt selten.",
@@ -1291,7 +1309,7 @@ const de: Dictionary = {
   "tickets.back": "Zurück zu den Tickets",
   "tickets.messages": "Konversation",
   "tickets.customer": "Kunde",
-  "tickets.staff": "Orbit-Team",
+  "tickets.staff": "IT Solutions. Team",
   "tickets.internal": "Interne Notiz",
   "tickets.category": "Kategorie",
   "tickets.description": "Problem beschreiben",
@@ -1497,7 +1515,7 @@ const de: Dictionary = {
   "chat.loading": "Konversation wird geladen…",
   "chat.closed": "Diese Konversation ist geschlossen.",
   "chat.you": "Sie",
-  "chat.team": "Orbit-Team",
+  "chat.team": "IT Solutions. Team",
   "chat.subjectPlaceholder": "Wie können wir helfen?",
   "chat.back": "Zurück zu den Konversationen",
   "chat.startNew": "Neuen Chat starten",
@@ -1524,7 +1542,7 @@ const de: Dictionary = {
     "Diese Erklärung beschreibt, welche personenbezogenen Daten wir bei der Nutzung dieser Website und unserer Leistungen verarbeiten.",
   "legal.termsTitle": "Allgemeine Geschäftsbedingungen",
   "legal.termsIntro":
-    "Diese Bedingungen gelten für Leistungen und Produkte der Orbit IT Solutions GmbH.",
+    "Diese Bedingungen gelten für Leistungen und Produkte der IT Solutions.",
   "legal.imprintTitle": "Impressum",
   "legal.imprintIntro": "Angaben gemäß § 5 DDG (Digitale-Dienste-Gesetz).",
   "legal.cookiesTitle": "Cookie-Richtlinie",

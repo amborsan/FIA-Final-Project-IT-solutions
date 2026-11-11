@@ -1,3 +1,13 @@
+import { buttonVariants } from "@/components/ui/button";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
@@ -5,10 +15,26 @@ import { api } from "../lib/api";
 import type { ServiceRequest } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { useAdminNav } from "../components/nav";
-import { DashboardShell } from "../components/DashboardShell";
-import { ArchiveTabs, FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
-import { EmptyState, ErrorState, PageLoader, StatusBadge } from "../components/ui";
-import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
+import { AdminDashboardShell as DashboardShell } from "../components/AdminDashboardShell";
+import {
+  ArchiveTabs,
+  FilterSelect,
+  ListToolbar,
+  Pagination,
+  SearchField,
+} from "../components/ListControls";
+import {
+  EmptyState,
+  ErrorState,
+  PageLoader,
+  StatusBadge,
+} from "../components/ui";
+import {
+  filterByArchive,
+  matchesSearch,
+  paginate,
+  useListControls,
+} from "../lib/list";
 
 export const Route = createFileRoute("/admin/requests/")({
   component: AdminRequestsPage,
@@ -59,7 +85,11 @@ function AdminRequestsPage() {
   const pageData = paginate(filtered, controls.page, controls.pageSize);
 
   return (
-    <DashboardShell nav={nav} title={t("admin.requests")} subtitle={t("requests.text")}>
+    <DashboardShell
+      nav={nav}
+      title={t("admin.requests")}
+      subtitle={t("requests.text")}
+    >
       <ListToolbar>
         <SearchField
           value={controls.search}
@@ -89,51 +119,66 @@ function AdminRequestsPage() {
 
       {pageData.total > 0 && (
         <div className="mt-5 overflow-x-auto rounded-box border border-base-300 bg-base-100">
-          <table className="table table-zebra">
-            <thead>
-              <tr>
-                <th>{t("common.reference")}</th>
-                <th>{t("common.title")}</th>
-                <th>{t("common.customer")}</th>
-                <th>{t("common.date")}</th>
-                <th>{t("requests.budget")}</th>
-                <th>{t("common.status")}</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
+          <Table className={cn(" [&_tbody_tr:nth-child(even)]:bg-base-200")}>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t("common.reference")}</TableHead>
+                <TableHead>{t("common.title")}</TableHead>
+                <TableHead>{t("common.customer")}</TableHead>
+                <TableHead>{t("common.date")}</TableHead>
+                <TableHead>{t("requests.budget")}</TableHead>
+                <TableHead>{t("common.status")}</TableHead>
+                <TableHead />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {pageData.items.map((request) => (
-                <tr key={request.id}>
-                  <td className="font-mono text-[11px]">{request.reference}</td>
-                  <td>
-                    <p className="max-w-56 truncate font-semibold">{request.title}</p>
-                    <p className="text-[11px] text-base-content/70">
-                      {request.service ? pick(request.service.nameEn, request.service.nameDe) : "–"}
+                <TableRow key={request.id}>
+                  <TableCell className="tabular-nums text-xs">
+                    {request.reference}
+                  </TableCell>
+                  <TableCell>
+                    <p className="max-w-56 truncate font-semibold">
+                      {request.title}
                     </p>
-                  </td>
-                  <td className="text-xs">
+                    <p className="text-xs text-ink-muted">
+                      {request.service
+                        ? pick(request.service.nameEn, request.service.nameDe)
+                        : "–"}
+                    </p>
+                  </TableCell>
+                  <TableCell className="text-xs">
                     {request.customer?.fullName || request.contactName}
                     <br />
-                    <span className="text-[10px] text-base-content/70">{request.contactEmail}</span>
-                  </td>
-                  <td className="text-xs">{formatDate(request.createdAt)}</td>
-                  <td className="text-xs">{request.budget ? formatMoney(request.budget) : "–"}</td>
-                  <td>
+                    <span className="text-xs text-ink-muted">
+                      {request.contactEmail}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-xs">
+                    {formatDate(request.createdAt)}
+                  </TableCell>
+                  <TableCell className="text-xs">
+                    {request.budget ? formatMoney(request.budget) : "–"}
+                  </TableCell>
+                  <TableCell>
                     <StatusBadge status={request.status} />
-                  </td>
-                  <td>
+                  </TableCell>
+                  <TableCell>
                     <Link
                       to="/admin/requests/$id"
                       params={{ id: request.id }}
-                      className="btn btn-ghost btn-xs"
+                      className={cn(
+                        buttonVariants(),
+                        " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs",
+                      )}
                     >
                       <ArrowRight className="h-4 w-4" />
                     </Link>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       )}
 

@@ -1,3 +1,5 @@
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
@@ -39,7 +41,7 @@ export default function ServiceDetailPage() {
     return (
       <div className="container-page py-10">
         <ErrorState message={t("services.notFound")} />
-        <Link to="/services" className="btn btn-outline btn-sm">
+        <Link to="/services" className={cn(buttonVariants(), " border-current bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm")}>
           <ArrowLeft className="h-4 w-4" /> {t("services.eyebrow")}
         </Link>
       </div>
@@ -84,7 +86,7 @@ export default function ServiceDetailPage() {
                 <Link
                   to="/quote"
                   search={{ service: service.id }}
-                  className="btn btn-primary"
+                  className={cn(buttonVariants(), " bg-primary text-primary-content border-primary hover:bg-primary-hover")}
                 >
                   {t("services.requestQuote")}{" "}
                   <ArrowRight className="h-4 w-4" />

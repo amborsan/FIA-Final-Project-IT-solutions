@@ -1,3 +1,5 @@
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import {
@@ -106,7 +108,7 @@ export default function AboutPage() {
       <section className="container-page py-14">
         <div className="flex flex-col items-start justify-between gap-4 rounded-box bg-primary p-8 text-primary-content sm:flex-row sm:items-center">
           <h2 className="text-2xl font-bold">{t("home.ctaTitle")}</h2>
-          <Link to="/quote" search={{ service: undefined }} className="btn btn-accent">
+          <Link to="/quote" search={{ service: undefined }} className={cn(buttonVariants(), " bg-accent text-accent-content border-accent hover:bg-accent/90")}>
             {t("about.cta")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

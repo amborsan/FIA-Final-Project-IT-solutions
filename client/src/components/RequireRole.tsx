@@ -1,3 +1,5 @@
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useEffect, type ReactNode } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ShieldAlert } from "lucide-react";
@@ -36,7 +38,7 @@ export function RequireRole({ roles, children }: { roles: Role[]; children: Reac
           <ShieldAlert className="mx-auto h-12 w-12 text-warning" />
           <h1 className="mt-4 text-2xl font-bold">{t("forbidden.title")}</h1>
           <p className="mt-2 text-base-content/70">{t("forbidden.text")}</p>
-          <a href={dashboard} className="btn btn-primary mt-6">
+          <a href={dashboard} className={cn(buttonVariants(), " bg-primary text-primary-content border-primary hover:bg-primary-hover mt-6")}>
             {t("forbidden.back")}
           </a>
         </div>

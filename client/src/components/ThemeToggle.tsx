@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { useI18n } from "../i18n/I18nContext";
@@ -9,14 +11,14 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
   const label = isDark ? t("theme.switchToLight") : t("theme.switchToDark");
 
   return (
-    <button
+    <Button
       type="button"
       onClick={toggleTheme}
-      className={`btn btn-ghost btn-sm ${className}`}
+      className={cn(` border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm ${className}`)}
       aria-label={label}
       title={label}
     >
       {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-    </button>
+    </Button>
   );
 }

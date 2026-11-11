@@ -26,6 +26,7 @@ If a task needs a new endpoint/field/permission/validation/database change:
 
 | Ticket | Page / area | Need | Priority | Status |
 | --- | --- | --- | --- | --- |
+| [FE-20261110-demo-customer-login.md](tickets/FE-20261110-demo-customer-login.md) | `/login` | Confirm demo customer credentials; fresh login returns 401 | `MEDIUM` | `PROPOSED` |
 | [FE-20261106-archived-users.md](tickets/FE-20261106-archived-users.md) | `/admin/users` | Return deactivated users plus `active`/`deactivatedAt` so the users list can have an archive tab | `MEDIUM` | `PROPOSED` |
 
 ## Done / frontend consumed

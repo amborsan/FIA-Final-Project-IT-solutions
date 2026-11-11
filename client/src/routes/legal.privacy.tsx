@@ -20,7 +20,7 @@ function EnglishPrivacy() {
     <>
       <h2>1. Data controller</h2>
       <p>
-        Orbit IT Solutions GmbH, Hauptstraße 12, 10115 Berlin, Germany, is
+        IT Solutions., Hauptstraße 12, 10115 Berlin, Germany, is
         responsible for the processing described here. Managing director: Aylin
         Demir. Email: <a href="mailto:privacy@fia-it.de">privacy@fia-it.de</a>,
         phone: +49 30 5550 0100.
@@ -158,8 +158,7 @@ function GermanPrivacy() {
     <>
       <h2>1. Verantwortlicher</h2>
       <p>
-        Verantwortlich für die hier beschriebene Verarbeitung ist die Orbit IT
-        Solutions GmbH, Hauptstraße 12, 10115 Berlin, Deutschland.
+        Verantwortlich für die hier beschriebene Verarbeitung ist die IT Solutions., Hauptstraße 12, 10115 Berlin, Deutschland.
         Geschäftsführung: Aylin Demir. E-Mail:{" "}
         <a href="mailto:privacy@fia-it.de">privacy@fia-it.de</a>, Telefon: +49
         30 5550 0100.

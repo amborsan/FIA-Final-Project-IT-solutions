@@ -1,17 +1,32 @@
+import { cn } from "@/lib/utils";
+import { CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Check, ShoppingCart } from "lucide-react";
+import {
+  Check,
+  ShoppingCart,
+  Router,
+  Cctv,
+  Laptop,
+  Server,
+  Phone,
+  Cable,
+  Package,
+  type LucideIcon,
+} from "lucide-react";
 import type { Product } from "../lib/types";
 import { useCart } from "../context/CartContext";
 import { useI18n } from "../i18n/I18nContext";
 
-const categoryIcon: Record<string, string> = {
-  network: "📶",
-  surveillance: "📷",
-  computers: "💻",
-  servers: "🗄️",
-  communication: "☎️",
-  accessories: "🔌",
+const categoryIcon: Record<string, LucideIcon> = {
+  network: Router,
+  surveillance: Cctv,
+  computers: Laptop,
+  servers: Server,
+  communication: Phone,
+  accessories: Cable,
 };
 
 export function ProductVisual({
@@ -31,13 +46,12 @@ export function ProductVisual({
       />
     );
   }
+  const Icon = categoryIcon[product.category?.slug ?? ""] ?? Package;
   return (
     <div
-      className={`flex w-full items-center justify-center rounded-t-box bg-gradient-to-br from-base-200 via-base-100 to-primary/5 ${className}`}
+      className={`flex w-full items-center justify-center rounded-t-box bg-accent-sky ${className}`}
     >
-      <span className="text-5xl opacity-80" aria-hidden="true">
-        {categoryIcon[product.category?.slug ?? ""] ?? "📦"}
-      </span>
+      <Icon className="size-14 text-ink" strokeWidth={1} aria-hidden="true" />
     </div>
   );
 }
@@ -54,7 +68,11 @@ export function ProductCard({ product }: { product: Product }) {
   }
 
   return (
-    <article className="card card-hover overflow-hidden border border-base-300 bg-base-100">
+    <article
+      className={cn(
+        "flex flex-col rounded-box card-hover overflow-hidden border border-base-300 bg-base-100",
+      )}
+    >
       <Link
         to="/products/$slug"
         params={{ slug: product.slug }}
@@ -63,13 +81,21 @@ export function ProductCard({ product }: { product: Product }) {
       >
         <ProductVisual product={product} />
       </Link>
-      <div className="card-body gap-2 p-4">
+      <CardContent className={cn("flex flex-auto flex-col gap-3 p-6")}>
         <div className="flex items-center justify-between gap-2">
           <span className="text-[11px] font-semibold uppercase tracking-wide text-base-content/70">
-            {product.category ? pick(product.category.nameEn, product.category.nameDe) : product.sku}
+            {product.category
+              ? pick(product.category.nameEn, product.category.nameDe)
+              : product.sku}
           </span>
           {product.featured && (
-            <span className="badge badge-accent badge-xs">{t("products.featured")}</span>
+            <Badge
+              className={cn(
+                " bg-accent text-accent-content border-accent h-4 text-xs",
+              )}
+            >
+              {t("products.featured")}
+            </Badge>
           )}
         </div>
         <Link to="/products/$slug" params={{ slug: product.slug }}>
@@ -83,26 +109,34 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="mt-auto flex items-end justify-between gap-2 pt-2">
           <div>
             <p className="text-base font-bold">{formatMoney(product.price)}</p>
-            <p className={`text-[11px] ${product.stock > 0 ? "text-emerald-700" : "text-red-700"}`}>
+            <p
+              className={`text-[11px] ${product.stock > 0 ? "text-success" : "text-error"}`}
+            >
               {product.stock > 0
                 ? t("products.stockCount", { count: product.stock })
                 : t("products.outOfStock")}
             </p>
           </div>
-          <button
+          <Button
             type="button"
             disabled={product.stock <= 0}
             onClick={handleAdd}
-            className={`btn btn-sm ${added ? "btn-success" : "btn-primary"}`}
+            className={cn(
+              ` h-8 px-3 text-sm ${added ? "bg-success text-success-content border-success hover:bg-success/90" : "bg-primary text-primary-content border-primary hover:bg-primary-hover"}`,
+            )}
             aria-label={t("products.addToCart")}
           >
-            {added ? <Check className="h-4 w-4" /> : <ShoppingCart className="h-4 w-4" />}
+            {added ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <ShoppingCart className="h-4 w-4" />
+            )}
             <span className="hidden sm:inline">
               {added ? t("products.added") : t("products.addToCart")}
             </span>
-          </button>
+          </Button>
         </div>
-      </div>
+      </CardContent>
     </article>
   );
 }

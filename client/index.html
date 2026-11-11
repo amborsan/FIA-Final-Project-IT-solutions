@@ -3,19 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link
+      rel="preload"
+      href="/fonts/geist/Geist-Variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Orbit IT Solutions - networks, servers, cybersecurity, web development and IT support for small and medium businesses in Berlin and Germany."
+      content="IT Solutions. - networks, servers, cybersecurity, web development and IT support for small and medium businesses in Berlin and Germany."
     />
-    <meta name="theme-color" content="#0f4c81" />
-    <meta property="og:title" content="Orbit IT Solutions" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta property="og:title" content="IT Solutions." />
     <meta
       property="og:description"
       content="IT services and equipment for small and medium businesses. English and German."
     />
     <meta property="og:type" content="website" />
-    <title>Orbit IT Solutions — IT services & equipment</title>
+    <title>IT Solutions. — IT services & equipment</title>
     <script>
       // Apply the saved theme before React renders to avoid a light flash.
       (function () {
@@ -24,7 +31,10 @@
           var dark = saved
             ? saved === "dark"
             : window.matchMedia("(prefers-color-scheme: dark)").matches;
-          document.documentElement.setAttribute("data-theme", dark ? "orbit-dark" : "orbit");
+          document.documentElement.setAttribute(
+            "data-theme",
+            dark ? "orbit-dark" : "orbit",
+          );
           document.documentElement.style.colorScheme = dark ? "dark" : "light";
         } catch (error) {
           // localStorage can be blocked; the default light theme still works.
