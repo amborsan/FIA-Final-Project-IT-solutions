@@ -95,3 +95,43 @@ login check still fails with HTTP 401, as recorded in the ticket above. Combined
 with the Admin/public design and Technician runs, nine E2E checks passed and
 that one known customer-authentication check failed; this was verified in
 separate runs rather than a single all-green suite.
+
+## Animated workspace sidebar
+
+The user-requested [Be UI Animated Sidebar](https://beui.dev/components/motion/animated-sidebar)
+now replaces the shared dashboard navigation for Customer, Admin and Technician.
+Adapted upstream source lives in `src/components/beui/`; `DashboardSidebar.tsx`
+composes it with existing role navigation, translations and the TanStack router.
+The frontend adds Motion, which is required by this component.
+
+Desktop navigation morphs into an icon rail and remembers the expanded state in
+browser-local storage (no authentication data). Real anchor hrefs, modified
+clicks, nested-route active states and all role-specific destinations remain.
+The separate mobile surface uses a native modal dialog with the Be UI motion,
+so the browser provides top-layer placement and outside inertness. Escape,
+explicit close, backdrop dismissal and navigation close the drawer; focus returns
+to its trigger. Reduced motion disables the slide/morph. EN/DE labels and sizes
+use existing translations and design tokens. No API or permission changes.
+
+`e2e/sidebar.spec.ts` covers the three roles in both languages, expanded/collapsed
+navigation, persistence across routes, keyboard activation, active links, mobile
+dialog focus and Escape, navigation dismissal and 360 px overflow.
+`E2E_BROWSER_CHANNEL=chrome` selects installed Chrome when the bundled Playwright
+Chromium cannot launch; leaving it unset preserves the original test default.
+
+`e2e/sidebar-component.spec.ts` uses a test-only Vite HTML entry and memory
+router with the real role navigation and sidebar. No API requests or auth mocks
+are used, and the fixture is not a production build entry. All six role/language
+cases passed after the final fixes, including light/dark, reduced motion, rail
+dimensions, shortcuts outside editable fields, five mobile open/close cycles,
+native modality, backdrop/Escape dismissal, focus return and SPA navigation.
+Native modal focus can enter browser chrome; the test checks that page controls
+remain unreachable rather than adding a custom focus trap.
+
+The full live-API suite completed with 11 passes and five failures before the
+last fixes: four logins were blocked by HTTP 429 after repeated runs, and one
+mobile opening race was corrected by synchronizing native dialog opening in a
+layout effect. The corrected behavior is covered by the API-free matrix; the
+live suite still needs a fresh run after the login limiter expires. The existing
+customer demo-card credential issue is unchanged. No security control was
+disabled, and no backend changes or business mutations were made.

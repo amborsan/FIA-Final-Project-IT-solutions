@@ -18,7 +18,7 @@ import { useI18n } from "../i18n/I18nContext";
 import type { TranslationKey } from "../i18n/translations";
 import { SectionHeading } from "../components/ui";
 import { ServiceCard } from "../components/ServiceCard";
-import { AsciiOrb } from "../components/AsciiOrb";
+import { ParticleHands } from "../components/ParticleHands";
 export const Route = createFileRoute("/")({
   component: HomePage,
 });
@@ -64,6 +64,7 @@ export default function HomePage() {
       {/* Hero */}
       <section className="home-hero">
         <div className="container-page home-hero-layout">
+          <div className="home-hero-topline">
           <div className="home-hero-heading">
             <h1 className="home-hero-title">
               {t("home.heroTitle")}{" "}
@@ -85,9 +86,11 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
+          </div>
+          <ParticleHands />
+        </div>
 
-          <AsciiOrb />
-
+        <div className="container-page home-hero-topics-panel">
           <div
             className="home-hero-description"
             onMouseLeave={() => setHeroTopic(null)}

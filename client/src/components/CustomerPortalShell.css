@@ -11,45 +11,36 @@
   @apply gap-8;
 }
 .customer-portal aside,
-.customer-portal main,
-.customer-portal main > div,
-.customer-portal main .grid > * {
+.customer-portal [data-slot="dashboard-content"],
+.customer-portal [data-slot="dashboard-content"] > div,
+.customer-portal [data-slot="dashboard-content"] .grid > * {
   @apply min-w-0;
 }
-.customer-portal aside nav {
-  @apply gap-2 border-hairline bg-surface p-2;
-}
-.customer-portal aside a {
-  @apply min-h-control gap-inline px-4 font-normal;
-}
-.customer-portal aside a:focus-visible {
-  @apply outline-2 outline-offset-2 outline-ring;
-}
-.customer-portal main > div:first-child {
+.customer-portal [data-slot="dashboard-content"] > div:first-child {
   @apply gap-6 border-b border-hairline pb-8;
 }
 .customer-portal h1 {
   @apply text-3xl font-normal;
   overflow-wrap: anywhere;
 }
-.customer-portal main > div:first-child > div:first-child {
+.customer-portal [data-slot="dashboard-content"] > div:first-child > div:first-child {
   @apply min-w-0;
 }
-.customer-portal main > div:first-child p {
+.customer-portal [data-slot="dashboard-content"] > div:first-child p {
   @apply mt-3 max-w-2xl text-sm font-normal text-ink-muted;
 }
-.customer-portal main > div:nth-child(2) {
+.customer-portal [data-slot="dashboard-content"] > div:nth-child(2) {
   @apply mt-8;
 }
-.customer-portal main section {
+.customer-portal [data-slot="dashboard-content"] section {
   @apply rounded-box border-hairline bg-surface p-6;
 }
-.customer-portal main h2 {
+.customer-portal [data-slot="dashboard-content"] h2 {
   @apply text-2xl font-medium;
 }
-.customer-portal main p,
-.customer-portal main label,
-.customer-portal main span {
+.customer-portal [data-slot="dashboard-content"] p,
+.customer-portal [data-slot="dashboard-content"] label,
+.customer-portal [data-slot="dashboard-content"] span {
   overflow-wrap: anywhere;
 }
 .customer-portal [data-slot="button"] {

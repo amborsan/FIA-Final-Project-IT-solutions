@@ -1,3 +1,4 @@
+import { I18nProvider } from "../i18n/I18nContext";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it } from "vitest";
@@ -40,13 +41,17 @@ it("preserves keyboard navigation and caller actions in the technician shell", a
     routeTree: root.addChildren([overview, requests]),
     history: createMemoryHistory({ initialEntries: ["/technician"] }),
   });
-  render(<RouterProvider router={router} />);
+  render(<I18nProvider><RouterProvider router={router} /></I18nProvider>);
   await screen.findByText("Overview content");
   expect(screen.getByRole("link", { name: "New request" })).toHaveAttribute(
     "href",
     "/quote",
   );
   const user = userEvent.setup();
+  await user.tab();
+  await user.keyboard("{Enter}");
+  expect(screen.getByRole("button", { name: "Toggle workspace sidebar" })).toHaveAttribute("aria-expanded", "false");
+  expect(localStorage.getItem("fia_sidebar_expanded")).toBe("false");
   await user.tab();
   expect(screen.getByRole("link", { name: "Requests" })).toHaveFocus();
   await user.keyboard("{Enter}");

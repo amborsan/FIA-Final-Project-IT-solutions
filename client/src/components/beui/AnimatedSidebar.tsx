@@ -1,0 +1,1069 @@
+"use client";
+// beui.dev/components/motion/animated-sidebar
+
+import { ChevronRight } from "lucide-react";
+import {
+  AnimatePresence,
+  type HTMLMotionProps,
+  motion,
+  useReducedMotion,
+  type Variants,
+} from "motion/react";
+import {
+  type ButtonHTMLAttributes,
+  type CSSProperties,
+  createContext,
+  forwardRef,
+  type HTMLAttributes,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import { createPortal } from "react-dom";
+import { SharedLayoutBg } from "./SharedLayoutBg";
+import {
+  EASE_DRAWER,
+  EASE_OUT,
+  SPRING_LAYOUT,
+  SPRING_PRESS,
+} from "./ease";
+import { cn } from "@/lib/utils";
+
+type SidebarState = "expanded" | "collapsed";
+type SidebarSide = "left" | "right";
+type SidebarVariant = "sidebar" | "floating" | "inset";
+type SidebarCollapsible = "offcanvas" | "icon" | "none";
+
+const MOBILE_QUERY = "(max-width: 767px)";
+const SIDEBAR_KEYBOARD_SHORTCUT = "b";
+
+const PANEL_TRANSITION = {
+  duration: 0.36,
+  ease: EASE_DRAWER,
+} as const;
+
+// The desktop rail settles at a hard zero-width boundary. Keep the spring
+// critically damped so it cannot overshoot, pause against that boundary, and
+// then snap back during the final frame.
+const SIDEBAR_MORPH_TRANSITION = {
+  type: "spring",
+  stiffness: 380,
+  damping: 35,
+  mass: 0.75,
+} as const;
+
+const LABEL_ENTER_TRANSITION = {
+  duration: 0.2,
+  delay: 0.08,
+  ease: EASE_OUT,
+} as const;
+
+const LABEL_EXIT_TRANSITION = {
+  duration: 0.12,
+  ease: EASE_OUT,
+} as const;
+
+const SUBMENU_TRANSITION = {
+  duration: 0.18,
+  ease: EASE_OUT,
+} as const;
+
+const SUBMENU_VARIANTS: Variants = {
+  closed: {
+    opacity: 0,
+    clipPath: "inset(0 0 100% 0 round 8px)",
+    transition: {
+      duration: 0.14,
+      ease: EASE_OUT,
+      staggerChildren: 0.025,
+      staggerDirection: -1,
+    },
+  },
+  open: {
+    opacity: 1,
+    clipPath: "inset(0 0 0% 0 round 8px)",
+    transition: {
+      duration: 0.2,
+      delayChildren: 0.035,
+      ease: EASE_OUT,
+      staggerChildren: 0.045,
+    },
+  },
+};
+
+const SUBMENU_ITEM_VARIANTS: Variants = {
+  closed: {
+    opacity: 0,
+    y: -6,
+    filter: "blur(3px)",
+  },
+  open: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: SUBMENU_TRANSITION,
+  },
+};
+
+const REDUCED_TRANSITION = {
+  duration: 0.16,
+  ease: EASE_OUT,
+} as const;
+
+function subscribeToMobileQuery(callback: () => void) {
+  const query = window.matchMedia(MOBILE_QUERY);
+  query.addEventListener("change", callback);
+  return () => query.removeEventListener("change", callback);
+}
+
+function getMobileSnapshot() {
+  return window.matchMedia(MOBILE_QUERY).matches;
+}
+
+function getServerMobileSnapshot() {
+  return false;
+}
+
+function useIsMobile() {
+  return useSyncExternalStore(
+    subscribeToMobileQuery,
+    getMobileSnapshot,
+    getServerMobileSnapshot,
+  );
+}
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const animatedSidebarMessages = {
+  label: "Sidebar",
+  toggle: "Toggle sidebar",
+  close: "Close sidebar",
+};
+
+export type AnimatedSidebarMessages = typeof animatedSidebarMessages;
+
+interface AnimatedSidebarContextValue {
+  isMobile: boolean;
+  layoutId: string;
+  open: boolean;
+  openMobile: boolean;
+  reduce: boolean;
+  setOpen: (open: boolean) => void;
+  setOpenMobile: (open: boolean) => void;
+  state: SidebarState;
+  toggleSidebar: () => void;
+  triggerRef: React.RefObject<HTMLButtonElement | null>;
+  registerTrigger: (node: HTMLButtonElement | null) => void;
+  t: (key: keyof AnimatedSidebarMessages) => string;
+  panelId: string;
+}
+
+const AnimatedSidebarContext =
+  createContext<AnimatedSidebarContextValue | null>(null);
+
+interface AnimatedSidebarPanelContextValue {
+  collapsed: boolean;
+  collapsible: SidebarCollapsible;
+  side: SidebarSide;
+}
+
+const AnimatedSidebarPanelContext =
+  createContext<AnimatedSidebarPanelContextValue | null>(null);
+
+export function useAnimatedSidebar() {
+  const context = useContext(AnimatedSidebarContext);
+  if (!context) {
+    throw new Error(
+      "useAnimatedSidebar must be used inside AnimatedSidebarProvider.",
+    );
+  }
+  return context;
+}
+
+function useAnimatedSidebarPanel() {
+  const context = useContext(AnimatedSidebarPanelContext);
+  if (!context) {
+    throw new Error(
+      "Animated Sidebar parts must be used inside AnimatedSidebar.",
+    );
+  }
+  return context;
+}
+
+type SidebarProviderStyle = CSSProperties & {
+  "--sidebar-width"?: string;
+  "--sidebar-width-icon"?: string;
+  "--sidebar-width-mobile"?: string;
+};
+
+export interface AnimatedSidebarProviderProps
+  extends HTMLAttributes<HTMLDivElement> {
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  openMobile?: boolean;
+  defaultOpenMobile?: boolean;
+  onOpenMobileChange?: (open: boolean) => void;
+  style?: SidebarProviderStyle;
+  /** Override any built-in string. */
+  labels?: Partial<AnimatedSidebarMessages>;
+}
+
+export function AnimatedSidebarProvider({
+  children,
+  open,
+  defaultOpen = true,
+  onOpenChange,
+  openMobile,
+  defaultOpenMobile = false,
+  onOpenMobileChange,
+  className,
+  style,
+  labels,
+  ...props
+}: AnimatedSidebarProviderProps) {
+  const t = (key: keyof AnimatedSidebarMessages) => labels?.[key] ?? animatedSidebarMessages[key];
+  const [internalOpen, setInternalOpen] = useState(defaultOpen);
+  const [internalOpenMobile, setInternalOpenMobile] =
+    useState(defaultOpenMobile);
+  const isMobile = useIsMobile();
+  const reduce = useReducedMotion() ?? false;
+  const generatedId = useId();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const desktopOpen = open ?? internalOpen;
+  const mobileOpen = openMobile ?? internalOpenMobile;
+
+  const setOpen = useCallback(
+    (nextOpen: boolean) => {
+      if (open === undefined) setInternalOpen(nextOpen);
+      onOpenChange?.(nextOpen);
+    },
+    [onOpenChange, open],
+  );
+
+  const setOpenMobile = useCallback(
+    (nextOpen: boolean) => {
+      if (openMobile === undefined) setInternalOpenMobile(nextOpen);
+      onOpenMobileChange?.(nextOpen);
+    },
+    [onOpenMobileChange, openMobile],
+  );
+
+  const toggleSidebar = useCallback(() => {
+    if (isMobile) setOpenMobile(!mobileOpen);
+    else setOpen(!desktopOpen);
+  }, [desktopOpen, isMobile, mobileOpen, setOpen, setOpenMobile]);
+
+  useEffect(() => {
+    const handleShortcut = (event: KeyboardEvent) => {
+      if (
+        !event.repeat &&
+        !(event.target instanceof HTMLElement && (event.target.isContentEditable || event.target.closest("input, textarea, select"))) &&
+        event.key.toLowerCase() === SIDEBAR_KEYBOARD_SHORTCUT &&
+        (event.metaKey || event.ctrlKey)
+      ) {
+        event.preventDefault();
+        toggleSidebar();
+      }
+    };
+
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, [toggleSidebar]);
+
+  return (
+    <AnimatedSidebarContext.Provider
+      value={{
+        isMobile,
+        panelId: `${generatedId}-panel`,
+        layoutId: `${generatedId}-active`,
+        open: desktopOpen,
+        openMobile: mobileOpen,
+        reduce,
+        setOpen,
+        setOpenMobile,
+        state: desktopOpen ? "expanded" : "collapsed",
+        toggleSidebar,
+        triggerRef,
+        registerTrigger: (node) => { triggerRef.current = node; },
+        t,
+      }}
+    >
+      <div
+        {...props}
+        data-slot="sidebar-wrapper"
+        data-state={desktopOpen ? "expanded" : "collapsed"}
+        style={{
+          "--sidebar-width": "var(--dashboard-sidebar-width)",
+          "--sidebar-width-icon": "var(--dashboard-sidebar-icon-width)",
+          "--sidebar-width-mobile": "var(--dashboard-sidebar-mobile-width)",
+          ...style,
+        }}
+        className={cn(
+          "group/sidebar-wrapper flex min-h-svh w-full min-w-0",
+          className,
+        )}
+      >
+        {children}
+      </div>
+    </AnimatedSidebarContext.Provider>
+  );
+}
+
+// The mobile panel is a separate modal surface; native dialog supplies top-layer
+// placement and outside inertness while the Be UI motion remains interruptible.
+function MobileSidebar({
+  ariaLabel, children, className, side,
+}: { ariaLabel: string; children: ReactNode; className?: string; side: SidebarSide }) {
+  const context = useAnimatedSidebar();
+  const panelRef = useRef<HTMLDialogElement>(null);
+  const openRef = useRef(context.openMobile);
+
+  useLayoutEffect(() => {
+    openRef.current = context.openMobile;
+    if (context.openMobile && !panelRef.current?.open) panelRef.current?.showModal();
+  }, [context.openMobile]);
+
+  useEffect(() => {
+    if (!context.openMobile) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [context.openMobile]);
+
+  return createPortal(
+    <motion.dialog
+      ref={panelRef}
+      id={context.panelId}
+      aria-label={ariaLabel}
+      data-slot="sidebar"
+      data-mobile="true"
+      data-state={context.openMobile ? "expanded" : "collapsed"}
+      data-side={side}
+      initial={false}
+      animate={{
+        opacity: context.openMobile ? 1 : 0,
+        x: context.reduce ? 0 : context.openMobile ? "0%" : side === "left" ? "-100%" : "100%",
+      }}
+      transition={context.reduce ? { duration: 0 } : PANEL_TRANSITION}
+      onAnimationComplete={() => {
+        if (!openRef.current && panelRef.current?.open) {
+          panelRef.current.close();
+        }
+      }}
+      onCancel={(event) => { event.preventDefault(); context.setOpenMobile(false); }}
+      onClose={() => {
+        if (panelRef.current?.open) return;
+        context.setOpenMobile(false);
+        // Native close restores focus first; apply the current responsive trigger after it.
+        context.triggerRef.current?.focus({ preventScroll: true });
+      }}
+      onClick={(event) => {
+        if (event.target !== event.currentTarget) return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        if (event.clientX < rect.left || event.clientX > rect.right ||
+            event.clientY < rect.top || event.clientY > rect.bottom) context.setOpenMobile(false);
+      }}
+      className={cn("dashboard-sidebar-drawer", className)}
+    >
+      <AnimatedSidebarPanelContext.Provider value={{ collapsed: false, collapsible: "none", side }}>
+        {children}
+      </AnimatedSidebarPanelContext.Provider>
+    </motion.dialog>,
+    document.body,
+  );
+}
+
+export interface AnimatedSidebarProps
+  extends Omit<HTMLMotionProps<"aside">, "children"> {
+  children?: ReactNode;
+  side?: SidebarSide;
+  variant?: SidebarVariant;
+  collapsible?: SidebarCollapsible;
+  ariaLabel?: string;
+  panelClassName?: string;
+}
+
+export const AnimatedSidebar = forwardRef<HTMLElement, AnimatedSidebarProps>(
+  function AnimatedSidebar(
+    {
+      side = "left",
+      variant = "sidebar",
+      collapsible = "icon",
+      ariaLabel: ariaLabelProp,
+      children,
+      className,
+      panelClassName,
+      style,
+      ...props
+    },
+    forwardedRef,
+  ) {
+    const context = useAnimatedSidebar();
+    const ariaLabel = ariaLabelProp ?? context.t("label");
+    const collapsed = collapsible !== "none" && !context.open;
+    const offcanvas = collapsed && collapsible === "offcanvas";
+    const width = offcanvas
+      ? "0px"
+      : collapsed
+        ? "var(--sidebar-width-icon)"
+        : "var(--sidebar-width)";
+
+    if (context.isMobile) {
+      return (
+        <MobileSidebar
+          ariaLabel={ariaLabel}
+          className={className}
+          side={side}
+        >
+          {children}
+        </MobileSidebar>
+      );
+    }
+
+    return (
+      <motion.aside
+        {...props}
+        ref={forwardedRef}
+        id={context.panelId}
+        initial={false}
+        aria-label={ariaLabel}
+        data-slot="sidebar"
+        data-state={collapsed ? "collapsed" : "expanded"}
+        data-collapsible={collapsible}
+        data-variant={variant}
+        data-side={side}
+        animate={{ width }}
+        transition={
+          context.reduce ? { duration: 0 } : SIDEBAR_MORPH_TRANSITION
+        }
+        style={style}
+        className={cn(
+          "group/sidebar relative hidden h-auto shrink-0 md:block will-change-[width]",
+          "peer",
+          side === "right" && "order-last",
+          className,
+        )}
+      >
+        <motion.div
+          initial={false}
+          animate={{
+            opacity: offcanvas ? 0 : 1,
+            x: offcanvas ? (side === "left" ? "-100%" : "100%") : "0%",
+          }}
+          transition={
+            context.reduce ? REDUCED_TRANSITION : PANEL_TRANSITION
+          }
+          className={cn(
+            "sticky top-0 flex h-svh w-full flex-col overflow-hidden bg-background",
+            collapsible === "offcanvas" && "w-[var(--sidebar-width)]",
+            variant === "sidebar" &&
+              (side === "left" ? "border-border border-r" : "border-border border-l"),
+            variant === "floating" &&
+              "m-2 h-[calc(100svh-1rem)] rounded-2xl border border-border shadow-sm",
+            variant === "inset" && "m-2 h-[calc(100svh-1rem)] rounded-2xl",
+            panelClassName,
+          )}
+        >
+          <AnimatedSidebarPanelContext.Provider
+            value={{ collapsed, collapsible, side }}
+          >
+            {children}
+          </AnimatedSidebarPanelContext.Provider>
+        </motion.div>
+      </motion.aside>
+    );
+  },
+);
+
+export type AnimatedSidebarTriggerProps = ButtonHTMLAttributes<HTMLButtonElement>;
+
+export const AnimatedSidebarTrigger = forwardRef<
+  HTMLButtonElement,
+  AnimatedSidebarTriggerProps
+>(function AnimatedSidebarTrigger(
+  { className, onClick, type = "button", ...props },
+  forwardedRef,
+) {
+  const context = useAnimatedSidebar();
+  const expanded = context.isMobile ? context.openMobile : context.open;
+
+  return (
+    <button
+      {...props}
+      ref={(node) => {
+        context.registerTrigger(node);
+        if (typeof forwardedRef === "function") forwardedRef(node);
+        else if (forwardedRef) forwardedRef.current = node;
+      }}
+      type={type}
+      aria-label={props["aria-label"] ?? context.t("toggle")}
+      aria-expanded={expanded}
+      aria-controls={context.panelId}
+      data-slot="sidebar-trigger"
+      data-state={expanded ? "expanded" : "collapsed"}
+      onClick={(event) => {
+        onClick?.(event);
+        if (!event.defaultPrevented) context.toggleSidebar();
+      }}
+      className={cn(
+        "inline-flex size-10 shrink-0 items-center justify-center rounded-pill outline-none",
+        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        className,
+      )}
+    />
+  );
+});
+
+export type AnimatedSidebarCloseProps = ButtonHTMLAttributes<HTMLButtonElement>;
+
+export const AnimatedSidebarClose = forwardRef<
+  HTMLButtonElement,
+  AnimatedSidebarCloseProps
+>(function AnimatedSidebarClose(
+  { className, onClick, type = "button", ...props },
+  forwardedRef,
+) {
+  const context = useAnimatedSidebar();
+
+  return (
+    <button
+      {...props}
+      ref={forwardedRef}
+      type={type}
+      aria-label={props["aria-label"] ?? context.t("close")}
+      onClick={(event) => {
+        onClick?.(event);
+        if (event.defaultPrevented) return;
+        if (context.isMobile) context.setOpenMobile(false);
+        else context.setOpen(false);
+      }}
+      className={cn(
+        "inline-flex size-10 shrink-0 items-center justify-center rounded-pill outline-none",
+        "focus-visible:ring-2 focus-visible:ring-ring",
+        className,
+      )}
+    />
+  );
+});
+
+export type AnimatedSidebarRailProps = ButtonHTMLAttributes<HTMLButtonElement>;
+
+export const AnimatedSidebarRail = forwardRef<
+  HTMLButtonElement,
+  AnimatedSidebarRailProps
+>(function AnimatedSidebarRail(
+  { className, onClick, type = "button", ...props },
+  forwardedRef,
+) {
+  const context = useAnimatedSidebar();
+  const panel = useAnimatedSidebarPanel();
+
+  return (
+    <button
+      {...props}
+      ref={forwardedRef}
+      type={type}
+      data-side={panel.side}
+      aria-label={props["aria-label"] ?? context.t("toggle")}
+      title={context.t("toggle")}
+      tabIndex={-1}
+      onClick={(event) => {
+        onClick?.(event);
+        if (!event.defaultPrevented) context.toggleSidebar();
+      }}
+      className={cn(
+        "absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 outline-none md:block",
+        "after:absolute after:inset-y-0 after:left-1/2 after:w-px after:bg-transparent after:transition-colors hover:after:bg-border",
+        "data-[side=right]:right-0 data-[side=right]:translate-x-1/2 data-[side=left]:left-full",
+        className,
+      )}
+    />
+  );
+});
+
+export type AnimatedSidebarInsetProps = HTMLMotionProps<"main">;
+
+export const AnimatedSidebarInset = forwardRef<
+  HTMLElement,
+  AnimatedSidebarInsetProps
+>(function AnimatedSidebarInset({ className, ...props }, forwardedRef) {
+  return (
+    <motion.main
+      {...props}
+      ref={forwardedRef}
+      data-slot="sidebar-inset"
+      className={cn(
+        "relative flex min-h-svh min-w-0 flex-1 flex-col bg-background",
+        "md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-2xl md:peer-data-[variant=inset]:shadow-sm",
+        className,
+      )}
+    />
+  );
+});
+
+export const AnimatedSidebarHeader = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement>
+>(function AnimatedSidebarHeader({ className, ...props }, forwardedRef) {
+  return (
+    <div
+      {...props}
+      ref={forwardedRef}
+      data-slot="sidebar-header"
+      className={cn("flex shrink-0 flex-col gap-2 p-3", className)}
+    />
+  );
+});
+
+export const AnimatedSidebarContent = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement>
+>(function AnimatedSidebarContent({ className, ...props }, forwardedRef) {
+  return (
+    <div
+      {...props}
+      ref={forwardedRef}
+      data-slot="sidebar-content"
+      className={cn(
+        "flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden overscroll-contain px-2 py-2",
+        className,
+      )}
+    />
+  );
+});
+
+export const AnimatedSidebarFooter = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement>
+>(function AnimatedSidebarFooter({ className, ...props }, forwardedRef) {
+  return (
+    <div
+      {...props}
+      ref={forwardedRef}
+      data-slot="sidebar-footer"
+      className={cn(
+        "flex shrink-0 flex-col gap-2 border-border border-t p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]",
+        className,
+      )}
+    />
+  );
+});
+
+export const AnimatedSidebarGroup = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement>
+>(function AnimatedSidebarGroup({ className, ...props }, forwardedRef) {
+  return (
+    <div
+      {...props}
+      ref={forwardedRef}
+      data-slot="sidebar-group"
+      className={cn("flex w-full min-w-0 flex-col px-1 py-1.5", className)}
+    />
+  );
+});
+
+export const AnimatedSidebarGroupLabel = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement>
+>(function AnimatedSidebarGroupLabel(
+  { children, className, ...props },
+  forwardedRef,
+) {
+  const { collapsed } = useAnimatedSidebarPanel();
+
+  return (
+    <div
+      {...props}
+      ref={forwardedRef}
+      aria-hidden={collapsed}
+      data-slot="sidebar-group-label"
+      className={cn(
+        "mb-1 h-7 overflow-hidden px-2 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground transition-opacity",
+        collapsed ? "opacity-0" : "opacity-100",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+});
+
+export const AnimatedSidebarGroupContent = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement>
+>(function AnimatedSidebarGroupContent(
+  { className, ...props },
+  forwardedRef,
+) {
+  return (
+    <div
+      {...props}
+      ref={forwardedRef}
+      data-slot="sidebar-group-content"
+      className={cn("w-full min-w-0", className)}
+    />
+  );
+});
+
+export const AnimatedSidebarMenu = forwardRef<
+  HTMLUListElement,
+  HTMLAttributes<HTMLUListElement>
+>(function AnimatedSidebarMenu(
+  { children, className, ...props },
+  forwardedRef,
+) {
+  return (
+    <SharedLayoutBg
+      {...props}
+      ref={forwardedRef as React.Ref<HTMLElement>}
+      as="ul"
+      inset={0}
+      pillClassName="rounded-pill bg-muted/70"
+      pillContainerClassName="inset-y-0"
+      data-slot="sidebar-menu"
+      className={cn("flex w-full min-w-0 list-none flex-col gap-0.5", className)}
+    >
+      {children}
+    </SharedLayoutBg>
+  );
+});
+
+export const AnimatedSidebarMenuItem = forwardRef<
+  HTMLLIElement,
+  HTMLMotionProps<"li">
+>(function AnimatedSidebarMenuItem({ className, ...props }, forwardedRef) {
+  return (
+    <motion.li
+      {...props}
+      ref={forwardedRef}
+      layout="position"
+      transition={useAnimatedSidebar().reduce ? { duration: 0 } : SPRING_LAYOUT}
+      data-slot="sidebar-menu-item"
+      className={cn("relative", className)}
+    />
+  );
+});
+
+export interface AnimatedSidebarMenuSubProps
+  extends Omit<HTMLMotionProps<"ul">, "children"> {
+  open: boolean;
+  children?: ReactNode;
+}
+
+export const AnimatedSidebarMenuSub = forwardRef<
+  HTMLUListElement,
+  AnimatedSidebarMenuSubProps
+>(function AnimatedSidebarMenuSub(
+  { open, children, className, ...props },
+  forwardedRef,
+) {
+  const context = useAnimatedSidebar();
+  const panel = useAnimatedSidebarPanel();
+
+  return (
+    <AnimatePresence initial={false} mode="popLayout">
+      {open && !panel.collapsed ? (
+        <motion.ul
+          {...props}
+          ref={forwardedRef}
+          key="sidebar-submenu"
+          variants={context.reduce ? undefined : SUBMENU_VARIANTS}
+          initial={context.reduce ? false : "closed"}
+          animate={context.reduce ? { opacity: 1 } : "open"}
+          exit={context.reduce ? { opacity: 0 } : "closed"}
+          transition={context.reduce ? { duration: 0.12 } : undefined}
+          data-slot="sidebar-menu-sub"
+          className={cn(
+            "relative mt-1 ml-5 flex min-w-0 flex-col gap-0.5 border-border border-l pl-3",
+            className,
+          )}
+        >
+          {children}
+        </motion.ul>
+      ) : null}
+    </AnimatePresence>
+  );
+});
+
+export const AnimatedSidebarMenuSubItem = forwardRef<
+  HTMLLIElement,
+  HTMLMotionProps<"li">
+>(function AnimatedSidebarMenuSubItem(
+  { className, ...props },
+  forwardedRef,
+) {
+  return (
+    <motion.li
+      {...props}
+      ref={forwardedRef}
+      variants={SUBMENU_ITEM_VARIANTS}
+      data-slot="sidebar-menu-sub-item"
+      className={cn("relative min-w-0", className)}
+    />
+  );
+});
+
+export interface AnimatedSidebarMenuSubButtonProps {
+  children: ReactNode;
+  icon?: ReactNode;
+  href?: string;
+  isActive?: boolean;
+  disabled?: boolean;
+  closeOnSelect?: boolean;
+  target?: "_blank" | "_self" | "_parent" | "_top";
+  rel?: string;
+  onSelect?: (event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
+  className?: string;
+}
+
+export function AnimatedSidebarMenuSubButton({
+  children,
+  icon,
+  href,
+  isActive = false,
+  disabled = false,
+  closeOnSelect = true,
+  target,
+  rel,
+  onSelect,
+  className,
+}: AnimatedSidebarMenuSubButtonProps) {
+  const context = useAnimatedSidebar();
+
+  const select = (
+    event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
+  ) => {
+    if (disabled) {
+      event.preventDefault();
+      return;
+    }
+    onSelect?.(event);
+    if (context.isMobile && closeOnSelect) context.setOpenMobile(false);
+  };
+
+  const content = (
+    <>
+      <span
+        aria-hidden="true"
+        className="grid size-4 shrink-0 place-items-center"
+      >
+        {icon ?? <span className="size-1 rounded-full bg-current" />}
+      </span>
+      <span className="min-w-0 flex-1 truncate">{children}</span>
+    </>
+  );
+
+  const interactiveClassName = cn(
+    "flex min-h-8 w-full min-w-0 items-center gap-2 rounded-lg px-2 text-left text-xs outline-none",
+    "text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground",
+    "focus-visible:bg-muted/70 focus-visible:ring-2 focus-visible:ring-ring",
+    isActive && "bg-muted/70 text-foreground",
+    disabled && "cursor-not-allowed opacity-40",
+    className,
+  );
+
+  return href ? (
+    <motion.a
+      href={href}
+      target={target}
+      rel={
+        rel ??
+        (target === "_blank" ? "noreferrer noopener" : undefined)
+      }
+      aria-current={isActive ? "page" : undefined}
+      aria-disabled={disabled || undefined}
+      tabIndex={disabled ? -1 : undefined}
+      onClick={select}
+      whileTap={context.reduce || disabled ? undefined : { scale: 0.98 }}
+      transition={SPRING_PRESS}
+      className={interactiveClassName}
+    >
+      {content}
+    </motion.a>
+  ) : (
+    <motion.button
+      type="button"
+      disabled={disabled}
+      aria-current={isActive ? "page" : undefined}
+      onClick={select}
+      whileTap={context.reduce || disabled ? undefined : { scale: 0.98 }}
+      transition={SPRING_PRESS}
+      className={interactiveClassName}
+    >
+      {content}
+    </motion.button>
+  );
+}
+
+export interface AnimatedSidebarMenuButtonProps {
+  children: ReactNode;
+  icon?: ReactNode;
+  badge?: ReactNode;
+  href?: string;
+  isActive?: boolean;
+  ariaExpanded?: boolean;
+  disabled?: boolean;
+  closeOnSelect?: boolean;
+  target?: "_blank" | "_self" | "_parent" | "_top";
+  rel?: string;
+  onSelect?: (event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
+  className?: string;
+}
+
+export function AnimatedSidebarMenuButton({
+  children,
+  icon,
+  badge,
+  href,
+  isActive = false,
+  ariaExpanded,
+  disabled = false,
+  closeOnSelect,
+  target,
+  rel,
+  onSelect,
+  className,
+}: AnimatedSidebarMenuButtonProps) {
+  const context = useAnimatedSidebar();
+  const panel = useAnimatedSidebarPanel();
+  const textLabel = typeof children === "string" ? children : undefined;
+
+  const select = (
+    event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
+  ) => {
+    if (disabled) {
+      event.preventDefault();
+      return;
+    }
+    onSelect?.(event);
+    const shouldCloseOnSelect =
+      closeOnSelect ?? ariaExpanded === undefined;
+    if (context.isMobile && shouldCloseOnSelect) {
+      context.setOpenMobile(false);
+    }
+    // A submenu cannot render in the icon rail, so opening one from there
+    // leaves its children unreachable — a pointer can still fall back to the
+    // rail or the shortcut, a finger has nothing. Selecting a group unfolds
+    // the panel that is about to hold it.
+    if (ariaExpanded !== undefined && panel.collapsed && !context.isMobile) {
+      context.setOpen(true);
+    }
+  };
+
+  const content = (
+    <>
+      {isActive ? (
+        <motion.span
+          layoutId={context.layoutId}
+          transition={context.reduce ? { duration: 0 } : SPRING_LAYOUT}
+          className="absolute inset-0 rounded-pill bg-muted"
+        />
+      ) : null}
+      {icon ? (
+        <span
+          aria-hidden="true"
+          className="relative z-10 grid size-5 shrink-0 place-items-center"
+        >
+          {icon}
+        </span>
+      ) : null}
+      <motion.span
+        data-slot="sidebar-menu-label"
+        initial={false}
+        animate={{
+          opacity: panel.collapsed ? 0 : 1,
+          x: panel.collapsed ? -4 : 0,
+        }}
+        transition={
+          context.reduce
+            ? REDUCED_TRANSITION
+            : panel.collapsed
+              ? LABEL_EXIT_TRANSITION
+              : LABEL_ENTER_TRANSITION
+        }
+        aria-hidden={panel.collapsed}
+        className={cn(
+          "relative z-10 min-w-0 flex-1 truncate",
+          panel.collapsed && "pointer-events-none",
+        )}
+      >
+        {children}
+      </motion.span>
+      {badge && !panel.collapsed ? (
+        <span className="relative z-10 shrink-0 text-xs text-muted-foreground">
+          {badge}
+        </span>
+      ) : null}
+      {ariaExpanded !== undefined ? (
+        <motion.span
+          aria-hidden="true"
+          initial={false}
+          animate={{
+            opacity: panel.collapsed ? 0 : 1,
+            rotate: ariaExpanded ? 90 : 0,
+            x: panel.collapsed ? 4 : 0,
+          }}
+          transition={context.reduce ? { duration: 0 } : SPRING_LAYOUT}
+          className="relative z-10 grid size-4 shrink-0 place-items-center text-muted-foreground"
+        >
+          <ChevronRight className="size-3.5" />
+        </motion.span>
+      ) : null}
+    </>
+  );
+
+  const interactiveClassName = cn(
+    "relative flex min-h-9 w-full min-w-0 items-center gap-2.5 overflow-hidden rounded-pill px-3 text-left text-sm font-medium outline-none",
+    "text-muted-foreground transition-colors hover:text-foreground",
+    "focus-visible:bg-muted/70 focus-visible:ring-2 focus-visible:ring-ring",
+    isActive && "text-foreground",
+    disabled && "cursor-not-allowed opacity-40",
+    className,
+  );
+
+  return href ? (
+    <motion.a
+      href={href}
+      target={target}
+      rel={
+        rel ??
+        (target === "_blank" ? "noreferrer noopener" : undefined)
+      }
+      aria-current={isActive ? "page" : undefined}
+      aria-expanded={ariaExpanded}
+      aria-disabled={disabled || undefined}
+      aria-label={panel.collapsed ? textLabel : undefined}
+      title={panel.collapsed ? textLabel : undefined}
+      tabIndex={disabled ? -1 : undefined}
+      onClick={select}
+      whileTap={context.reduce || disabled ? undefined : { scale: 0.98 }}
+      transition={SPRING_PRESS}
+      className={interactiveClassName}
+    >
+      {content}
+    </motion.a>
+  ) : (
+    <motion.button
+      type="button"
+      disabled={disabled}
+      aria-current={isActive ? "page" : undefined}
+      aria-expanded={ariaExpanded}
+      aria-label={panel.collapsed ? textLabel : undefined}
+      title={panel.collapsed ? textLabel : undefined}
+      onClick={select}
+      whileTap={context.reduce || disabled ? undefined : { scale: 0.98 }}
+      transition={SPRING_PRESS}
+      className={interactiveClassName}
+    >
+      {content}
+    </motion.button>
+  );
+}
+

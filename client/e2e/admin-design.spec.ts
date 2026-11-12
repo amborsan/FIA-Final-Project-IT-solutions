@@ -23,8 +23,11 @@ async function signIn(page: Page) {
     .getByRole("button", { name: "Log in", exact: true })
     .click();
   await expect(page).toHaveURL(/\/admin\/?$/, { timeout: 15000 });
+  await expect(page.locator(".admin-dashboard aside")).toBeVisible();
 }
 async function visit(page: Page, route: string) {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await expect(page.locator(".admin-dashboard aside")).toBeVisible();
   // Keep providers and query caches alive instead of reloading every screen.
   if (new URL(page.url()).pathname.replace(/\/$/, "") !== route) {
     const navigation = page.locator(
@@ -37,7 +40,7 @@ async function visit(page: Page, route: string) {
         .locator('.admin-dashboard aside a[href="/admin/requests"]')
         .click();
       await page
-        .locator(`.admin-dashboard main a[href="${route}"]`)
+        .locator(`.admin-dashboard [data-slot=dashboard-content] a[href="${route}"]`)
         .first()
         .click();
     }
@@ -167,7 +170,7 @@ for (const language of ["en", "de"] as const) {
     ).toHaveCount(2);
     await visit(page, "/admin/tickets");
     await page
-      .locator(".admin-dashboard main button.w-full.rounded-box")
+      .locator(".admin-dashboard [data-slot=dashboard-content] button.w-full.rounded-box")
       .first()
       .click();
     await expect(page.locator(".admin-dashboard form")).toBeVisible();

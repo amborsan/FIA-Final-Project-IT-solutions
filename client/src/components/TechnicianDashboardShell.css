@@ -10,46 +10,37 @@
   @apply gap-8;
 }
 .technician-dashboard aside,
-.technician-dashboard main,
-.technician-dashboard main > div,
-.technician-dashboard main .grid > * {
+.technician-dashboard [data-slot="dashboard-content"],
+.technician-dashboard [data-slot="dashboard-content"] > div,
+.technician-dashboard [data-slot="dashboard-content"] .grid > * {
   @apply min-w-0;
 }
-.technician-dashboard aside nav {
-  @apply gap-2 border-hairline bg-surface p-2;
-}
-.technician-dashboard aside a {
-  @apply min-h-control gap-inline px-4 font-normal;
-}
-.technician-dashboard aside a:focus-visible {
-  @apply outline-2 outline-offset-2 outline-ring;
-}
-.technician-dashboard main > div:first-child {
+.technician-dashboard [data-slot="dashboard-content"] > div:first-child {
   @apply gap-6 border-b border-hairline pb-8;
 }
 .technician-dashboard h1 {
   @apply text-3xl font-normal;
   overflow-wrap: anywhere;
 }
-.technician-dashboard main > div:first-child > div:first-child {
+.technician-dashboard [data-slot="dashboard-content"] > div:first-child > div:first-child {
   @apply min-w-0;
 }
-.technician-dashboard main > div:first-child p {
+.technician-dashboard [data-slot="dashboard-content"] > div:first-child p {
   @apply mt-3 max-w-2xl text-sm font-normal text-ink-muted;
 }
-.technician-dashboard main > div:nth-child(2) {
+.technician-dashboard [data-slot="dashboard-content"] > div:nth-child(2) {
   @apply mt-8;
 }
-.technician-dashboard main section,
-.technician-dashboard main > div > form {
+.technician-dashboard [data-slot="dashboard-content"] section,
+.technician-dashboard [data-slot="dashboard-content"] > div > form {
   @apply rounded-box border-hairline bg-surface p-6;
 }
-.technician-dashboard main h2 {
+.technician-dashboard [data-slot="dashboard-content"] h2 {
   @apply text-2xl font-medium;
 }
-.technician-dashboard main p,
-.technician-dashboard main span,
-.technician-dashboard main label {
+.technician-dashboard [data-slot="dashboard-content"] p,
+.technician-dashboard [data-slot="dashboard-content"] span,
+.technician-dashboard [data-slot="dashboard-content"] label {
   overflow-wrap: anywhere;
 }
 .technician-dashboard label > span {

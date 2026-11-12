@@ -147,9 +147,6 @@ export function Footer() {
           </p>
           <div className="text-center sm:text-right">
             <p>{t("footer.madeIn")}</p>
-            <a className="underline underline-offset-2" href="https://thenounproject.com/icon/sphere-104194/">
-              {t("footer.iconCredit")}
-            </a>
           </div>
         </div>
       </div>

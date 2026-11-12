@@ -52,7 +52,7 @@ async function visit(page: Page, route: string, language: Language) {
           .locator('.technician-dashboard aside a[href="/technician/tickets"]')
           .click();
         await page
-          .locator(`.technician-dashboard main a[href="${route}"]`)
+          .locator(`.technician-dashboard [data-slot=dashboard-content] a[href="${route}"]`)
           .first()
           .click();
       }
@@ -145,7 +145,7 @@ for (const language of ["en", "de"] as const) {
       .click();
     const addReport = page
       .locator(
-        '.technician-dashboard main a[href^="/technician/reports?request="]',
+        '.technician-dashboard [data-slot=dashboard-content] a[href^="/technician/reports?request="]',
       )
       .first();
     const href = await addReport.getAttribute("href");

@@ -10,46 +10,37 @@
   @apply gap-8;
 }
 .admin-dashboard aside,
-.admin-dashboard main,
-.admin-dashboard main > div,
-.admin-dashboard main .grid > * {
+.admin-dashboard [data-slot="dashboard-content"],
+.admin-dashboard [data-slot="dashboard-content"] > div,
+.admin-dashboard [data-slot="dashboard-content"] .grid > * {
   @apply min-w-0;
 }
-.admin-dashboard aside nav {
-  @apply gap-2 border-hairline bg-surface p-2;
-}
-.admin-dashboard aside a {
-  @apply min-h-control gap-inline px-4 font-normal;
-}
-.admin-dashboard aside a:focus-visible {
-  @apply outline-2 outline-offset-2 outline-ring;
-}
-.admin-dashboard main > div:first-child {
+.admin-dashboard [data-slot="dashboard-content"] > div:first-child {
   @apply gap-6 border-b border-hairline pb-8;
 }
 .admin-dashboard h1 {
   @apply text-3xl font-normal;
   overflow-wrap: anywhere;
 }
-.admin-dashboard main > div:first-child > div:first-child {
+.admin-dashboard [data-slot="dashboard-content"] > div:first-child > div:first-child {
   @apply min-w-0;
 }
-.admin-dashboard main > div:first-child p {
+.admin-dashboard [data-slot="dashboard-content"] > div:first-child p {
   @apply mt-3 max-w-2xl text-sm font-normal text-ink-muted;
 }
-.admin-dashboard main > div:nth-child(2) {
+.admin-dashboard [data-slot="dashboard-content"] > div:nth-child(2) {
   @apply mt-8;
 }
-.admin-dashboard main section,
-.admin-dashboard main > div > form {
+.admin-dashboard [data-slot="dashboard-content"] section,
+.admin-dashboard [data-slot="dashboard-content"] > div > form {
   @apply rounded-box border-hairline bg-surface p-6;
 }
-.admin-dashboard main h2 {
+.admin-dashboard [data-slot="dashboard-content"] h2 {
   @apply text-2xl font-medium;
 }
-.admin-dashboard main p,
-.admin-dashboard main span,
-.admin-dashboard main label {
+.admin-dashboard [data-slot="dashboard-content"] p,
+.admin-dashboard [data-slot="dashboard-content"] span,
+.admin-dashboard [data-slot="dashboard-content"] label {
   overflow-wrap: anywhere;
 }
 .admin-dashboard label > span {

@@ -5,7 +5,9 @@
 export type Language = "en" | "de";
 
 const en = {
-  "footer.iconCredit": "Sphere icon by Ryan Spiering · The Noun Project",
+  "sidebar.label": "Workspace",
+  "sidebar.toggle": "Toggle workspace sidebar",
+  "sidebar.close": "Close workspace sidebar",
   "home.topicNetworks": "Connected teams",
   "home.topicNetworksText": "Office networks and servers, from planning and setup to ongoing support.",
   "home.topicSecurity": "Secure systems",
@@ -830,7 +832,9 @@ type EnglishKeys = keyof typeof en;
 type Dictionary = Record<EnglishKeys, string>;
 
 const de: Dictionary = {
-  "footer.iconCredit": "Kugel-Icon von Ryan Spiering · The Noun Project",
+  "sidebar.label": "Arbeitsbereich",
+  "sidebar.toggle": "Seitenleiste umschalten",
+  "sidebar.close": "Seitenleiste schließen",
   "home.topicNetworks": "Vernetzte Teams",
   "home.topicNetworksText": "Büronetzwerke und Server: von Planung und Einrichtung bis zur laufenden Betreuung.",
   "home.topicSecurity": "Sichere Systeme",

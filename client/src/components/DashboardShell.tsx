@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
+import { DashboardSidebar } from "./DashboardSidebar";
 import type { LucideIcon } from "lucide-react";
 
 export type DashboardNavItem = {
@@ -24,31 +24,8 @@ export function DashboardShell({
 }) {
   return (
     <div className="container-page py-8">
-      <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
-        <aside className="lg:sticky lg:top-24 lg:self-start">
-          <nav className="flex gap-1 overflow-x-auto rounded-box border border-base-300 bg-base-100 p-2 lg:flex-col lg:overflow-visible">
-            {nav.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to as "/"}
-                  activeOptions={{ exact: item.exact }}
-                  className="flex shrink-0 items-center gap-2 rounded-pill px-3 py-2.5 text-sm font-medium text-base-content/65 transition hover:bg-base-200 hover:text-base-content"
-                  activeProps={{
-                    className:
-                      "flex shrink-0 items-center gap-2 rounded-pill px-3 py-2.5 text-sm font-medium bg-primary text-primary-content",
-                  }}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span className="whitespace-nowrap">{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </aside>
-
-        <main className="min-w-0">
+      <DashboardSidebar nav={nav}>
+        <div data-slot="dashboard-content" className="dashboard-content">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
@@ -61,8 +38,8 @@ export function DashboardShell({
             {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
           </div>
           <div className="mt-6">{children}</div>
-        </main>
-      </div>
+        </div>
+      </DashboardSidebar>
     </div>
   );
 }
