@@ -1,3 +1,5 @@
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -13,9 +15,15 @@ import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
 import { usePortalNav } from "../components/nav";
-import { DashboardShell, Panel } from "../components/DashboardShell";
+import { Panel } from "../components/DashboardShell";
+import { CustomerPortalShell as DashboardShell } from "../components/CustomerPortalShell";
 import { PageLoader, StatusBadge } from "../components/ui";
-import type { Appointment, ProfileResponse, ServiceRequest, Ticket } from "../lib/types";
+import type {
+  Appointment,
+  ProfileResponse,
+  ServiceRequest,
+  Ticket,
+} from "../lib/types";
 
 export const Route = createFileRoute("/portal/")({
   component: PortalDashboard,
@@ -45,9 +53,15 @@ function PortalDashboard() {
   const notificationsQuery = useQuery({
     queryKey: ["notifications"],
     queryFn: () =>
-      api<{ notifications: { id: string; title: string; message: string; createdAt: string; readAt?: string }[] }>(
-        "/notifications",
-      ),
+      api<{
+        notifications: {
+          id: string;
+          title: string;
+          message: string;
+          createdAt: string;
+          readAt?: string;
+        }[];
+      }>("/notifications"),
   });
 
   const stats = profileQuery.data?.counts;
@@ -62,13 +76,28 @@ function PortalDashboard() {
     <DashboardShell
       nav={nav}
       title={t("portal.dashboard")}
-      subtitle={t("portal.welcome", { name: user?.firstName || user?.fullName || "" })}
+      subtitle={t("portal.welcome", {
+        name: user?.firstName || user?.fullName || "",
+      })}
       actions={
         <>
-          <Link to="/quote" search={{ service: undefined }} className="btn btn-primary btn-sm">
+          <Link
+            to="/quote"
+            search={{ service: undefined }}
+            className={cn(
+              buttonVariants(),
+              " bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm",
+            )}
+          >
             <Plus className="h-4 w-4" /> {t("portal.newRequest")}
           </Link>
-          <Link to="/portal/tickets" className="btn btn-outline btn-sm">
+          <Link
+            to="/portal/tickets"
+            className={cn(
+              buttonVariants(),
+              " border-current bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm",
+            )}
+          >
             <LifeBuoy className="h-4 w-4" /> {t("portal.newTicket")}
           </Link>
         </>
@@ -77,33 +106,67 @@ function PortalDashboard() {
       {profileQuery.isLoading ? (
         <PageLoader />
       ) : (
-        <div className="space-y-5">
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="space-y-8">
+          <div className="portal-stats grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              ["ClipboardList", t("portal.openRequests"), stats?.requests ?? 0, "text-primary"],
-              ["LifeBuoy", t("portal.openTickets"), stats?.tickets ?? 0, "text-secondary"],
-              ["ShoppingBag", t("portal.totalOrders"), stats?.orders ?? 0, "text-accent"],
-              ["CheckCircle2", t("portal.unread"), stats?.unreadNotifications ?? 0, "text-success"],
+              [
+                "ClipboardList",
+                t("portal.openRequests"),
+                stats?.requests ?? 0,
+                "text-primary",
+              ],
+              [
+                "LifeBuoy",
+                t("portal.openTickets"),
+                stats?.tickets ?? 0,
+                "text-secondary",
+              ],
+              [
+                "ShoppingBag",
+                t("portal.totalOrders"),
+                stats?.orders ?? 0,
+                "text-ink-muted",
+              ],
+              [
+                "CheckCircle2",
+                t("portal.unread"),
+                stats?.unreadNotifications ?? 0,
+                "text-success",
+              ],
             ].map(([icon, label, value, color]) => {
-              const icons = { ClipboardList, LifeBuoy, ShoppingBag, CheckCircle2 };
+              const icons = {
+                ClipboardList,
+                LifeBuoy,
+                ShoppingBag,
+                CheckCircle2,
+              };
               const Icon = icons[icon as keyof typeof icons];
               return (
-                <div key={String(label)} className="rounded-box border border-base-300 bg-base-100 p-4">
+                <div
+                  key={String(label)}
+                  className="portal-stat rounded-box border border-base-300 bg-base-100 p-4"
+                >
                   <div className="flex items-center justify-between">
-                    <p className="text-xs text-base-content/65">{label}</p>
+                    <p className="text-xs text-ink-muted">{label}</p>
                     <Icon className={`h-4 w-4 ${color}`} />
                   </div>
-                  <p className="mt-2 text-2xl font-black">{value}</p>
+                  <p className="mt-2 text-2xl font-medium">{value}</p>
                 </div>
               );
             })}
           </div>
 
-          <div className="grid gap-5 lg:grid-cols-[1.25fr_0.75fr]">
+          <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
             <Panel
+              className="portal-request-panel"
               title={t("portal.recentRequests")}
               action={
-                <Link to="/portal/requests" className="link link-primary text-xs">
+                <Link
+                  to="/portal/requests"
+                  className={cn(
+                    "underline cursor-pointer text-primary text-xs",
+                  )}
+                >
                   {t("portal.viewAll")}
                 </Link>
               }
@@ -111,7 +174,7 @@ function PortalDashboard() {
               {requests.length === 0 ? (
                 <EmptyLine text={t("requests.text")} />
               ) : (
-                <div className="divide-y divide-base-200">
+                <div className="divide-y divide-hairline">
                   {requests.map((request) => (
                     <Link
                       key={request.id}
@@ -120,8 +183,10 @@ function PortalDashboard() {
                       className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                     >
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold">{request.title}</p>
-                        <p className="text-[11px] text-base-content/70">
+                        <p className="truncate text-sm font-semibold">
+                          {request.title}
+                        </p>
+                        <p className="text-xs text-ink-muted">
                           {request.reference} · {formatDate(request.createdAt)}
                         </p>
                       </div>
@@ -135,7 +200,12 @@ function PortalDashboard() {
             <Panel
               title={t("portal.upcoming")}
               action={
-                <Link to="/portal/appointments" className="link link-primary text-xs">
+                <Link
+                  to="/portal/appointments"
+                  className={cn(
+                    "underline cursor-pointer text-primary text-xs",
+                  )}
+                >
                   {t("portal.viewAll")}
                 </Link>
               }
@@ -145,9 +215,11 @@ function PortalDashboard() {
               ) : (
                 <div className="space-y-3">
                   {appointments.map((appointment) => (
-                    <div key={appointment.id} className="rounded-lg bg-base-200/60 p-3">
-                      <p className="text-sm font-semibold">{appointment.title}</p>
-                      <p className="mt-1 flex items-center gap-1.5 text-[11px] text-base-content/65">
+                    <div key={appointment.id} className="portal-sky-panel">
+                      <p className="text-sm font-semibold">
+                        {appointment.title}
+                      </p>
+                      <p className="mt-1 flex items-center gap-1.5 text-xs text-ink-muted">
                         <CalendarDays className="h-3.5 w-3.5" />
                         {formatDateTime(appointment.startsAt)}
                       </p>
@@ -161,11 +233,16 @@ function PortalDashboard() {
             </Panel>
           </div>
 
-          <div className="grid gap-5 lg:grid-cols-2">
+          <div className="grid gap-6 lg:grid-cols-2">
             <Panel
               title={t("portal.recentTickets")}
               action={
-                <Link to="/portal/tickets" className="link link-primary text-xs">
+                <Link
+                  to="/portal/tickets"
+                  className={cn(
+                    "underline cursor-pointer text-primary text-xs",
+                  )}
+                >
                   {t("portal.viewAll")}
                 </Link>
               }
@@ -173,7 +250,7 @@ function PortalDashboard() {
               {tickets.length === 0 ? (
                 <EmptyLine text={t("tickets.noTickets")} />
               ) : (
-                <div className="divide-y divide-base-200">
+                <div className="divide-y divide-hairline">
                   {tickets.map((ticket) => (
                     <Link
                       key={ticket.id}
@@ -182,8 +259,10 @@ function PortalDashboard() {
                       className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                     >
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold">{ticket.subject}</p>
-                        <p className="text-[11px] text-base-content/70">
+                        <p className="truncate text-sm font-semibold">
+                          {ticket.subject}
+                        </p>
+                        <p className="text-xs text-ink-muted">
                           {ticket.reference} · {formatDate(ticket.createdAt)}
                         </p>
                       </div>
@@ -208,15 +287,23 @@ function PortalDashboard() {
                           : "border-primary/20 bg-primary/5"
                       }`}
                     >
-                      <p className="text-xs font-semibold">{notification.title}</p>
-                      <p className="mt-0.5 text-[11px] text-base-content/65">{notification.message}</p>
-                      <p className="mt-1 text-[10px] text-base-content/65">
+                      <p className="text-xs font-semibold">
+                        {notification.title}
+                      </p>
+                      <p className="mt-0.5 text-xs text-ink-muted">
+                        {notification.message}
+                      </p>
+                      <p className="mt-1 text-xs text-ink-muted">
                         {formatDateTime(notification.createdAt)}
                       </p>
                     </div>
                   ))}
-                  <Link to="/portal/profile" className="flex items-center gap-1 text-xs font-semibold text-primary">
-                    {t("portal.notifications")} <ArrowRight className="h-3.5 w-3.5" />
+                  <Link
+                    to="/portal/profile"
+                    className="flex items-center gap-1 text-xs font-semibold text-primary"
+                  >
+                    {t("portal.notifications")}{" "}
+                    <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
               )}
@@ -229,5 +316,5 @@ function PortalDashboard() {
 }
 
 function EmptyLine({ text }: { text: string }) {
-  return <p className="py-6 text-center text-xs text-base-content/70">{text}</p>;
+  return <p className="py-6 text-center text-xs text-ink-muted">{text}</p>;
 }

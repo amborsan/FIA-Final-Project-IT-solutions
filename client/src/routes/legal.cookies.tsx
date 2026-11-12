@@ -1,3 +1,6 @@
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalShell } from "../components/LegalShell";
 import { useI18n } from "../i18n/I18nContext";
@@ -31,74 +34,74 @@ function EnglishCookies() {
         the basis of § 25(2) TDDDG (technically necessary) and Art. 6(1)(f) GDPR (secure operation).
       </p>
       <div className="overflow-x-auto">
-        <table className="table table-sm">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Purpose</th>
-              <th>Duration</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
+        <Table className={cn(" text-xs [&_td]:px-3 [&_td]:py-2 [&_th]:px-3 [&_th]:py-2")}>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Purpose</TableHead>
+              <TableHead>Duration</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>
                 <code>orbit_session</code>
-              </td>
-              <td>Keeps you signed in. HTTP-only, not readable by JavaScript.</td>
-              <td>7 days</td>
-            </tr>
-            <tr>
-              <td>
+              </TableCell>
+              <TableCell>Keeps you signed in. HTTP-only, not readable by JavaScript.</TableCell>
+              <TableCell>7 days</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
                 <code>orbit_csrf</code>
-              </td>
-              <td>Protects forms against cross-site request forgery.</td>
-              <td>Until you close the browser</td>
-            </tr>
-          </tbody>
-        </table>
+              </TableCell>
+              <TableCell>Protects forms against cross-site request forgery.</TableCell>
+              <TableCell>Until you close the browser</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
 
       <h2>Local storage</h2>
       <div className="overflow-x-auto">
-        <table className="table table-sm">
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Purpose</th>
-              <th>Duration</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
+        <Table className={cn(" text-xs [&_td]:px-3 [&_td]:py-2 [&_th]:px-3 [&_th]:py-2")}>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Key</TableHead>
+              <TableHead>Purpose</TableHead>
+              <TableHead>Duration</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>
                 <code>orbit_language</code>
-              </td>
-              <td>Remembers whether you prefer English or German.</td>
-              <td>Until deleted</td>
-            </tr>
-            <tr>
-              <td>
+              </TableCell>
+              <TableCell>Remembers whether you prefer English or German.</TableCell>
+              <TableCell>Until deleted</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
                 <code>orbit_cart</code>
-              </td>
-              <td>Stores products in your shopping cart before checkout.</td>
-              <td>Until deleted</td>
-            </tr>
-            <tr>
-              <td>
+              </TableCell>
+              <TableCell>Stores products in your shopping cart before checkout.</TableCell>
+              <TableCell>Until deleted</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
                 <code>orbit_cookie_consent</code>
-              </td>
-              <td>Remembers your cookie choice and its date.</td>
-              <td>Until deleted</td>
-            </tr>
-            <tr>
-              <td>
+              </TableCell>
+              <TableCell>Remembers your cookie choice and its date.</TableCell>
+              <TableCell>Until deleted</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
                 <code>orbit_guest_chat</code>
-              </td>
-              <td>Keeps the token for a guest chat so you can read replies.</td>
-              <td>Until deleted</td>
-            </tr>
-          </tbody>
-        </table>
+              </TableCell>
+              <TableCell>Keeps the token for a guest chat so you can read replies.</TableCell>
+              <TableCell>Until deleted</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
 
       <h2>No analytics or advertising</h2>
@@ -114,13 +117,13 @@ function EnglishCookies() {
         Blocking essential cookies may prevent login and checkout from working.
       </p>
       <p>
-        <button
+        <Button
           type="button"
           onClick={() => window.dispatchEvent(new Event("orbit:open-cookie-settings"))}
-          className="btn btn-primary btn-sm"
+          className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm")}
         >
           Open cookie settings
-        </button>
+        </Button>
       </p>
 
       <h2>More information</h2>
@@ -149,74 +152,74 @@ function GermanCookies() {
         DSGVO (sicherer Betrieb) gesetzt.
       </p>
       <div className="overflow-x-auto">
-        <table className="table table-sm">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Zweck</th>
-              <th>Dauer</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
+        <Table className={cn(" text-xs [&_td]:px-3 [&_td]:py-2 [&_th]:px-3 [&_th]:py-2")}>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Zweck</TableHead>
+              <TableHead>Dauer</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>
                 <code>orbit_session</code>
-              </td>
-              <td>Hält Sie angemeldet. HTTP-only, für JavaScript nicht lesbar.</td>
-              <td>7 Tage</td>
-            </tr>
-            <tr>
-              <td>
+              </TableCell>
+              <TableCell>Hält Sie angemeldet. HTTP-only, für JavaScript nicht lesbar.</TableCell>
+              <TableCell>7 Tage</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
                 <code>orbit_csrf</code>
-              </td>
-              <td>Schützt Formulare vor Cross-Site-Request-Forgery.</td>
-              <td>Bis zum Schließen des Browsers</td>
-            </tr>
-          </tbody>
-        </table>
+              </TableCell>
+              <TableCell>Schützt Formulare vor Cross-Site-Request-Forgery.</TableCell>
+              <TableCell>Bis zum Schließen des Browsers</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
 
       <h2>Lokaler Speicher</h2>
       <div className="overflow-x-auto">
-        <table className="table table-sm">
-          <thead>
-            <tr>
-              <th>Schlüssel</th>
-              <th>Zweck</th>
-              <th>Dauer</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
+        <Table className={cn(" text-xs [&_td]:px-3 [&_td]:py-2 [&_th]:px-3 [&_th]:py-2")}>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Schlüssel</TableHead>
+              <TableHead>Zweck</TableHead>
+              <TableHead>Dauer</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>
                 <code>orbit_language</code>
-              </td>
-              <td>Merkt sich, ob Sie Deutsch oder Englisch bevorzugen.</td>
-              <td>Bis zur Löschung</td>
-            </tr>
-            <tr>
-              <td>
+              </TableCell>
+              <TableCell>Merkt sich, ob Sie Deutsch oder Englisch bevorzugen.</TableCell>
+              <TableCell>Bis zur Löschung</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
                 <code>orbit_cart</code>
-              </td>
-              <td>Speichert Produkte im Warenkorb vor der Bestellung.</td>
-              <td>Bis zur Löschung</td>
-            </tr>
-            <tr>
-              <td>
+              </TableCell>
+              <TableCell>Speichert Produkte im Warenkorb vor der Bestellung.</TableCell>
+              <TableCell>Bis zur Löschung</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
                 <code>orbit_cookie_consent</code>
-              </td>
-              <td>Speichert Ihre Cookie-Auswahl und das Datum.</td>
-              <td>Bis zur Löschung</td>
-            </tr>
-            <tr>
-              <td>
+              </TableCell>
+              <TableCell>Speichert Ihre Cookie-Auswahl und das Datum.</TableCell>
+              <TableCell>Bis zur Löschung</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
                 <code>orbit_guest_chat</code>
-              </td>
-              <td>Speichert das Token für einen Gast-Chat, damit Sie Antworten lesen können.</td>
-              <td>Bis zur Löschung</td>
-            </tr>
-          </tbody>
-        </table>
+              </TableCell>
+              <TableCell>Speichert das Token für einen Gast-Chat, damit Sie Antworten lesen können.</TableCell>
+              <TableCell>Bis zur Löschung</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
 
       <h2>Keine Analyse- oder Werbe-Cookies</h2>
@@ -233,13 +236,13 @@ function GermanCookies() {
         Anmeldung und Bestellung verhindern.
       </p>
       <p>
-        <button
+        <Button
           type="button"
           onClick={() => window.dispatchEvent(new Event("orbit:open-cookie-settings"))}
-          className="btn btn-primary btn-sm"
+          className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm")}
         >
           Cookie-Einstellungen öffnen
-        </button>
+        </Button>
       </p>
 
       <h2>Weitere Informationen</h2>

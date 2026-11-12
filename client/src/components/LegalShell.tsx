@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { AlertTriangle, FileText, ShieldCheck } from "lucide-react";
@@ -92,11 +93,11 @@ export function LegalShell({
         <div className="rounded-box bg-base-200 p-4 text-sm">
           <p className="font-semibold">{t("legal.questions")}</p>
           <p className="mt-1 text-xs text-base-content/70">
-            <a href="mailto:privacy@fia-it.de" className="link link-primary">
+            <a href="mailto:privacy@fia-it.de" className={cn("underline cursor-pointer text-primary")}>
               privacy@fia-it.de
             </a>{" "}
             ·{" "}
-            <Link to="/contact" className="link link-primary">
+            <Link to="/contact" className={cn("underline cursor-pointer text-primary")}>
               {t("nav.contact")}
             </Link>
           </p>

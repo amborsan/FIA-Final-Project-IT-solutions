@@ -1,3 +1,7 @@
+import { cn } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -7,7 +11,8 @@ import type { Ticket } from "../lib/types";
 import { useAuth } from "../context/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
 import { usePortalNav } from "../components/nav";
-import { DashboardShell, Panel } from "../components/DashboardShell";
+import { Panel } from "../components/DashboardShell";
+import { CustomerPortalShell as DashboardShell } from "../components/CustomerPortalShell";
 import { ErrorState, PageLoader, StatusBadge } from "../components/ui";
 
 export const Route = createFileRoute("/portal/tickets/$id")({
@@ -68,7 +73,13 @@ function TicketDetailPage() {
     return (
       <DashboardShell nav={nav} title={t("tickets.details")}>
         <ErrorState message={t("common.error")} />
-        <Link to="/portal/tickets" className="btn btn-outline btn-sm mt-4">
+        <Link
+          to="/portal/tickets"
+          className={cn(
+            buttonVariants(),
+            " border-current bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm mt-4",
+          )}
+        >
           <ArrowLeft className="h-4 w-4" /> {t("tickets.back")}
         </Link>
       </DashboardShell>
@@ -83,18 +94,27 @@ function TicketDetailPage() {
       title={ticket.subject}
       subtitle={`${ticket.reference} · ${formatDateTime(ticket.createdAt)}`}
       actions={
-        <Link to="/portal/tickets" className="btn btn-ghost btn-sm">
+        <Link
+          to="/portal/tickets"
+          className={cn(
+            buttonVariants(),
+            " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm",
+          )}
+        >
           <ArrowLeft className="h-4 w-4" /> {t("common.back")}
         </Link>
       }
     >
-      <div className="grid gap-5 lg:grid-cols-[1.25fr_0.75fr]">
+      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
         <Panel title={t("tickets.messages")}>
           <div className="max-h-[32rem] space-y-4 overflow-y-auto pr-1 chat-scroll">
             {messages.map((message) => {
               const mine = message.authorId === user?.id;
               return (
-                <div key={message.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+                <div
+                  key={message.id}
+                  className={`flex ${mine ? "justify-end" : "justify-start"}`}
+                >
                   <div
                     className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
                       mine
@@ -102,13 +122,19 @@ function TicketDetailPage() {
                         : "rounded-bl-sm bg-base-200 text-base-content"
                     }`}
                   >
-                    <p className="text-[10px] font-semibold opacity-70">
+                    <p className="text-xs font-semibold opacity-70">
                       {mine
                         ? t("chat.you")
-                        : message.author?.fullName || message.authorName || t("tickets.staff")}
+                        : message.author?.fullName ||
+                          message.authorName ||
+                          t("tickets.staff")}
                     </p>
-                    <p className="mt-1 whitespace-pre-wrap break-words">{message.body}</p>
-                    <p className="mt-1 text-[10px] opacity-55">{formatDateTime(message.createdAt)}</p>
+                    <p className="mt-1 whitespace-pre-wrap break-words">
+                      {message.body}
+                    </p>
+                    <p className="mt-1 text-xs opacity-55">
+                      {formatDateTime(message.createdAt)}
+                    </p>
                   </div>
                 </div>
               );
@@ -117,59 +143,85 @@ function TicketDetailPage() {
           </div>
 
           {ticket.status !== "CLOSED" ? (
-            <form onSubmit={sendReply} className="mt-4 border-t border-base-200 pt-4">
+            <form
+              onSubmit={sendReply}
+              className="mt-4 border-t border-hairline pt-4"
+            >
               {error && <p className="mb-2 text-xs text-error">{error}</p>}
               <div className="flex items-end gap-2">
-                <textarea
+                <Textarea
                   value={reply}
                   onChange={(event) => setReply(event.target.value)}
                   required
                   rows={2}
                   maxLength={4000}
                   placeholder={t("chat.replyPlaceholder")}
-                  className="textarea textarea-bordered flex-1 resize-none text-sm"
+                  className={cn(" flex-1 resize-none text-sm")}
                 />
-                <button disabled={sending || !reply.trim()} className="btn btn-primary h-12 w-12 p-0">
-                  {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                </button>
+                <Button
+                  disabled={sending || !reply.trim()}
+                  className={cn(
+                    " bg-primary text-primary-content border-primary hover:bg-primary-hover h-12 w-12 p-0",
+                  )}
+                >
+                  {sending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                </Button>
               </div>
             </form>
           ) : (
-            <p className="mt-4 rounded-lg bg-base-200 p-3 text-center text-xs text-base-content/65">
+            <p className="mt-4 rounded-lg bg-base-200 p-3 text-center text-xs text-ink-muted">
               {t("chat.closed")}
             </p>
           )}
         </Panel>
 
-        <div className="space-y-5">
+        <div className="space-y-8">
           <Panel title={t("tickets.details")}>
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-base-content/65">{t("tickets.status")}</span>
+                <span className="text-xs text-ink-muted">
+                  {t("tickets.status")}
+                </span>
                 <StatusBadge status={ticket.status} />
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-base-content/65">{t("tickets.priority")}</span>
-                <span className="badge badge-outline badge-sm">
-                  {t(`priority.${ticket.priority}` as "priority.LOW")}
+                <span className="text-xs text-ink-muted">
+                  {t("tickets.priority")}
                 </span>
+                <Badge
+                  className={cn(" border-current bg-transparent h-5 text-xs")}
+                >
+                  {t(`priority.${ticket.priority}` as "priority.LOW")}
+                </Badge>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-base-content/65">{t("tickets.category")}</span>
+                <span className="text-xs text-ink-muted">
+                  {t("tickets.category")}
+                </span>
                 <span>{ticket.category || "–"}</span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-base-content/65">{t("tickets.assignedTo")}</span>
+                <span className="text-xs text-ink-muted">
+                  {t("tickets.assignedTo")}
+                </span>
                 <span>{ticket.technician?.fullName || "–"}</span>
               </div>
               {ticket.request && (
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs text-base-content/65">{t("common.reference")}</span>
-                  <span className="font-mono text-xs">{ticket.request.reference}</span>
+                  <span className="text-xs text-ink-muted">
+                    {t("common.reference")}
+                  </span>
+                  <span className="tabular-nums text-xs">
+                    {ticket.request.reference}
+                  </span>
                 </div>
               )}
             </div>
-            <p className="mt-4 border-t border-base-200 pt-3 text-xs leading-relaxed text-base-content/70">
+            <p className="mt-4 border-t border-hairline pt-3 text-xs leading-relaxed text-ink-muted">
               {ticket.description}
             </p>
           </Panel>

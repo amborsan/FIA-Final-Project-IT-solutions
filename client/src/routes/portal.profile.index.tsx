@@ -1,13 +1,27 @@
+import { Alert } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Bell, Download, KeyRound, Loader2, ShieldAlert, Trash2, UserRound } from "lucide-react";
+import {
+  Bell,
+  Download,
+  KeyRound,
+  Loader2,
+  ShieldAlert,
+  Trash2,
+  UserRound,
+} from "lucide-react";
 import { api, downloadFile, errorMessage } from "../lib/api";
 import type { Notification, ProfileResponse } from "../lib/types";
 import { useAuth } from "../context/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
 import { usePortalNav } from "../components/nav";
-import { DashboardShell, Panel } from "../components/DashboardShell";
+import { Panel } from "../components/DashboardShell";
+import { CustomerPortalShell as DashboardShell } from "../components/CustomerPortalShell";
 import { PageLoader } from "../components/ui";
 
 export const Route = createFileRoute("/portal/profile/")({
@@ -37,7 +51,10 @@ function ProfilePage() {
     address: user?.address ?? "",
     preferredLanguage: user?.preferredLanguage ?? "EN",
   });
-  const [passwords, setPasswords] = useState({ currentPassword: "", newPassword: "" });
+  const [passwords, setPasswords] = useState({
+    currentPassword: "",
+    newPassword: "",
+  });
   const [deletePassword, setDeletePassword] = useState("");
   const [deleteWord, setDeleteWord] = useState("");
   const [busy, setBusy] = useState("");
@@ -123,113 +140,186 @@ function ProfilePage() {
   }
 
   return (
-    <DashboardShell nav={nav} title={t("portal.profileTitle")} subtitle={t("portal.profileText")}>
-      {message && <div className="alert alert-success mb-4 text-sm">{message}</div>}
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+    <DashboardShell
+      nav={nav}
+      title={t("portal.profileTitle")}
+      subtitle={t("portal.profileText")}
+    >
+      {message && (
+        <Alert
+          className={cn(
+            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-success text-success-content border-success mb-4 text-sm",
+          )}
+        >
+          {message}
+        </Alert>
+      )}
+      {error && (
+        <Alert
+          className={cn(
+            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mb-4 text-sm",
+          )}
+        >
+          {error}
+        </Alert>
+      )}
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid gap-6 xl:grid-cols-2">
         <Panel title={t("portal.profileTitle")}>
           <form onSubmit={saveProfile} className="grid gap-4 sm:grid-cols-2">
             <label className="block sm:col-span-2">
-              <span className="mb-1 block text-xs font-semibold">{t("common.name")}</span>
-              <input
+              <span className="mb-1 block text-xs font-semibold">
+                {t("common.name")}
+              </span>
+              <Input
                 required
                 value={profile.fullName}
-                onChange={(event) => setProfile({ ...profile, fullName: event.target.value })}
-                className="input input-bordered w-full"
+                onChange={(event) =>
+                  setProfile({ ...profile, fullName: event.target.value })
+                }
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold">{t("common.phone")}</span>
-              <input
+              <span className="mb-1 block text-xs font-semibold">
+                {t("common.phone")}
+              </span>
+              <Input
                 value={profile.phone}
-                onChange={(event) => setProfile({ ...profile, phone: event.target.value })}
-                className="input input-bordered w-full"
+                onChange={(event) =>
+                  setProfile({ ...profile, phone: event.target.value })
+                }
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold">{t("portal.companyName")}</span>
-              <input
+              <span className="mb-1 block text-xs font-semibold">
+                {t("portal.companyName")}
+              </span>
+              <Input
                 value={profile.companyName}
-                onChange={(event) => setProfile({ ...profile, companyName: event.target.value })}
-                className="input input-bordered w-full"
+                onChange={(event) =>
+                  setProfile({ ...profile, companyName: event.target.value })
+                }
+                className={cn(" w-full")}
               />
             </label>
             <label className="block sm:col-span-2">
-              <span className="mb-1 block text-xs font-semibold">{t("common.address")}</span>
-              <input
+              <span className="mb-1 block text-xs font-semibold">
+                {t("common.address")}
+              </span>
+              <Input
                 value={profile.address}
-                onChange={(event) => setProfile({ ...profile, address: event.target.value })}
-                className="input input-bordered w-full"
+                onChange={(event) =>
+                  setProfile({ ...profile, address: event.target.value })
+                }
+                className={cn(" w-full")}
               />
             </label>
             <label className="block sm:col-span-2">
-              <span className="mb-1 block text-xs font-semibold">{t("portal.language")}</span>
-              <select
+              <span className="mb-1 block text-xs font-semibold">
+                {t("portal.language")}
+              </span>
+              <NativeSelect
                 value={profile.preferredLanguage}
                 onChange={(event) =>
-                  setProfile({ ...profile, preferredLanguage: event.target.value as "EN" | "DE" })
+                  setProfile({
+                    ...profile,
+                    preferredLanguage: event.target.value as "EN" | "DE",
+                  })
                 }
-                className="select select-bordered w-full"
+                className={cn(" w-full")}
               >
                 <option value="EN">English</option>
                 <option value="DE">Deutsch</option>
-              </select>
+              </NativeSelect>
             </label>
             <div className="sm:col-span-2">
-              <button disabled={busy === "profile"} className="btn btn-primary btn-sm">
-                {busy === "profile" && <Loader2 className="h-4 w-4 animate-spin" />}
+              <Button
+                disabled={busy === "profile"}
+                className={cn(
+                  " bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm",
+                )}
+              >
+                {busy === "profile" && (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                )}
                 {t("portal.saveProfile")}
-              </button>
+              </Button>
             </div>
           </form>
         </Panel>
 
-        <Panel title={t("portal.passwordTitle")} text={t("portal.passwordText")}>
+        <Panel
+          title={t("portal.passwordTitle")}
+          text={t("portal.passwordText")}
+        >
           <form onSubmit={changePassword} className="space-y-4">
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold">{t("portal.currentPassword")}</span>
-              <input
+              <span className="mb-1 block text-xs font-semibold">
+                {t("portal.currentPassword")}
+              </span>
+              <Input
                 required
                 type="password"
                 autoComplete="current-password"
                 value={passwords.currentPassword}
                 onChange={(event) =>
-                  setPasswords({ ...passwords, currentPassword: event.target.value })
+                  setPasswords({
+                    ...passwords,
+                    currentPassword: event.target.value,
+                  })
                 }
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold">{t("portal.newPassword")}</span>
-              <input
+              <span className="mb-1 block text-xs font-semibold">
+                {t("portal.newPassword")}
+              </span>
+              <Input
                 required
                 type="password"
                 minLength={10}
                 autoComplete="new-password"
                 value={passwords.newPassword}
-                onChange={(event) => setPasswords({ ...passwords, newPassword: event.target.value })}
-                className="input input-bordered w-full"
+                onChange={(event) =>
+                  setPasswords({
+                    ...passwords,
+                    newPassword: event.target.value,
+                  })
+                }
+                className={cn(" w-full")}
               />
-              <span className="mt-1 block text-[11px] text-base-content/70">{t("auth.passwordHint")}</span>
+              <span className="mt-1 block text-xs text-ink-muted">
+                {t("auth.passwordHint")}
+              </span>
             </label>
-            <button disabled={busy === "password"} className="btn btn-primary btn-sm">
+            <Button
+              disabled={busy === "password"}
+              className={cn(
+                " bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm",
+              )}
+            >
               <KeyRound className="h-4 w-4" />
               {t("portal.updatePassword")}
-            </button>
+            </Button>
           </form>
         </Panel>
 
         <Panel
           title={t("portal.notifications")}
           action={
-            <button onClick={markAllRead} className="link link-primary text-xs">
+            <button
+              onClick={markAllRead}
+              className={cn("underline cursor-pointer text-primary text-xs")}
+            >
               {t("portal.markAllRead")}
             </button>
           }
         >
           {notifications.length === 0 && (
-            <p className="py-4 text-center text-xs text-base-content/70">
+            <p className="py-4 text-center text-xs text-ink-muted">
               {t("portal.noNotifications")}
             </p>
           )}
@@ -238,14 +328,18 @@ function ProfilePage() {
               <div
                 key={notification.id}
                 className={`rounded-lg border p-3 ${
-                  notification.readAt ? "border-base-200" : "border-primary/20 bg-primary/5"
+                  notification.readAt
+                    ? "border-base-200"
+                    : "border-primary/20 bg-primary/5"
                 }`}
               >
                 <p className="flex items-center gap-1.5 text-xs font-semibold">
                   <Bell className="h-3.5 w-3.5" /> {notification.title}
                 </p>
-                <p className="mt-1 text-[11px] text-base-content/65">{notification.message}</p>
-                <p className="mt-1 text-[10px] text-base-content/65">
+                <p className="mt-1 text-xs text-ink-muted">
+                  {notification.message}
+                </p>
+                <p className="mt-1 text-xs text-ink-muted">
                   {formatDateTime(notification.createdAt)}
                 </p>
               </div>
@@ -257,40 +351,51 @@ function ProfilePage() {
           <div className="space-y-4">
             <div className="rounded-lg border border-base-300 p-3">
               <p className="flex items-center gap-2 text-sm font-semibold">
-                <Download className="h-4 w-4 text-primary" /> {t("portal.exportData")}
+                <Download className="h-4 w-4 text-primary" />{" "}
+                {t("portal.exportData")}
               </p>
-              <p className="mt-1 text-xs text-base-content/65">{t("portal.exportText")}</p>
-              <button
-                onClick={() => void downloadFile("/privacy/export", "orbit-data.json")}
-                className="btn btn-outline btn-xs mt-2"
+              <p className="mt-1 text-xs text-ink-muted">
+                {t("portal.exportText")}
+              </p>
+              <Button
+                onClick={() =>
+                  void downloadFile("/privacy/export", "it-solutions-data.json")
+                }
+                className={cn(
+                  " border-current bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs mt-2",
+                )}
               >
                 {t("common.download")}
-              </button>
+              </Button>
             </div>
 
             <div className="rounded-lg border border-error/30 bg-error/5 p-3">
               <p className="flex items-center gap-2 text-sm font-semibold text-error">
                 <ShieldAlert className="h-4 w-4" /> {t("portal.deleteAccount")}
               </p>
-              <p className="mt-1 text-xs text-base-content/65">{t("portal.deleteText")}</p>
+              <p className="mt-1 text-xs text-ink-muted">
+                {t("portal.deleteText")}
+              </p>
               <div className="mt-3 space-y-2">
-                <input
+                <Input
                   type="password"
                   placeholder={t("portal.deletePassword")}
                   value={deletePassword}
                   onChange={(event) => setDeletePassword(event.target.value)}
-                  className="input input-bordered input-sm w-full"
+                  className={cn(" h-8 text-xs w-full")}
                 />
-                <input
+                <Input
                   placeholder={t("portal.deleteConfirm")}
                   value={deleteWord}
                   onChange={(event) => setDeleteWord(event.target.value)}
-                  className="input input-bordered input-sm w-full"
+                  className={cn(" h-8 text-xs w-full")}
                 />
-                <button
+                <Button
                   onClick={deleteAccount}
                   disabled={busy === "delete" || deleteWord !== "DELETE"}
-                  className="btn btn-error btn-xs"
+                  className={cn(
+                    " bg-error text-error-content border-error hover:bg-error/90 h-6 px-2 text-xs",
+                  )}
                 >
                   {busy === "delete" ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -298,11 +403,11 @@ function ProfilePage() {
                     <Trash2 className="h-3.5 w-3.5" />
                   )}
                   {t("portal.deleteButton")}
-                </button>
+                </Button>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 text-[11px] text-base-content/70">
+            <div className="flex items-center gap-2 text-xs text-ink-muted">
               <UserRound className="h-3.5 w-3.5" />
               {profileQuery.data?.user.email}
             </div>

@@ -1,3 +1,6 @@
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -45,7 +48,7 @@ export default function ProductDetailPage() {
     return (
       <div className="container-page py-10">
         <ErrorState message={t("products.notFound")} />
-        <Link to="/products" className="btn btn-outline btn-sm">
+        <Link to="/products" className={cn(buttonVariants(), " border-current bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm")}>
           <ArrowLeft className="h-4 w-4" /> {t("nav.products")}
         </Link>
       </div>
@@ -96,15 +99,15 @@ export default function ProductDetailPage() {
 
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="badge badge-ghost badge-sm">
+              <Badge className={cn(" bg-base-200 text-base-content h-5 text-xs")}>
                 {product.category ? pick(product.category.nameEn, product.category.nameDe) : ""}
-              </span>
+              </Badge>
               {product.featured && (
-                <span className="badge badge-accent badge-sm">{t("products.featured")}</span>
+                <Badge className={cn(" bg-accent text-accent-content border-accent h-5 text-xs")}>{t("products.featured")}</Badge>
               )}
-              <span className={`badge badge-sm ${product.stock > 0 ? "badge-success" : "badge-error"}`}>
+              <Badge className={cn(` h-5 text-xs ${product.stock > 0 ? "bg-success text-success-content border-success" : "bg-error text-error-content border-error"}`)}>
                 {product.stock > 0 ? t("products.inStock") : t("products.outOfStock")}
-              </span>
+              </Badge>
             </div>
             <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
               {pick(product.nameEn, product.nameDe)}
@@ -127,33 +130,33 @@ export default function ProductDetailPage() {
               </div>
 
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                <div className="join">
-                  <button
-                    className="btn btn-sm join-item"
+                <div className={cn("inline-flex [&>*:not(:first-child)]:-ml-px [&>*:not(:first-child)]:rounded-l-none [&>*:not(:last-child)]:rounded-r-none")}>
+                  <Button
+                    className={cn(" h-8 px-3 text-sm ")}
                     onClick={() => setQuantity((value) => Math.max(1, value - 1))}
                     disabled={quantity <= 1}
                   >
                     −
-                  </button>
-                  <span className="btn btn-sm join-item pointer-events-none w-12">
+                  </Button>
+                  <span className={cn(buttonVariants(), "  h-8 px-3 text-sm pointer-events-none w-12")}>
                     {quantity}
                   </span>
-                  <button
-                    className="btn btn-sm join-item"
+                  <Button
+                    className={cn(" h-8 px-3 text-sm ")}
                     onClick={() => setQuantity((value) => Math.min(product.stock, value + 1))}
                     disabled={quantity >= product.stock}
                   >
                     +
-                  </button>
+                  </Button>
                 </div>
-                <button
+                <Button
                   onClick={handleAdd}
                   disabled={product.stock <= 0}
-                  className={`btn flex-1 ${added ? "btn-success" : "btn-primary"}`}
+                  className={cn(` flex-1 ${added ? "bg-success text-success-content border-success hover:bg-success/90" : "bg-primary text-primary-content border-primary hover:bg-primary-hover"}`)}
                 >
                   {added ? <Check className="h-4 w-4" /> : <ShoppingCart className="h-4 w-4" />}
                   {added ? t("products.added") : t("products.addToCart")}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -176,10 +179,10 @@ export default function ProductDetailPage() {
               <p className="text-sm font-semibold">{t("products.advice")}</p>
               <p className="mt-1 text-xs text-base-content/70">{t("products.adviceText")}</p>
               <div className="mt-3 flex gap-2">
-                <Link to="/contact" className="btn btn-outline btn-xs">
+                <Link to="/contact" className={cn(buttonVariants(), " border-current bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs")}>
                   {t("nav.contact")}
                 </Link>
-                <Link to="/quote" search={{ service: undefined }} className="btn btn-ghost btn-xs">
+                <Link to="/quote" search={{ service: undefined }} className={cn(buttonVariants(), " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs")}>
                   {t("nav.quote")} <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>

@@ -1,12 +1,27 @@
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, CalendarDays, ClipboardList, Clock, FileText, LifeBuoy } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  ClipboardList,
+  Clock,
+  FileText,
+  LifeBuoy,
+} from "lucide-react";
 import { api } from "../lib/api";
-import type { Appointment, ServiceReport, ServiceRequest, Ticket } from "../lib/types";
+import type {
+  Appointment,
+  ServiceReport,
+  ServiceRequest,
+  Ticket,
+} from "../lib/types";
 import { useAuth } from "../context/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
 import { useTechnicianNav } from "../components/nav";
-import { DashboardShell, Panel } from "../components/DashboardShell";
+import { Panel } from "../components/DashboardShell";
+import { TechnicianDashboardShell as DashboardShell } from "../components/TechnicianDashboardShell";
 import { PageLoader, StatusBadge } from "../components/ui";
 
 export const Route = createFileRoute("/technician/")({
@@ -42,7 +57,9 @@ function TechnicianDashboard() {
   const openRequests = requests.filter(
     (request) => !["COMPLETED", "CANCELLED"].includes(request.status),
   );
-  const openTickets = tickets.filter((ticket) => !["RESOLVED", "CLOSED"].includes(ticket.status));
+  const openTickets = tickets.filter(
+    (ticket) => !["RESOLVED", "CLOSED"].includes(ticket.status),
+  );
   const upcoming = appointments
     .filter(
       (appointment) =>
@@ -63,44 +80,66 @@ function TechnicianDashboard() {
     <DashboardShell
       nav={nav}
       title={t("technician.dashboard")}
-      subtitle={t("technician.welcome", { name: user?.firstName || user?.fullName || "" })}
+      subtitle={t("technician.welcome", {
+        name: user?.firstName || user?.fullName || "",
+      })}
       actions={
-        <Link to="/technician/reports" search={{ request: undefined }} className="btn btn-primary btn-sm">
+        <Link
+          to="/technician/reports"
+          search={{ request: undefined }}
+          className={cn(
+            buttonVariants(),
+            " bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm",
+          )}
+        >
           <FileText className="h-4 w-4" /> {t("technician.newReport")}
         </Link>
       }
     >
-      <div className="space-y-5">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {([
-            [ClipboardList, t("technician.assignedRequests"), openRequests.length],
-            [LifeBuoy, t("technician.assignedTickets"), openTickets.length],
-            [CalendarDays, t("technician.appointments"), appointments.length],
-            [FileText, t("technician.reports"), reports.length],
-          ] as const).map(([icon, label, value]) => {
+      <div className="space-y-8">
+        <div className="technician-stats grid grid-cols-2 gap-3 xl:grid-cols-4">
+          {(
+            [
+              [
+                ClipboardList,
+                t("technician.assignedRequests"),
+                openRequests.length,
+              ],
+              [LifeBuoy, t("technician.assignedTickets"), openTickets.length],
+              [CalendarDays, t("technician.appointments"), appointments.length],
+              [FileText, t("technician.reports"), reports.length],
+            ] as const
+          ).map(([icon, label, value]) => {
             const Icon = icon as typeof ClipboardList;
             return (
-              <div key={String(label)} className="rounded-box border border-base-300 bg-base-100 p-4">
+              <div
+                key={String(label)}
+                className="technician-stat rounded-box border border-base-300 bg-base-100 p-4"
+              >
                 <div className="flex items-center justify-between">
-                  <p className="text-xs text-base-content/65">{label}</p>
+                  <p className="text-xs text-ink-muted">{label}</p>
                   <Icon className="h-4 w-4 text-primary" />
                 </div>
-                <p className="mt-2 text-2xl font-black">{value}</p>
+                <p className="mt-2 text-2xl font-medium">{value}</p>
               </div>
             );
           })}
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
           <Panel
+            className="technician-assigned-panel"
             title={t("technician.assignedRequests")}
             action={
-              <Link to="/technician/tasks" className="link link-primary text-xs">
+              <Link
+                to="/technician/tasks"
+                className={cn("underline cursor-pointer text-primary text-xs")}
+              >
                 {t("portal.viewAll")}
               </Link>
             }
           >
-            <div className="divide-y divide-base-200">
+            <div className="divide-y divide-hairline">
               {openRequests.slice(0, 6).map((request) => (
                 <Link
                   key={request.id}
@@ -108,16 +147,19 @@ function TechnicianDashboard() {
                   className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold">{request.title}</p>
-                    <p className="text-[11px] text-base-content/70">
-                      {request.reference} · {request.customer?.fullName || request.contactName}
+                    <p className="truncate text-sm font-semibold">
+                      {request.title}
+                    </p>
+                    <p className="text-xs text-ink-muted">
+                      {request.reference} ·{" "}
+                      {request.customer?.fullName || request.contactName}
                     </p>
                   </div>
                   <StatusBadge status={request.status} />
                 </Link>
               ))}
               {openRequests.length === 0 && (
-                <p className="py-6 text-center text-xs text-base-content/70">
+                <p className="py-6 text-center text-xs text-ink-muted">
                   {t("technician.noTasks")}
                 </p>
               )}
@@ -127,25 +169,29 @@ function TechnicianDashboard() {
           <Panel
             title={t("technician.appointments")}
             action={
-              <Link to="/technician/appointments" className="link link-primary text-xs">
+              <Link
+                to="/technician/appointments"
+                className={cn("underline cursor-pointer text-primary text-xs")}
+              >
                 {t("portal.viewAll")}
               </Link>
             }
           >
             <div className="space-y-3">
               {upcoming.map((appointment) => (
-                <div key={appointment.id} className="rounded-lg bg-base-200/60 p-3">
+                <div key={appointment.id} className="technician-visit">
                   <p className="text-sm font-semibold">{appointment.title}</p>
-                  <p className="mt-1 flex items-center gap-1.5 text-[11px] text-base-content/65">
-                    <Clock className="h-3.5 w-3.5" /> {formatDateTime(appointment.startsAt)}
+                  <p className="mt-1 flex items-center gap-1.5 text-xs text-ink-muted">
+                    <Clock className="h-3.5 w-3.5" />{" "}
+                    {formatDateTime(appointment.startsAt)}
                   </p>
-                  <p className="text-[11px] text-base-content/70">
+                  <p className="text-xs text-ink-muted">
                     {appointment.customer?.fullName}
                   </p>
                 </div>
               ))}
               {upcoming.length === 0 && (
-                <p className="py-6 text-center text-xs text-base-content/70">
+                <p className="py-6 text-center text-xs text-ink-muted">
                   {t("technician.noAppointments")}
                 </p>
               )}
@@ -154,14 +200,35 @@ function TechnicianDashboard() {
         </div>
 
         <Panel title={t("technician.quickLinks")}>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Link to="/technician/tasks" className="btn btn-outline justify-between">
-              {t("technician.assignedRequests")} <ArrowRight className="h-4 w-4" />
+          <div className="technician-quick-links grid gap-3 sm:grid-cols-3">
+            <Link
+              to="/technician/tasks"
+              className={cn(
+                buttonVariants(),
+                " border-current bg-transparent text-base-content hover:bg-base-content/10 justify-between",
+              )}
+            >
+              {t("technician.assignedRequests")}{" "}
+              <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/technician/tickets" className="btn btn-outline justify-between">
-              {t("technician.assignedTickets")} <ArrowRight className="h-4 w-4" />
+            <Link
+              to="/technician/tickets"
+              className={cn(
+                buttonVariants(),
+                " border-current bg-transparent text-base-content hover:bg-base-content/10 justify-between",
+              )}
+            >
+              {t("technician.assignedTickets")}{" "}
+              <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/technician/reports" search={{ request: undefined }} className="btn btn-outline justify-between">
+            <Link
+              to="/technician/reports"
+              search={{ request: undefined }}
+              className={cn(
+                buttonVariants(),
+                " border-current bg-transparent text-base-content hover:bg-base-content/10 justify-between",
+              )}
+            >
               {t("technician.newReport")} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

@@ -1,3 +1,19 @@
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Alert } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -6,10 +22,20 @@ import { api, errorMessage } from "../lib/api";
 import type { Product, ProductCategory, Service } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { useAdminNav } from "../components/nav";
-import { DashboardShell } from "../components/DashboardShell";
-import { ArchiveTabs, ListToolbar, Pagination, SearchField } from "../components/ListControls";
+import { AdminDashboardShell as DashboardShell } from "../components/AdminDashboardShell";
+import {
+  ArchiveTabs,
+  ListToolbar,
+  Pagination,
+  SearchField,
+} from "../components/ListControls";
 import { EmptyState, PageLoader } from "../components/ui";
-import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
+import {
+  filterByArchive,
+  matchesSearch,
+  paginate,
+  useListControls,
+} from "../lib/list";
 import { serviceIconOptions } from "../components/ServiceIcon";
 
 export const Route = createFileRoute("/admin/catalog")({
@@ -50,8 +76,12 @@ function AdminCatalogPage() {
   const serviceControls = useListControls();
   const productControls = useListControls();
   const [tab, setTab] = useState<"services" | "products">("services");
-  const [serviceForm, setServiceForm] = useState<typeof emptyService | null>(null);
-  const [productForm, setProductForm] = useState<typeof emptyProduct | null>(null);
+  const [serviceForm, setServiceForm] = useState<typeof emptyService | null>(
+    null,
+  );
+  const [productForm, setProductForm] = useState<typeof emptyProduct | null>(
+    null,
+  );
   const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -76,12 +106,22 @@ function AdminCatalogPage() {
 
   const filteredServices = filterByArchive(
     services.filter((service) =>
-      matchesSearch(serviceControls.search, service.nameEn, service.nameDe, service.slug, service.icon),
+      matchesSearch(
+        serviceControls.search,
+        service.nameEn,
+        service.nameDe,
+        service.slug,
+        service.icon,
+      ),
     ),
     serviceControls.archive,
     (service) => !service.active,
   );
-  const servicePage = paginate(filteredServices, serviceControls.page, serviceControls.pageSize);
+  const servicePage = paginate(
+    filteredServices,
+    serviceControls.page,
+    serviceControls.pageSize,
+  );
 
   const filteredProducts = filterByArchive(
     products.filter((product) =>
@@ -98,7 +138,11 @@ function AdminCatalogPage() {
     productControls.archive,
     (product) => !product.active,
   );
-  const productPage = paginate(filteredProducts, productControls.page, productControls.pageSize);
+  const productPage = paginate(
+    filteredProducts,
+    productControls.page,
+    productControls.pageSize,
+  );
 
   function startNewService() {
     setEditingServiceId(null);
@@ -128,7 +172,9 @@ function AdminCatalogPage() {
     try {
       const body = {
         ...serviceForm,
-        startingPrice: serviceForm.startingPrice ? Number(serviceForm.startingPrice) : undefined,
+        startingPrice: serviceForm.startingPrice
+          ? Number(serviceForm.startingPrice)
+          : undefined,
         sortOrder: Number(serviceForm.sortOrder),
       };
       if (editingServiceId) {
@@ -229,151 +275,254 @@ function AdminCatalogPage() {
       subtitle={`${services.length} ${t("admin.services").toLowerCase()} · ${products.length} ${t("admin.products").toLowerCase()}`}
       actions={
         tab === "services" ? (
-          <button onClick={startNewService} className="btn btn-primary btn-sm">
+          <Button
+            onClick={startNewService}
+            className={cn(
+              " bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm",
+            )}
+          >
             <Plus className="h-4 w-4" /> {t("admin.addService")}
-          </button>
+          </Button>
         ) : (
-          <button onClick={startNewProduct} className="btn btn-primary btn-sm">
+          <Button
+            onClick={startNewProduct}
+            className={cn(
+              " bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm",
+            )}
+          >
             <Plus className="h-4 w-4" /> {t("admin.addProduct")}
-          </button>
+          </Button>
         )
       }
     >
-      {message && <div className="alert alert-success mb-4 text-sm">{message}</div>}
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {message && (
+        <Alert
+          className={cn(
+            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-success text-success-content border-success mb-4 text-sm",
+          )}
+        >
+          {message}
+        </Alert>
+      )}
+      {error && (
+        <Alert
+          className={cn(
+            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mb-4 text-sm",
+          )}
+        >
+          {error}
+        </Alert>
+      )}
 
-      <div role="tablist" className="tabs tabs-boxed mb-5 w-fit">
-        <button
-          role="tab"
-          className={`tab ${tab === "services" ? "tab-active" : ""}`}
-          onClick={() => setTab("services")}
-        >
-          {t("admin.services")}
-        </button>
-        <button
-          role="tab"
-          className={`tab ${tab === "products" ? "tab-active" : ""}`}
-          onClick={() => setTab("products")}
-        >
-          {t("admin.products")}
-        </button>
-      </div>
+      <Tabs
+        value={tab}
+        onValueChange={(value) => setTab(value as "services" | "products")}
+        className="mb-5 w-fit"
+      >
+        <TabsList className="h-10 rounded-box bg-base-200 p-1">
+          <TabsTrigger
+            value="services"
+            className="px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-content"
+          >
+            {t("admin.services")}
+          </TabsTrigger>
+          <TabsTrigger
+            value="products"
+            className="px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-content"
+          >
+            {t("admin.products")}
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {tab === "services" && (
         <>
           {serviceForm && (
-            <form onSubmit={saveService} className="mb-5 rounded-box border border-base-300 bg-base-100 p-5">
+            <form
+              onSubmit={saveService}
+              className="mb-5 rounded-box border border-base-300 bg-base-100 p-6"
+            >
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-bold">
-                  {editingServiceId ? t("admin.editService") : t("admin.addService")}
+                <h2 className="text-base font-medium">
+                  {editingServiceId
+                    ? t("admin.editService")
+                    : t("admin.addService")}
                 </h2>
-                <button type="button" onClick={() => setServiceForm(null)} className="btn btn-ghost btn-xs">
+                <Button
+                  type="button"
+                  onClick={() => setServiceForm(null)}
+                  className={cn(
+                    " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs",
+                  )}
+                >
                   <X className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("admin.slug")}</span>
-                  <input
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("admin.slug")}
+                  </span>
+                  <Input
                     required
                     value={serviceForm.slug}
-                    onChange={(event) => setServiceForm({ ...serviceForm, slug: event.target.value })}
-                    className="input input-bordered input-sm w-full"
+                    onChange={(event) =>
+                      setServiceForm({
+                        ...serviceForm,
+                        slug: event.target.value,
+                      })
+                    }
+                    className={cn(" h-8 text-xs w-full")}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("admin.icon")}</span>
-                  <select
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("admin.icon")}
+                  </span>
+                  <NativeSelect
                     value={serviceForm.icon}
-                    onChange={(event) => setServiceForm({ ...serviceForm, icon: event.target.value })}
-                    className="select select-bordered select-sm w-full"
+                    onChange={(event) =>
+                      setServiceForm({
+                        ...serviceForm,
+                        icon: event.target.value,
+                      })
+                    }
+                    className={cn(" h-8 text-xs w-full")}
                   >
                     {serviceIconOptions.map((icon) => (
                       <option key={icon} value={icon}>
                         {icon}
                       </option>
                     ))}
-                  </select>
+                  </NativeSelect>
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("admin.titleEn")}</span>
-                  <input
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("admin.titleEn")}
+                  </span>
+                  <Input
                     required
                     value={serviceForm.nameEn}
-                    onChange={(event) => setServiceForm({ ...serviceForm, nameEn: event.target.value })}
-                    className="input input-bordered input-sm w-full"
+                    onChange={(event) =>
+                      setServiceForm({
+                        ...serviceForm,
+                        nameEn: event.target.value,
+                      })
+                    }
+                    className={cn(" h-8 text-xs w-full")}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("admin.titleDe")}</span>
-                  <input
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("admin.titleDe")}
+                  </span>
+                  <Input
                     required
                     value={serviceForm.nameDe}
-                    onChange={(event) => setServiceForm({ ...serviceForm, nameDe: event.target.value })}
-                    className="input input-bordered input-sm w-full"
+                    onChange={(event) =>
+                      setServiceForm({
+                        ...serviceForm,
+                        nameDe: event.target.value,
+                      })
+                    }
+                    className={cn(" h-8 text-xs w-full")}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("common.description")} EN</span>
-                  <textarea
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("common.description")} EN
+                  </span>
+                  <Textarea
                     required
                     rows={3}
                     value={serviceForm.descriptionEn}
                     onChange={(event) =>
-                      setServiceForm({ ...serviceForm, descriptionEn: event.target.value })
+                      setServiceForm({
+                        ...serviceForm,
+                        descriptionEn: event.target.value,
+                      })
                     }
-                    className="textarea textarea-bordered w-full text-sm"
+                    className={cn(" w-full text-sm")}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("common.description")} DE</span>
-                  <textarea
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("common.description")} DE
+                  </span>
+                  <Textarea
                     required
                     rows={3}
                     value={serviceForm.descriptionDe}
                     onChange={(event) =>
-                      setServiceForm({ ...serviceForm, descriptionDe: event.target.value })
+                      setServiceForm({
+                        ...serviceForm,
+                        descriptionDe: event.target.value,
+                      })
                     }
-                    className="textarea textarea-bordered w-full text-sm"
+                    className={cn(" w-full text-sm")}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("admin.startingPrice")}</span>
-                  <input
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("admin.startingPrice")}
+                  </span>
+                  <Input
                     type="number"
                     min={0}
                     step={0.01}
                     value={serviceForm.startingPrice}
                     onChange={(event) =>
-                      setServiceForm({ ...serviceForm, startingPrice: event.target.value })
+                      setServiceForm({
+                        ...serviceForm,
+                        startingPrice: event.target.value,
+                      })
                     }
-                    className="input input-bordered input-sm w-full"
+                    className={cn(" h-8 text-xs w-full")}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("admin.sortOrder")}</span>
-                  <input
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("admin.sortOrder")}
+                  </span>
+                  <Input
                     type="number"
                     min={0}
                     value={serviceForm.sortOrder}
-                    onChange={(event) => setServiceForm({ ...serviceForm, sortOrder: event.target.value })}
-                    className="input input-bordered input-sm w-full"
+                    onChange={(event) =>
+                      setServiceForm({
+                        ...serviceForm,
+                        sortOrder: event.target.value,
+                      })
+                    }
+                    className={cn(" h-8 text-xs w-full")}
                   />
                 </label>
                 <label className="flex items-center gap-2 text-xs font-semibold sm:col-span-2">
                   <input
                     type="checkbox"
-                    className="checkbox checkbox-sm"
+                    className={cn(
+                      "appearance-auto accent-primary size-6 shrink-0 rounded-field border border-input focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary size-5",
+                    )}
                     checked={serviceForm.active}
-                    onChange={(event) => setServiceForm({ ...serviceForm, active: event.target.checked })}
+                    onChange={(event) =>
+                      setServiceForm({
+                        ...serviceForm,
+                        active: event.target.checked,
+                      })
+                    }
                   />
                   {t("common.active")}
                 </label>
               </div>
-              <button disabled={busy} className="btn btn-primary btn-sm mt-4">
+              <Button
+                disabled={busy}
+                className={cn(
+                  " bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm mt-4",
+                )}
+              >
                 {busy && <Loader2 className="h-4 w-4 animate-spin" />}
                 {t("admin.save")}
-              </button>
+              </Button>
             </form>
           )}
 
@@ -385,7 +534,10 @@ function AdminCatalogPage() {
               onChange={serviceControls.setSearch}
               placeholder={t("list.searchCatalog")}
             />
-            <ArchiveTabs value={serviceControls.archive} onChange={serviceControls.setArchive} />
+            <ArchiveTabs
+              value={serviceControls.archive}
+              onChange={serviceControls.setArchive}
+            />
           </ListToolbar>
 
           {!servicesQuery.isLoading && servicePage.total === 0 && (
@@ -396,46 +548,67 @@ function AdminCatalogPage() {
 
           {servicePage.total > 0 && (
             <div className="mt-5 overflow-x-auto rounded-box border border-base-300 bg-base-100">
-              <table className="table table-zebra">
-                <thead>
-                  <tr>
-                    <th>{t("common.title")}</th>
-                    <th>{t("admin.slug")}</th>
-                    <th>{t("admin.startingPrice")}</th>
-                    <th>{t("common.status")}</th>
-                    <th />
-                  </tr>
-                </thead>
-                <tbody>
+              <Table
+                className={cn(" [&_tbody_tr:nth-child(even)]:bg-base-200")}
+              >
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("common.title")}</TableHead>
+                    <TableHead>{t("admin.slug")}</TableHead>
+                    <TableHead>{t("admin.startingPrice")}</TableHead>
+                    <TableHead>{t("common.status")}</TableHead>
+                    <TableHead />
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {servicePage.items.map((service) => (
-                    <tr key={service.id}>
-                      <td className="font-semibold">{pick(service.nameEn, service.nameDe)}</td>
-                      <td className="font-mono text-[11px]">{service.slug}</td>
-                      <td className="text-xs">
-                        {service.startingPrice ? formatMoney(service.startingPrice) : "–"}
-                      </td>
-                      <td>
-                        <span className={`badge badge-sm ${service.active ? "badge-success" : "badge-ghost"}`}>
-                          {service.active ? t("common.active") : t("common.inactive")}
-                        </span>
-                      </td>
-                      <td>
+                    <TableRow key={service.id}>
+                      <TableCell className="font-semibold">
+                        {pick(service.nameEn, service.nameDe)}
+                      </TableCell>
+                      <TableCell className="tabular-nums text-xs">
+                        {service.slug}
+                      </TableCell>
+                      <TableCell className="text-xs">
+                        {service.startingPrice
+                          ? formatMoney(service.startingPrice)
+                          : "–"}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className={cn(
+                            ` h-5 text-xs ${service.active ? "bg-success text-success-content border-success" : "bg-base-200 text-base-content"}`,
+                          )}
+                        >
+                          {service.active
+                            ? t("common.active")
+                            : t("common.inactive")}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
                         <div className="flex gap-1">
-                          <button onClick={() => editService(service)} className="btn btn-ghost btn-xs">
+                          <Button
+                            onClick={() => editService(service)}
+                            className={cn(
+                              " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs",
+                            )}
+                          >
                             <Pencil className="h-3.5 w-3.5" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => void archiveService(service.id)}
-                            className="btn btn-ghost btn-xs text-error"
+                            className={cn(
+                              " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs text-error",
+                            )}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
-                          </button>
+                          </Button>
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
 
@@ -455,146 +628,244 @@ function AdminCatalogPage() {
       {tab === "products" && (
         <>
           {productForm && (
-            <form onSubmit={saveProduct} className="mb-5 rounded-box border border-base-300 bg-base-100 p-5">
+            <form
+              onSubmit={saveProduct}
+              className="mb-5 rounded-box border border-base-300 bg-base-100 p-6"
+            >
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-bold">
-                  {editingProductId ? t("admin.editProduct") : t("admin.addProduct")}
+                <h2 className="text-base font-medium">
+                  {editingProductId
+                    ? t("admin.editProduct")
+                    : t("admin.addProduct")}
                 </h2>
-                <button type="button" onClick={() => setProductForm(null)} className="btn btn-ghost btn-xs">
+                <Button
+                  type="button"
+                  onClick={() => setProductForm(null)}
+                  className={cn(
+                    " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs",
+                  )}
+                >
                   <X className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("admin.slug")}</span>
-                  <input
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("admin.slug")}
+                  </span>
+                  <Input
                     required
                     value={productForm.slug}
-                    onChange={(event) => setProductForm({ ...productForm, slug: event.target.value })}
-                    className="input input-bordered input-sm w-full"
+                    onChange={(event) =>
+                      setProductForm({
+                        ...productForm,
+                        slug: event.target.value,
+                      })
+                    }
+                    className={cn(" h-8 text-xs w-full")}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("admin.sku")}</span>
-                  <input
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("admin.sku")}
+                  </span>
+                  <Input
                     required
                     value={productForm.sku}
-                    onChange={(event) => setProductForm({ ...productForm, sku: event.target.value })}
-                    className="input input-bordered input-sm w-full"
+                    onChange={(event) =>
+                      setProductForm({
+                        ...productForm,
+                        sku: event.target.value,
+                      })
+                    }
+                    className={cn(" h-8 text-xs w-full")}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("admin.categories")}</span>
-                  <select
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("admin.categories")}
+                  </span>
+                  <NativeSelect
                     required
                     value={productForm.categoryId}
-                    onChange={(event) => setProductForm({ ...productForm, categoryId: event.target.value })}
-                    className="select select-bordered select-sm w-full"
+                    onChange={(event) =>
+                      setProductForm({
+                        ...productForm,
+                        categoryId: event.target.value,
+                      })
+                    }
+                    className={cn(" h-8 text-xs w-full")}
                   >
                     <option value="">–</option>
-                    {(categoriesQuery.data?.categories ?? []).map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {pick(category.nameEn, category.nameDe)}
-                      </option>
-                    ))}
-                  </select>
+                    {(categoriesQuery.data?.categories ?? []).map(
+                      (category) => (
+                        <option key={category.id} value={category.id}>
+                          {pick(category.nameEn, category.nameDe)}
+                        </option>
+                      ),
+                    )}
+                  </NativeSelect>
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("admin.imageUrl")}</span>
-                  <input
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("admin.imageUrl")}
+                  </span>
+                  <Input
                     value={productForm.imageUrl}
-                    onChange={(event) => setProductForm({ ...productForm, imageUrl: event.target.value })}
-                    className="input input-bordered input-sm w-full"
+                    onChange={(event) =>
+                      setProductForm({
+                        ...productForm,
+                        imageUrl: event.target.value,
+                      })
+                    }
+                    className={cn(" h-8 text-xs w-full")}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("admin.titleEn")}</span>
-                  <input
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("admin.titleEn")}
+                  </span>
+                  <Input
                     required
                     value={productForm.nameEn}
-                    onChange={(event) => setProductForm({ ...productForm, nameEn: event.target.value })}
-                    className="input input-bordered input-sm w-full"
+                    onChange={(event) =>
+                      setProductForm({
+                        ...productForm,
+                        nameEn: event.target.value,
+                      })
+                    }
+                    className={cn(" h-8 text-xs w-full")}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("admin.titleDe")}</span>
-                  <input
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("admin.titleDe")}
+                  </span>
+                  <Input
                     required
                     value={productForm.nameDe}
-                    onChange={(event) => setProductForm({ ...productForm, nameDe: event.target.value })}
-                    className="input input-bordered input-sm w-full"
+                    onChange={(event) =>
+                      setProductForm({
+                        ...productForm,
+                        nameDe: event.target.value,
+                      })
+                    }
+                    className={cn(" h-8 text-xs w-full")}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("common.description")} EN</span>
-                  <textarea
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("common.description")} EN
+                  </span>
+                  <Textarea
                     required
                     rows={3}
                     value={productForm.descriptionEn}
                     onChange={(event) =>
-                      setProductForm({ ...productForm, descriptionEn: event.target.value })
+                      setProductForm({
+                        ...productForm,
+                        descriptionEn: event.target.value,
+                      })
                     }
-                    className="textarea textarea-bordered w-full text-sm"
+                    className={cn(" w-full text-sm")}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("common.description")} DE</span>
-                  <textarea
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("common.description")} DE
+                  </span>
+                  <Textarea
                     required
                     rows={3}
                     value={productForm.descriptionDe}
                     onChange={(event) =>
-                      setProductForm({ ...productForm, descriptionDe: event.target.value })
+                      setProductForm({
+                        ...productForm,
+                        descriptionDe: event.target.value,
+                      })
                     }
-                    className="textarea textarea-bordered w-full text-sm"
+                    className={cn(" w-full text-sm")}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("common.price")} (EUR)</span>
-                  <input
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("common.price")} (EUR)
+                  </span>
+                  <Input
                     required
                     type="number"
                     min={0}
                     step={0.01}
                     value={productForm.price}
-                    onChange={(event) => setProductForm({ ...productForm, price: event.target.value })}
-                    className="input input-bordered input-sm w-full"
+                    onChange={(event) =>
+                      setProductForm({
+                        ...productForm,
+                        price: event.target.value,
+                      })
+                    }
+                    className={cn(" h-8 text-xs w-full")}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold">{t("admin.stock")}</span>
-                  <input
+                  <span className="mb-1 block text-xs font-semibold">
+                    {t("admin.stock")}
+                  </span>
+                  <Input
                     required
                     type="number"
                     min={0}
                     value={productForm.stock}
-                    onChange={(event) => setProductForm({ ...productForm, stock: event.target.value })}
-                    className="input input-bordered input-sm w-full"
+                    onChange={(event) =>
+                      setProductForm({
+                        ...productForm,
+                        stock: event.target.value,
+                      })
+                    }
+                    className={cn(" h-8 text-xs w-full")}
                   />
                 </label>
                 <label className="flex items-center gap-2 text-xs font-semibold">
                   <input
                     type="checkbox"
-                    className="checkbox checkbox-sm"
+                    className={cn(
+                      "appearance-auto accent-primary size-6 shrink-0 rounded-field border border-input focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary size-5",
+                    )}
                     checked={productForm.active}
-                    onChange={(event) => setProductForm({ ...productForm, active: event.target.checked })}
+                    onChange={(event) =>
+                      setProductForm({
+                        ...productForm,
+                        active: event.target.checked,
+                      })
+                    }
                   />
                   {t("common.active")}
                 </label>
                 <label className="flex items-center gap-2 text-xs font-semibold">
                   <input
                     type="checkbox"
-                    className="checkbox checkbox-sm"
+                    className={cn(
+                      "appearance-auto accent-primary size-6 shrink-0 rounded-field border border-input focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary size-5",
+                    )}
                     checked={productForm.featured}
-                    onChange={(event) => setProductForm({ ...productForm, featured: event.target.checked })}
+                    onChange={(event) =>
+                      setProductForm({
+                        ...productForm,
+                        featured: event.target.checked,
+                      })
+                    }
                   />
                   {t("admin.featured")}
                 </label>
               </div>
-              <button disabled={busy} className="btn btn-primary btn-sm mt-4">
+              <Button
+                disabled={busy}
+                className={cn(
+                  " bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm mt-4",
+                )}
+              >
                 {busy && <Loader2 className="h-4 w-4 animate-spin" />}
                 {t("admin.save")}
-              </button>
+              </Button>
             </form>
           )}
 
@@ -606,7 +877,10 @@ function AdminCatalogPage() {
               onChange={productControls.setSearch}
               placeholder={t("list.searchCatalog")}
             />
-            <ArchiveTabs value={productControls.archive} onChange={productControls.setArchive} />
+            <ArchiveTabs
+              value={productControls.archive}
+              onChange={productControls.setArchive}
+            />
           </ListToolbar>
 
           {!productsQuery.isLoading && productPage.total === 0 && (
@@ -617,50 +891,80 @@ function AdminCatalogPage() {
 
           {productPage.total > 0 && (
             <div className="mt-5 overflow-x-auto rounded-box border border-base-300 bg-base-100">
-              <table className="table table-zebra">
-                <thead>
-                  <tr>
-                    <th>{t("common.title")}</th>
-                    <th>{t("admin.sku")}</th>
-                    <th>{t("common.category")}</th>
-                    <th>{t("common.price")}</th>
-                    <th>{t("admin.stock")}</th>
-                    <th>{t("common.status")}</th>
-                    <th />
-                  </tr>
-                </thead>
-                <tbody>
+              <Table
+                className={cn(" [&_tbody_tr:nth-child(even)]:bg-base-200")}
+              >
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("common.title")}</TableHead>
+                    <TableHead>{t("admin.sku")}</TableHead>
+                    <TableHead>{t("common.category")}</TableHead>
+                    <TableHead>{t("common.price")}</TableHead>
+                    <TableHead>{t("admin.stock")}</TableHead>
+                    <TableHead>{t("common.status")}</TableHead>
+                    <TableHead />
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {productPage.items.map((product) => (
-                    <tr key={product.id}>
-                      <td className="font-semibold">{pick(product.nameEn, product.nameDe)}</td>
-                      <td className="font-mono text-[11px]">{product.sku}</td>
-                      <td className="text-xs">{product.category ? pick(product.category.nameEn, product.category.nameDe) : "–"}</td>
-                      <td className="text-xs">{formatMoney(product.price)}</td>
-                      <td className={`text-xs ${product.stock <= 3 ? "font-bold text-warning" : ""}`}>
+                    <TableRow key={product.id}>
+                      <TableCell className="font-semibold">
+                        {pick(product.nameEn, product.nameDe)}
+                      </TableCell>
+                      <TableCell className="tabular-nums text-xs">
+                        {product.sku}
+                      </TableCell>
+                      <TableCell className="text-xs">
+                        {product.category
+                          ? pick(
+                              product.category.nameEn,
+                              product.category.nameDe,
+                            )
+                          : "–"}
+                      </TableCell>
+                      <TableCell className="text-xs">
+                        {formatMoney(product.price)}
+                      </TableCell>
+                      <TableCell
+                        className={`text-xs ${product.stock <= 3 ? "font-medium text-warning" : ""}`}
+                      >
                         {product.stock}
-                      </td>
-                      <td>
-                        <span className={`badge badge-sm ${product.active ? "badge-success" : "badge-ghost"}`}>
-                          {product.active ? t("common.active") : t("common.inactive")}
-                        </span>
-                      </td>
-                      <td>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className={cn(
+                            ` h-5 text-xs ${product.active ? "bg-success text-success-content border-success" : "bg-base-200 text-base-content"}`,
+                          )}
+                        >
+                          {product.active
+                            ? t("common.active")
+                            : t("common.inactive")}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
                         <div className="flex gap-1">
-                          <button onClick={() => editProduct(product)} className="btn btn-ghost btn-xs">
+                          <Button
+                            onClick={() => editProduct(product)}
+                            className={cn(
+                              " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs",
+                            )}
+                          >
                             <Pencil className="h-3.5 w-3.5" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => void archiveProduct(product.id)}
-                            className="btn btn-ghost btn-xs text-error"
+                            className={cn(
+                              " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs text-error",
+                            )}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
-                          </button>
+                          </Button>
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
 

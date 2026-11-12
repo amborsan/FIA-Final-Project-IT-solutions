@@ -42,7 +42,7 @@ function EnglishWithdrawal() {
         or post) before the period expires:
       </p>
       <p>
-        Orbit IT Solutions GmbH
+        IT Solutions.
         <br />
         Hauptstraße 12, 10115 Berlin, Germany
         <br />
@@ -95,7 +95,7 @@ function EnglishWithdrawal() {
       <h2>Model withdrawal form</h2>
       <p>(Complete and return this form only if you want to withdraw.)</p>
       <p>
-        To: Orbit IT Solutions GmbH, Hauptstraße 12, 10115 Berlin, Germany,{" "}
+        To: IT Solutions., Hauptstraße 12, 10115 Berlin, Germany,{" "}
         <a href="mailto:hello@fia-it.de">hello@fia-it.de</a>
       </p>
       <p>
@@ -152,7 +152,7 @@ function GermanWithdrawal() {
         eine eindeutige Erklärung (zum Beispiel per E-Mail oder Post):
       </p>
       <p>
-        Orbit IT Solutions GmbH
+        IT Solutions.
         <br />
         Hauptstraße 12, 10115 Berlin, Deutschland
         <br />
@@ -214,7 +214,7 @@ function GermanWithdrawal() {
         wollen.)
       </p>
       <p>
-        An: Orbit IT Solutions GmbH, Hauptstraße 12, 10115 Berlin, Deutschland,{" "}
+        An: IT Solutions., Hauptstraße 12, 10115 Berlin, Deutschland,{" "}
         <a href="mailto:hello@fia-it.de">hello@fia-it.de</a>
       </p>
       <p>

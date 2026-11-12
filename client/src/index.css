@@ -1,92 +1,142 @@
 @import "tailwindcss";
+@import "./styles/tokens.css";
 
-/* DaisyUI components + our own "orbit" theme (professional blue/teal). */
-@plugin "daisyui" {
-  themes: false;
-}
+@layer components {
+  .home-hero {
+    background: var(--canvas);
+    color: var(--ink);
+  }
 
-@plugin "daisyui/theme" {
-  name: "orbit";
-  default: true;
-  prefersdark: false;
-  color-scheme: light;
+  .home-hero-layout {
+    display: grid;
+    align-items: center;
+    gap: var(--hero-column-gap);
+    padding-block: var(--spacing-section);
+  }
 
-  --color-base-100: oklch(100% 0 0);
-  --color-base-200: oklch(97.5% 0.006 240);
-  --color-base-300: oklch(92% 0.012 240);
-  --color-base-content: oklch(25% 0.025 250);
+  .home-hero-heading { min-width: 0; }
 
-  --color-primary: oklch(42% 0.11 245);
-  --color-primary-content: oklch(98% 0.01 240);
-  --color-secondary: oklch(58% 0.1 185);
-  --color-secondary-content: oklch(99% 0.005 185);
-  --color-accent: oklch(72% 0.14 75);
-  --color-accent-content: oklch(25% 0.05 75);
-  --color-neutral: oklch(28% 0.03 250);
-  --color-neutral-content: oklch(97% 0.005 250);
+  .home-hero-title {
+    margin: 0;
+    font-size: var(--hero-title-size);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: var(--hero-title-tracking);
+    text-align: left;
+    text-wrap: balance;
+  }
 
-  --color-info: oklch(62% 0.11 240);
-  --color-info-content: oklch(99% 0.005 240);
-  --color-success: oklch(58% 0.12 155);
-  --color-success-content: oklch(99% 0.005 155);
-  --color-warning: oklch(76% 0.14 80);
-  --color-warning-content: oklch(25% 0.04 80);
-  --color-error: oklch(57% 0.18 25);
-  --color-error-content: oklch(99% 0.005 25);
+  .home-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-inline);
+    margin-top: var(--hero-column-gap);
+  }
 
-  --radius-selector: 0.75rem;
-  --radius-field: 0.6rem;
-  --radius-box: 1rem;
-  --size-selector: 0.25rem;
-  --size-field: 0.25rem;
-  --border: 1px;
-  --depth: 1;
-  --noise: 0;
-}
+  .ascii-orb {
+    position: relative;
+    width: var(--hero-orb-size);
+    max-width: 100%;
+    aspect-ratio: 1;
+    justify-self: center;
+    color: var(--ink);
+  }
 
-/* Night palette. The same hue family as "orbit" so the switch feels calm. */
-@plugin "daisyui/theme" {
-  name: "orbit-dark";
-  default: false;
-  prefersdark: true;
-  color-scheme: dark;
+  .ascii-orb-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: var(--brand-indigo-soft);
+  }
 
-  --color-base-100: oklch(23% 0.025 255);
-  --color-base-200: oklch(18% 0.02 255);
-  --color-base-300: oklch(32% 0.028 255);
-  --color-base-content: oklch(92% 0.012 250);
+  .home-hero-description {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: center;
+    gap: var(--spacing-inline);
+    min-height: var(--hero-topic-height);
+    max-width: var(--hero-copy-width);
+    font-size: var(--text-base);
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
 
-  --color-primary: oklch(74% 0.12 245);
-  --color-primary-content: oklch(20% 0.04 245);
-  --color-secondary: oklch(76% 0.11 185);
-  --color-secondary-content: oklch(20% 0.035 185);
-  --color-accent: oklch(82% 0.13 80);
-  --color-accent-content: oklch(24% 0.05 80);
-  --color-neutral: oklch(31% 0.022 250);
-  --color-neutral-content: oklch(95% 0.006 250);
+  .home-hero-topics { display: grid; gap: var(--spacing-inline); }
 
-  --color-info: oklch(74% 0.11 240);
-  --color-info-content: oklch(19% 0.03 240);
-  --color-success: oklch(74% 0.12 155);
-  --color-success-content: oklch(19% 0.03 155);
-  --color-warning: oklch(82% 0.13 80);
-  --color-warning-content: oklch(24% 0.04 80);
-  --color-error: oklch(72% 0.17 25);
-  --color-error-content: oklch(19% 0.03 25);
+  .home-hero-topic {
+    display: block;
+    text-align: left;
+    color: var(--ink);
+    cursor: pointer;
+    border-radius: var(--radius-xs);
+    transition: color var(--duration-ui) var(--ease-ui);
+  }
 
-  --radius-selector: 0.75rem;
-  --radius-field: 0.6rem;
-  --radius-box: 1rem;
-  --size-selector: 0.25rem;
-  --size-field: 0.25rem;
-  --border: 1px;
-  --depth: 1;
-  --noise: 0;
-}
+  .home-hero-topic:hover, .home-hero-topic[aria-expanded="true"] { color: var(--ink-muted); }
+  .home-hero-topic:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 
-@theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  .home-hero-topic-description {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    opacity: 0;
+    transition: opacity var(--duration-ui) var(--ease-ui);
+  }
+
+  .home-hero-topic-description[data-active="true"] { opacity: 1; }
+
+  .home-hero-details {
+    margin-top: var(--spacing-inline);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+  }
+
+  .home-hero-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--hero-column-gap);
+    padding-bottom: var(--spacing-section);
+  }
+
+  @media (min-width: 64rem) {
+    .home-hero-layout {
+      grid-template-columns: 1.2fr 1.15fr 1fr;
+      min-height: var(--hero-height);
+    }
+
+    .home-hero-stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .brand-lockup {
+    font-family: var(--font-brand);
+    font-size: var(--brand-wordmark-size);
+    font-weight: var(--brand-wordmark-weight);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--brand-lockup-gap);
+    color: var(--ink);
+  }
+
+  .brand-symbol {
+    display: inline-block;
+    width: var(--brand-symbol-size);
+    height: var(--brand-symbol-size);
+    flex-shrink: 0;
+    background: currentColor;
+    mask: url("/brand/sphere.svg") center / contain no-repeat;
+  }
+
+  .brand-wordmark {
+    font-family: var(--font-brand);
+    font-size: var(--brand-wordmark-size);
+    font-weight: var(--brand-wordmark-weight);
+    letter-spacing: var(--brand-wordmark-tracking);
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--ink);
+  }
 }
 
 @layer base {
@@ -101,6 +151,12 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  p { font-weight: 300; }
+  p:is(.text-xs, .text-sm) { font-weight: 400; }
+  input, textarea, select { caret-color: var(--ink); }
+  button, a { text-underline-offset: 0.2em; }
+  table { font-variant-numeric: tabular-nums; }
+
   ::selection {
     background: color-mix(in oklab, var(--color-primary) 25%, transparent);
   }
@@ -109,14 +165,16 @@
   h2,
   h3,
   h4 {
-    letter-spacing: -0.02em;
+    letter-spacing: var(--tracking-tight);
+    font-weight: 500;
+    text-wrap: balance;
   }
 }
 
 @layer components {
   .container-page {
     width: 100%;
-    max-width: 80rem;
+    max-width: var(--container-page);
     margin-inline: auto;
     padding-inline: 1rem;
   }
@@ -134,7 +192,7 @@
   }
 
   .section-space {
-    padding-block: 4.5rem;
+    padding-block: var(--spacing-section);
   }
 
   .eyebrow {
@@ -149,37 +207,15 @@
   }
 
   .hero-grid {
-    background-image:
-      radial-gradient(
-        circle at 20% 10%,
-        color-mix(in oklab, var(--color-primary) 12%, transparent),
-        transparent 45%
-      ),
-      radial-gradient(
-        circle at 85% 20%,
-        color-mix(in oklab, var(--color-secondary) 14%, transparent),
-        transparent 40%
-      ),
-      linear-gradient(
-        color-mix(in oklab, var(--color-primary) 6%, transparent) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        90deg,
-        color-mix(in oklab, var(--color-primary) 6%, transparent) 1px,
-        transparent 1px
-      );
-    background-size: auto, auto, 32px 32px, 32px 32px;
+    background: var(--canvas);
   }
 
   .card-hover {
-    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    transition: border-color var(--duration-ui) var(--ease-ui);
   }
 
   .card-hover:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 18px 40px -24px color-mix(in oklab, var(--color-base-content) 35%, transparent);
-    border-color: color-mix(in oklab, var(--color-primary) 35%, transparent);
+    border-color: var(--ink-muted);
   }
 
   /* Rich text rendered from the CMS. */
@@ -345,4 +381,9 @@
       display: none !important;
     }
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+ html { scroll-behavior: auto; }
+ *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }

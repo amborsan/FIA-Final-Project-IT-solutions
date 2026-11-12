@@ -20,8 +20,8 @@ function EnglishTerms() {
     <>
       <h2>1. Scope</h2>
       <p>
-        These Terms and Conditions apply to all contracts between Orbit IT Solutions GmbH
-        ("Orbit", "we") and our customers ("you") for IT services, hardware and software. They apply
+        These Terms and Conditions apply to all contracts between IT Solutions.
+        ("IT Solutions.", "we") and our customers ("you") for IT services, hardware and software. They apply
         to both consumers and businesses. Deviating terms of the customer only apply if we confirm
         them in writing.
       </p>
@@ -123,8 +123,7 @@ function GermanTerms() {
     <>
       <h2>1. Geltungsbereich</h2>
       <p>
-        Diese Allgemeinen Geschäftsbedingungen gelten für alle Verträge zwischen der Orbit IT
-        Solutions GmbH („Orbit", „wir") und unseren Kundinnen und Kunden („Sie") über
+        Diese Allgemeinen Geschäftsbedingungen gelten für alle Verträge zwischen der IT Solutions. („IT Solutions.", „wir") und unseren Kundinnen und Kunden („Sie") über
         IT-Dienstleistungen, Hardware und Software. Sie gelten sowohl für Verbraucher als auch für
         Unternehmer. Abweichende Bedingungen des Kunden gelten nur, wenn wir sie schriftlich
         bestätigen.

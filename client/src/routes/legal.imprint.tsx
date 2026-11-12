@@ -20,7 +20,7 @@ function EnglishImprint() {
     <>
       <h2>Provider</h2>
       <p>
-        Orbit IT Solutions GmbH
+        IT Solutions.
         <br />
         Hauptstraße 12
         <br />
@@ -114,7 +114,7 @@ function GermanImprint() {
     <>
       <h2>Anbieter</h2>
       <p>
-        Orbit IT Solutions GmbH
+        IT Solutions.
         <br />
         Hauptstraße 12
         <br />

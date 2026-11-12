@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 import {
   Bold,
@@ -67,41 +69,41 @@ export function RichEditor({
   return (
     <div className="rounded-lg border border-base-300 bg-base-100">
       <div className="flex flex-wrap items-center gap-1 border-b border-base-300 p-2">
-        <button
+        <Button
           type="button"
           onClick={() => command("formatBlock", "h2")}
-          className="btn btn-ghost btn-xs font-bold"
+          className={cn(" border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs font-bold")}
           title="Heading 2"
         >
           H2
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => command("formatBlock", "h3")}
-          className="btn btn-ghost btn-xs font-bold"
+          className={cn(" border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs font-bold")}
           title="Heading 3"
         >
           H3
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => command("formatBlock", "p")}
-          className="btn btn-ghost btn-xs"
+          className={cn(" border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs")}
           title="Paragraph"
         >
           ¶
-        </button>
+        </Button>
         <span className="mx-1 h-5 w-px bg-base-300" />
         {buttons.map(({ icon: Icon, label, action }) => (
-          <button
+          <Button
             key={label}
             type="button"
             onClick={action}
             title={label}
-            className="btn btn-ghost btn-xs"
+            className={cn(" border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs")}
           >
             <Icon className="h-3.5 w-3.5" />
-          </button>
+          </Button>
         ))}
       </div>
       <div

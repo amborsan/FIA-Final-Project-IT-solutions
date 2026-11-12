@@ -1,3 +1,8 @@
+import { Alert } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
@@ -73,9 +78,9 @@ export default function ContactPage() {
           <h2 className="text-lg font-bold">{t("contact.formTitle")}</h2>
 
           {success && (
-            <div className="alert alert-success mt-4 text-sm">
+            <Alert className={cn("flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-success text-success-content border-success mt-4 text-sm")}>
               <CheckCircle2 className="h-5 w-5" /> {t("contact.success")}
-            </div>
+            </Alert>
           )}
 
           <form onSubmit={submit} className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -83,61 +88,61 @@ export default function ContactPage() {
               <span className="mb-1 block text-xs font-semibold">
                 {t("common.name")} <span className="text-error">*</span>
               </span>
-              <input
+              <Input
                 required
                 minLength={2}
                 value={form.name}
                 onChange={(event) =>
                   setForm({ ...form, name: event.target.value })
                 }
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">
                 {t("common.email")} <span className="text-error">*</span>
               </span>
-              <input
+              <Input
                 required
                 type="email"
                 value={form.email}
                 onChange={(event) =>
                   setForm({ ...form, email: event.target.value })
                 }
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">
                 {t("common.phone")} ({t("common.optional")})
               </span>
-              <input
+              <Input
                 value={form.phone}
                 onChange={(event) =>
                   setForm({ ...form, phone: event.target.value })
                 }
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">
                 {t("common.subject")} <span className="text-error">*</span>
               </span>
-              <input
+              <Input
                 required
                 minLength={3}
                 value={form.subject}
                 onChange={(event) =>
                   setForm({ ...form, subject: event.target.value })
                 }
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
             <label className="block sm:col-span-2">
               <span className="mb-1 block text-xs font-semibold">
                 {t("common.message")} <span className="text-error">*</span>
               </span>
-              <textarea
+              <Textarea
                 required
                 minLength={10}
                 maxLength={4000}
@@ -146,7 +151,7 @@ export default function ContactPage() {
                 onChange={(event) =>
                   setForm({ ...form, message: event.target.value })
                 }
-                className="textarea textarea-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
 
@@ -158,38 +163,38 @@ export default function ContactPage() {
                 onChange={(event) =>
                   setForm({ ...form, acceptPrivacy: event.target.checked })
                 }
-                className="checkbox checkbox-sm mt-0.5"
+                className={cn("appearance-auto accent-primary size-6 shrink-0 rounded-field border border-input focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary size-5 mt-0.5")}
               />
               <span>
                 {t("contact.privacyNote")}{" "}
-                <Link to="/legal/privacy" className="link link-primary">
+                <Link to="/legal/privacy" className={cn("underline cursor-pointer text-primary")}>
                   {t("footer.privacy")}
                 </Link>
               </span>
             </label>
 
             {error && (
-              <div className="alert alert-error py-2 text-sm sm:col-span-2">
+              <Alert className={cn("flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error py-2 text-sm sm:col-span-2")}>
                 {error}
-              </div>
+              </Alert>
             )}
 
             <div className="sm:col-span-2">
-              <button disabled={loading} className="btn btn-primary">
+              <Button disabled={loading} className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover")}>
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <Send className="h-4 w-4" />
                 )}
                 {t("common.send")}
-              </button>
+              </Button>
             </div>
           </form>
         </div>
 
         <aside className="space-y-4">
           <div className="rounded-box border border-base-300 bg-base-100 p-6">
-            <h2 className="text-base font-bold">Orbit IT Solutions GmbH</h2>
+            <h2 className="text-base font-bold">IT Solutions.</h2>
             <div className="mt-4 space-y-4 text-sm">
               <p className="flex items-start gap-3">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />

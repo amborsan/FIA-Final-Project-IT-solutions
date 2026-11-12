@@ -1,3 +1,7 @@
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -87,40 +91,40 @@ export default function LoginPage() {
               <span className="mb-1 block text-xs font-semibold">
                 {t("auth.email")}
               </span>
-              <input
+              <Input
                 required
                 type="email"
                 autoComplete="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">
                 {t("auth.password")}
               </span>
-              <input
+              <Input
                 required
                 type="password"
                 autoComplete="current-password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
             {error && (
-              <div className="alert alert-error py-2 text-sm">{error}</div>
+              <Alert className={cn("flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error py-2 text-sm")}>{error}</Alert>
             )}
-            <button disabled={loading} className="btn btn-primary w-full">
+            <Button disabled={loading} className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover w-full")}>
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               {t("auth.loginButton")}
-            </button>
+            </Button>
           </form>
 
           <p className="mt-4 text-center text-sm text-base-content/65">
             {t("auth.noAccount")}{" "}
-            <Link to="/register" className="link link-primary font-semibold">
+            <Link to="/register" className={cn("underline cursor-pointer text-primary font-semibold")}>
               {t("auth.registerButton")}
             </Link>
           </p>

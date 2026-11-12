@@ -1,0 +1,167 @@
+@reference "../index.css";
+
+.technician-dashboard {
+  @apply bg-canvas text-ink;
+}
+.technician-dashboard .container-page {
+  @apply py-10 lg:py-12;
+}
+.technician-dashboard .container-page > .grid {
+  @apply gap-8;
+}
+.technician-dashboard aside,
+.technician-dashboard main,
+.technician-dashboard main > div,
+.technician-dashboard main .grid > * {
+  @apply min-w-0;
+}
+.technician-dashboard aside nav {
+  @apply gap-2 border-hairline bg-surface p-2;
+}
+.technician-dashboard aside a {
+  @apply min-h-control gap-inline px-4 font-normal;
+}
+.technician-dashboard aside a:focus-visible {
+  @apply outline-2 outline-offset-2 outline-ring;
+}
+.technician-dashboard main > div:first-child {
+  @apply gap-6 border-b border-hairline pb-8;
+}
+.technician-dashboard h1 {
+  @apply text-3xl font-normal;
+  overflow-wrap: anywhere;
+}
+.technician-dashboard main > div:first-child > div:first-child {
+  @apply min-w-0;
+}
+.technician-dashboard main > div:first-child p {
+  @apply mt-3 max-w-2xl text-sm font-normal text-ink-muted;
+}
+.technician-dashboard main > div:nth-child(2) {
+  @apply mt-8;
+}
+.technician-dashboard main section,
+.technician-dashboard main > div > form {
+  @apply rounded-box border-hairline bg-surface p-6;
+}
+.technician-dashboard main h2 {
+  @apply text-2xl font-medium;
+}
+.technician-dashboard main p,
+.technician-dashboard main span,
+.technician-dashboard main label {
+  overflow-wrap: anywhere;
+}
+.technician-dashboard label > span {
+  @apply text-sm;
+}
+.technician-dashboard [data-slot="button"] {
+  @apply min-h-control rounded-pill text-sm font-medium tracking-button;
+}
+.technician-dashboard [data-slot="input"],
+.technician-dashboard [data-slot="native-select"] {
+  @apply min-h-control border-hairline text-base;
+}
+.technician-dashboard [data-slot="textarea"] {
+  @apply border-hairline text-base;
+}
+.technician-dashboard [data-slot="badge"] {
+  @apply h-auto min-h-6 py-1 text-xs font-medium;
+}
+.technician-dashboard [data-slot="tabs-list"] {
+  @apply h-auto flex-wrap gap-2 rounded-pill;
+}
+.technician-dashboard [data-slot="tabs-trigger"] {
+  @apply min-h-control rounded-pill px-4 text-sm;
+}
+.technician-dashboard [data-slot="table-container"] {
+  @apply rounded-md;
+}
+.technician-dashboard [data-slot="table"] {
+  @apply text-sm;
+}
+.technician-dashboard [data-slot="table"] :is(th, td) {
+  @apply border-hairline px-4 py-4;
+}
+.technician-dashboard [data-slot="table"] th {
+  @apply bg-canvas text-xs font-medium text-ink-muted;
+}
+.technician-dashboard [data-slot="table"] td {
+  @apply align-top;
+}
+.technician-dashboard [data-slot="table"] th:not(:first-child),
+.technician-dashboard [data-slot="table"] td:not(:first-child) {
+  white-space: nowrap;
+}
+.technician-dashboard label:has(> input:not([data-slot])) {
+  @apply min-h-control;
+}
+.technician-dashboard label > [data-slot="button"] {
+  @apply h-6 min-h-6 w-6 shrink-0 p-0;
+}
+
+.technician-dashboard .technician-stats {
+  @apply gap-4;
+}
+.technician-dashboard .technician-stat {
+  @apply rounded-md border-hairline bg-surface p-6;
+}
+.technician-dashboard .technician-stat > p:last-child {
+  @apply mt-4 text-4xl font-normal tabular-nums;
+}
+.technician-dashboard section.technician-assigned-panel {
+  @apply border-transparent bg-brand-indigo text-panel-foreground;
+}
+.technician-dashboard .technician-assigned-panel :is(a, h2) {
+  @apply text-panel-foreground;
+}
+.technician-dashboard .technician-assigned-panel a > div p:last-child,
+.technician-dashboard .technician-assigned-panel .divide-y > p {
+  @apply text-panel-foreground/80;
+}
+.technician-dashboard .technician-assigned-panel .divide-y > * {
+  @apply border-panel-foreground/20;
+}
+.technician-dashboard .technician-visit {
+  @apply rounded-md border border-hairline bg-accent-sky p-4 text-ink;
+}
+.technician-dashboard .technician-quick-links {
+  @apply grid-cols-1 xl:grid-cols-3;
+}
+.technician-standalone .container-page > div:first-child {
+  @apply gap-6 border-b border-hairline pb-8;
+}
+.technician-standalone .rounded-box {
+  @apply border-hairline p-6;
+}
+.technician-standalone :is(h2, label > span) {
+  @apply font-medium;
+}
+.technician-standalone h2 {
+  @apply text-2xl;
+}
+.technician-dashboard [type="file"] {
+  @apply max-w-full;
+}
+@media (min-width: 1024px) {
+  .technician-dashboard aside a span {
+    white-space: normal;
+  }
+}
+@media print {
+  .technician-dashboard aside {
+    display: none;
+  }
+  .technician-dashboard .container-page > .grid {
+    display: block;
+  }
+}
+.technician-dashboard .technician-visit p {
+  @apply text-ink-soft;
+}
+.technician-standalone .grid > * {
+  @apply min-w-0;
+}
+.technician-standalone [data-slot="button"] {
+  @apply h-auto max-w-full whitespace-normal text-center;
+}

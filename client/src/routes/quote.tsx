@@ -1,3 +1,9 @@
+import { cn } from "@/lib/utils";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert } from "@/components/ui/alert";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -87,12 +93,12 @@ function QuotePage() {
           </p>
           <p className="mt-4 rounded-lg bg-base-200 px-3 py-2 font-mono text-sm">{reference}</p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">
-            <Link to="/services" className="btn btn-primary">
+            <Link to="/services" className={cn(buttonVariants(), " bg-primary text-primary-content border-primary hover:bg-primary-hover")}>
               {t("nav.services")}
             </Link>
-            <button className="btn btn-ghost" onClick={() => setReference("")}>
+            <Button className={cn(" border-transparent bg-transparent text-base-content hover:bg-base-content/10")} onClick={() => setReference("")}>
               {t("quote.newRequest")}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -118,44 +124,44 @@ function QuotePage() {
               <span className="mb-1 block text-xs font-semibold">
                 {t("quote.name")} <span className="text-error">*</span>
               </span>
-              <input
+              <Input
                 required
                 minLength={2}
                 value={form.contactName}
                 onChange={(event) => setForm({ ...form, contactName: event.target.value })}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">
                 {t("quote.email")} <span className="text-error">*</span>
               </span>
-              <input
+              <Input
                 required
                 type="email"
                 value={form.contactEmail}
                 onChange={(event) => setForm({ ...form, contactEmail: event.target.value })}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">
                 {t("quote.phone")} ({t("common.optional")})
               </span>
-              <input
+              <Input
                 value={form.contactPhone}
                 onChange={(event) => setForm({ ...form, contactPhone: event.target.value })}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">
                 {t("quote.service")} ({t("common.optional")})
               </span>
-              <select
+              <NativeSelect
                 value={form.serviceId}
                 onChange={(event) => setForm({ ...form, serviceId: event.target.value })}
-                className="select select-bordered w-full"
+                className={cn(" w-full")}
               >
                 <option value="">{t("quote.servicePlaceholder")}</option>
                 {(servicesQuery.data?.services ?? []).map((service) => (
@@ -163,7 +169,7 @@ function QuotePage() {
                     {pick(service.nameEn, service.nameDe)}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </label>
           </div>
 
@@ -171,14 +177,14 @@ function QuotePage() {
             <span className="mb-1 block text-xs font-semibold">
               {t("quote.titleLabel")} <span className="text-error">*</span>
             </span>
-            <input
+            <Input
               required
               minLength={3}
               maxLength={160}
               value={form.title}
               onChange={(event) => setForm({ ...form, title: event.target.value })}
               placeholder={pick("New office network", "Neues Büronetzwerk")}
-              className="input input-bordered w-full"
+              className={cn(" w-full")}
             />
           </label>
 
@@ -186,7 +192,7 @@ function QuotePage() {
             <span className="mb-1 block text-xs font-semibold">
               {t("quote.description")} <span className="text-error">*</span>
             </span>
-            <textarea
+            <Textarea
               required
               minLength={20}
               maxLength={4000}
@@ -194,7 +200,7 @@ function QuotePage() {
               value={form.description}
               onChange={(event) => setForm({ ...form, description: event.target.value })}
               placeholder={t("quote.descriptionPlaceholder")}
-              className="textarea textarea-bordered w-full"
+              className={cn(" w-full")}
             />
           </label>
 
@@ -203,34 +209,34 @@ function QuotePage() {
               <span className="mb-1 block text-xs font-semibold">
                 {t("quote.address")} ({t("common.optional")})
               </span>
-              <input
+              <Input
                 value={form.siteAddress}
                 onChange={(event) => setForm({ ...form, siteAddress: event.target.value })}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">
                 {t("quote.preferredDate")} ({t("common.optional")})
               </span>
-              <input
+              <Input
                 type="date"
                 value={form.preferredDate}
                 onChange={(event) => setForm({ ...form, preferredDate: event.target.value })}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">
                 {t("quote.budget")}
               </span>
-              <input
+              <Input
                 type="number"
                 min={0}
                 step={50}
                 value={form.budget}
                 onChange={(event) => setForm({ ...form, budget: event.target.value })}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
                 placeholder="2500"
               />
             </label>
@@ -242,27 +248,27 @@ function QuotePage() {
               required
               checked={form.acceptPrivacy}
               onChange={(event) => setForm({ ...form, acceptPrivacy: event.target.checked })}
-              className="checkbox checkbox-sm mt-0.5"
+              className={cn("appearance-auto accent-primary size-6 shrink-0 rounded-field border border-input focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary size-5 mt-0.5")}
             />
             <span>
               {t("quote.consent")}{" "}
-              <Link to="/legal/privacy" className="link link-primary">
+              <Link to="/legal/privacy" className={cn("underline cursor-pointer text-primary")}>
                 {t("footer.privacy")}
               </Link>
             </span>
           </label>
 
-          {error && <div className="alert alert-error mt-4 py-2 text-sm">{error}</div>}
+          {error && <Alert className={cn("flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mt-4 py-2 text-sm")}>{error}</Alert>}
 
-          <button disabled={loading} className="btn btn-primary mt-5 w-full sm:w-auto">
+          <Button disabled={loading} className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover mt-5 w-full sm:w-auto")}>
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             {t("quote.submit")}
-          </button>
+          </Button>
 
           {!user && (
             <p className="mt-3 text-xs text-base-content/70">
               {t("quote.loginHint")}{" "}
-              <Link to="/login" className="link link-primary">
+              <Link to="/login" className={cn("underline cursor-pointer text-primary")}>
                 {t("nav.login")}
               </Link>
             </p>

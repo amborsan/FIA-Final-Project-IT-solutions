@@ -1,3 +1,13 @@
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Plus } from "lucide-react";
@@ -5,10 +15,26 @@ import { api } from "../lib/api";
 import type { ServiceRequest } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { usePortalNav } from "../components/nav";
-import { DashboardShell } from "../components/DashboardShell";
-import { ArchiveTabs, FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
-import { EmptyState, ErrorState, PageLoader, StatusBadge } from "../components/ui";
-import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
+import { CustomerPortalShell as DashboardShell } from "../components/CustomerPortalShell";
+import {
+  ArchiveTabs,
+  FilterSelect,
+  ListToolbar,
+  Pagination,
+  SearchField,
+} from "../components/ListControls";
+import {
+  EmptyState,
+  ErrorState,
+  PageLoader,
+  StatusBadge,
+} from "../components/ui";
+import {
+  filterByArchive,
+  matchesSearch,
+  paginate,
+  useListControls,
+} from "../lib/list";
 
 export const Route = createFileRoute("/portal/requests/")({
   component: RequestsPage,
@@ -63,7 +89,14 @@ function RequestsPage() {
       title={t("requests.title")}
       subtitle={t("requests.text")}
       actions={
-        <Link to="/quote" search={{ service: undefined }} className="btn btn-primary btn-sm">
+        <Link
+          to="/quote"
+          search={{ service: undefined }}
+          className={cn(
+            buttonVariants(),
+            " bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm",
+          )}
+        >
           <Plus className="h-4 w-4" /> {t("requests.new")}
         </Link>
       }
@@ -95,7 +128,14 @@ function RequestsPage() {
             title={t("requests.noQuotes")}
             text={t("requests.text")}
             action={
-              <Link to="/quote" search={{ service: undefined }} className="btn btn-primary btn-sm">
+              <Link
+                to="/quote"
+                search={{ service: undefined }}
+                className={cn(
+                  buttonVariants(),
+                  " bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm",
+                )}
+              >
                 {t("requests.new")}
               </Link>
             }
@@ -105,49 +145,62 @@ function RequestsPage() {
 
       {pageData.total > 0 && (
         <div className="mt-5 overflow-x-auto rounded-box border border-base-300 bg-base-100">
-          <table className="table table-zebra">
-            <thead>
-              <tr>
-                <th>{t("common.reference")}</th>
-                <th>{t("common.title")}</th>
-                <th>{t("requests.service")}</th>
-                <th>{t("requests.createdAt")}</th>
-                <th>{t("requests.budget")}</th>
-                <th>{t("requests.status")}</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
+          <Table className={cn(" [&_tbody_tr:nth-child(even)]:bg-base-200")}>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t("common.reference")}</TableHead>
+                <TableHead>{t("common.title")}</TableHead>
+                <TableHead>{t("requests.service")}</TableHead>
+                <TableHead>{t("requests.createdAt")}</TableHead>
+                <TableHead>{t("requests.budget")}</TableHead>
+                <TableHead>{t("requests.status")}</TableHead>
+                <TableHead />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {pageData.items.map((request) => (
-                <tr key={request.id}>
-                  <td className="font-mono text-xs">{request.reference}</td>
-                  <td>
-                    <p className="max-w-56 truncate font-semibold">{request.title}</p>
-                    <p className="text-[11px] text-base-content/70">
+                <TableRow key={request.id}>
+                  <TableCell className="tabular-nums text-xs">
+                    {request.reference}
+                  </TableCell>
+                  <TableCell>
+                    <p className="max-w-56 truncate font-semibold">
+                      {request.title}
+                    </p>
+                    <p className="text-xs text-ink-muted">
                       {request.technician?.fullName ?? t("requests.unassigned")}
                     </p>
-                  </td>
-                  <td className="text-xs">
-                    {request.service ? pick(request.service.nameEn, request.service.nameDe) : "–"}
-                  </td>
-                  <td className="text-xs">{formatDate(request.createdAt)}</td>
-                  <td className="text-xs">{request.budget ? formatMoney(request.budget) : "–"}</td>
-                  <td>
+                  </TableCell>
+                  <TableCell className="text-xs">
+                    {request.service
+                      ? pick(request.service.nameEn, request.service.nameDe)
+                      : "–"}
+                  </TableCell>
+                  <TableCell className="text-xs">
+                    {formatDate(request.createdAt)}
+                  </TableCell>
+                  <TableCell className="text-xs">
+                    {request.budget ? formatMoney(request.budget) : "–"}
+                  </TableCell>
+                  <TableCell>
                     <StatusBadge status={request.status} />
-                  </td>
-                  <td>
+                  </TableCell>
+                  <TableCell>
                     <Link
                       to="/portal/requests/$id"
                       params={{ id: request.id }}
-                      className="btn btn-ghost btn-xs"
+                      className={cn(
+                        buttonVariants(),
+                        " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs",
+                      )}
                     >
                       <ArrowRight className="h-4 w-4" />
                     </Link>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       )}
 

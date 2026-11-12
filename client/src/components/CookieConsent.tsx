@@ -1,3 +1,6 @@
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Cookie, ShieldCheck } from "lucide-react";
@@ -62,7 +65,7 @@ export function CookieConsent() {
             <h2 className="text-sm font-bold sm:text-base">{t("cookie.title")}</h2>
             <p className="mt-1 text-xs leading-relaxed text-base-content/65 sm:text-sm">
               {t("cookie.text")}{" "}
-              <Link to="/legal/privacy" className="link link-primary">
+              <Link to="/legal/privacy" className={cn("underline cursor-pointer text-primary")}>
                 {t("cookie.privacyLink")}
               </Link>
             </p>
@@ -74,31 +77,31 @@ export function CookieConsent() {
                     <p className="font-semibold">{t("cookie.essential")}</p>
                     <p className="text-base-content/70">{t("cookie.essentialText")}</p>
                   </div>
-                  <span className="badge badge-success badge-sm">ON</span>
+                  <Badge className={cn(" bg-success text-success-content border-success h-5 text-xs")}>ON</Badge>
                 </div>
                 <div className="flex items-start justify-between gap-4 border-t border-base-300 pt-2">
                   <div>
                     <p className="font-semibold">{t("cookie.analytics")}</p>
                     <p className="text-base-content/70">{t("cookie.analyticsText")}</p>
                   </div>
-                  <span className="badge badge-ghost badge-sm">OFF</span>
+                  <Badge className={cn(" bg-base-200 text-base-content h-5 text-xs")}>OFF</Badge>
                 </div>
               </div>
             )}
 
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button className="btn btn-primary btn-sm" onClick={() => save()}>
+              <Button className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm")} onClick={() => save()}>
                 {t("cookie.acceptAll")}
-              </button>
-              <button className="btn btn-outline btn-sm" onClick={() => save()}>
+              </Button>
+              <Button className={cn(" border-current bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm")} onClick={() => save()}>
                 {t("cookie.essentialOnly")}
-              </button>
-              <button
-                className="btn btn-ghost btn-sm"
+              </Button>
+              <Button
+                className={cn(" border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm")}
                 onClick={() => setDetails((value) => !value)}
               >
                 {t("cookie.settings")}
-              </button>
+              </Button>
               <span className="ml-auto hidden items-center gap-1 text-[11px] text-base-content/65 sm:flex">
                 <ShieldCheck className="h-3.5 w-3.5" /> GDPR
               </span>

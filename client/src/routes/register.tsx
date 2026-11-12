@@ -1,3 +1,7 @@
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -73,75 +77,75 @@ export default function RegisterPage() {
           <form onSubmit={submit} className="mt-6 grid gap-4 sm:grid-cols-2">
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">{t("auth.firstName")}</span>
-              <input
+              <Input
                 required
                 value={form.firstName}
                 onChange={(event) => setForm({ ...form, firstName: event.target.value })}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
                 autoComplete="given-name"
               />
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">{t("auth.lastName")}</span>
-              <input
+              <Input
                 required
                 value={form.lastName}
                 onChange={(event) => setForm({ ...form, lastName: event.target.value })}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
                 autoComplete="family-name"
               />
             </label>
             <label className="block sm:col-span-2">
               <span className="mb-1 block text-xs font-semibold">{t("auth.email")}</span>
-              <input
+              <Input
                 required
                 type="email"
                 autoComplete="email"
                 value={form.email}
                 onChange={(event) => setForm({ ...form, email: event.target.value })}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">{t("auth.password")}</span>
-              <input
+              <Input
                 required
                 type="password"
                 minLength={10}
                 autoComplete="new-password"
                 value={form.password}
                 onChange={(event) => setForm({ ...form, password: event.target.value })}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
               <span className="mt-1 block text-[11px] text-base-content/70">{t("auth.passwordHint")}</span>
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">{t("auth.confirmPassword")}</span>
-              <input
+              <Input
                 required
                 type="password"
                 minLength={10}
                 autoComplete="new-password"
                 value={form.confirmPassword}
                 onChange={(event) => setForm({ ...form, confirmPassword: event.target.value })}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">{t("auth.phone")}</span>
-              <input
+              <Input
                 value={form.phone}
                 onChange={(event) => setForm({ ...form, phone: event.target.value })}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
                 autoComplete="tel"
               />
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">{t("auth.company")}</span>
-              <input
+              <Input
                 value={form.companyName}
                 onChange={(event) => setForm({ ...form, companyName: event.target.value })}
-                className="input input-bordered w-full"
+                className={cn(" w-full")}
                 autoComplete="organization"
               />
             </label>
@@ -152,11 +156,11 @@ export default function RegisterPage() {
                 required
                 checked={form.acceptTerms}
                 onChange={(event) => setForm({ ...form, acceptTerms: event.target.checked })}
-                className="checkbox checkbox-sm mt-0.5"
+                className={cn("appearance-auto accent-primary size-6 shrink-0 rounded-field border border-input focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary size-5 mt-0.5")}
               />
               <span>
                 {t("auth.acceptTerms")}{" "}
-                <Link to="/legal/terms" className="link link-primary">
+                <Link to="/legal/terms" className={cn("underline cursor-pointer text-primary")}>
                   {t("footer.terms")}
                 </Link>
               </span>
@@ -167,29 +171,29 @@ export default function RegisterPage() {
                 required
                 checked={form.acceptPrivacy}
                 onChange={(event) => setForm({ ...form, acceptPrivacy: event.target.checked })}
-                className="checkbox checkbox-sm mt-0.5"
+                className={cn("appearance-auto accent-primary size-6 shrink-0 rounded-field border border-input focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary size-5 mt-0.5")}
               />
               <span>
                 {t("auth.acceptPrivacy")}{" "}
-                <Link to="/legal/privacy" className="link link-primary">
+                <Link to="/legal/privacy" className={cn("underline cursor-pointer text-primary")}>
                   {t("footer.privacy")}
                 </Link>
               </span>
             </label>
 
-            {error && <div className="alert alert-error py-2 text-sm sm:col-span-2">{error}</div>}
+            {error && <Alert className={cn("flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error py-2 text-sm sm:col-span-2")}>{error}</Alert>}
 
             <div className="sm:col-span-2">
-              <button disabled={loading} className="btn btn-primary w-full sm:w-auto">
+              <Button disabled={loading} className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover w-full sm:w-auto")}>
                 {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                 {t("auth.registerButton")}
-              </button>
+              </Button>
             </div>
           </form>
 
           <p className="mt-4 text-center text-sm text-base-content/65">
             {t("auth.hasAccount")}{" "}
-            <Link to="/login" className="link link-primary font-semibold">
+            <Link to="/login" className={cn("underline cursor-pointer text-primary font-semibold")}>
               {t("auth.loginButton")}
             </Link>
           </p>

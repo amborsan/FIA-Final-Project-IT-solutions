@@ -1,3 +1,6 @@
+import { cn } from "@/lib/utils";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -65,10 +68,10 @@ export default function CartPage() {
             {completed.reference}
           </p>
           <div className="mt-6 flex justify-center gap-2">
-            <Link to="/portal/orders" className="btn btn-primary">
+            <Link to="/portal/orders" className={cn(buttonVariants(), " bg-primary text-primary-content border-primary hover:bg-primary-hover")}>
               {t("cart.viewOrders")}
             </Link>
-            <Link to="/products" className="btn btn-ghost">
+            <Link to="/products" className={cn(buttonVariants(), " border-transparent bg-transparent text-base-content hover:bg-base-content/10")}>
               {t("cart.continueShopping")}
             </Link>
           </div>
@@ -86,7 +89,7 @@ export default function CartPage() {
             title={t("cart.empty")}
             text={t("cart.emptyText")}
             action={
-              <Link to="/products" className="btn btn-primary">
+              <Link to="/products" className={cn(buttonVariants(), " bg-primary text-primary-content border-primary hover:bg-primary-hover")}>
                 {t("cart.continueShopping")}
               </Link>
             }
@@ -106,9 +109,9 @@ export default function CartPage() {
           <h1 className="text-3xl font-black">{t("cart.title")}</h1>
           <p className="mt-1 text-sm text-base-content/65">{t("cart.items", { count })}</p>
         </div>
-        <button onClick={clear} className="btn btn-ghost btn-sm text-error">
+        <Button onClick={clear} className={cn(" border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm text-error")}>
           <Trash2 className="h-4 w-4" /> {t("cart.clear")}
-        </button>
+        </Button>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.3fr_0.7fr] lg:items-start">
@@ -131,31 +134,31 @@ export default function CartPage() {
                 </Link>
                 <p className="mt-1 text-xs text-base-content/65">{formatMoney(item.price)}</p>
               </div>
-              <div className="join">
-                <button
-                  className="btn btn-xs join-item"
+              <div className={cn("inline-flex [&>*:not(:first-child)]:-ml-px [&>*:not(:first-child)]:rounded-l-none [&>*:not(:last-child)]:rounded-r-none")}>
+                <Button
+                  className={cn(" h-6 px-2 text-xs ")}
                   onClick={() => setQuantity(item.productId, item.quantity - 1)}
                 >
                   −
-                </button>
-                <span className="btn btn-xs join-item pointer-events-none w-10">{item.quantity}</span>
-                <button
-                  className="btn btn-xs join-item"
+                </Button>
+                <span className={cn(buttonVariants(), "  h-6 px-2 text-xs pointer-events-none w-10")}>{item.quantity}</span>
+                <Button
+                  className={cn(" h-6 px-2 text-xs ")}
                   onClick={() => setQuantity(item.productId, item.quantity + 1)}
                 >
                   +
-                </button>
+                </Button>
               </div>
               <p className="w-20 text-right text-sm font-bold">
                 {formatMoney(item.price * item.quantity)}
               </p>
-              <button
+              <Button
                 onClick={() => remove(item.productId)}
-                className="btn btn-ghost btn-xs text-error"
+                className={cn(" border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs text-error")}
                 aria-label={t("cart.remove")}
               >
                 <Trash2 className="h-3.5 w-3.5" />
-              </button>
+              </Button>
             </div>
           ))}
         </div>
@@ -189,24 +192,24 @@ export default function CartPage() {
               <p className="mt-1 text-xs text-base-content/65">{t("cart.checkoutText")}</p>
               <label className="mt-4 block">
                 <span className="mb-1 block text-xs font-semibold">{t("cart.shippingAddress")}</span>
-                <textarea
+                <Textarea
                   required
                   minLength={10}
                   rows={3}
                   value={address}
                   onChange={(event) => setAddress(event.target.value)}
-                  className="textarea textarea-bordered w-full text-sm"
+                  className={cn(" w-full text-sm")}
                 />
               </label>
               <label className="mt-3 block">
                 <span className="mb-1 block text-xs font-semibold">
                   {t("common.notes")} ({t("common.optional")})
                 </span>
-                <textarea
+                <Textarea
                   rows={2}
                   value={notes}
                   onChange={(event) => setNotes(event.target.value)}
-                  className="textarea textarea-bordered w-full text-sm"
+                  className={cn(" w-full text-sm")}
                   maxLength={1000}
                 />
               </label>
@@ -214,7 +217,7 @@ export default function CartPage() {
               <label className="mt-3 flex items-start gap-2 text-[11px] leading-relaxed text-base-content/70">
                 <input
                   type="checkbox"
-                  className="checkbox checkbox-xs mt-0.5"
+                  className={cn("appearance-auto accent-primary size-6 shrink-0 rounded-field border border-input focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary size-4 mt-0.5")}
                   checked={acceptTerms}
                   onChange={(event) => setAcceptTerms(event.target.checked)}
                   required
@@ -224,19 +227,19 @@ export default function CartPage() {
                     "I accept the Terms and Conditions and have read the Privacy Policy.",
                     "Ich akzeptiere die AGB und habe die Datenschutzerklärung gelesen.",
                   )}{" "}
-                  <Link to="/legal/terms" className="link link-primary">
+                  <Link to="/legal/terms" className={cn("underline cursor-pointer text-primary")}>
                     {t("footer.terms")}
                   </Link>{" "}
                   ·{" "}
-                  <Link to="/legal/privacy" className="link link-primary">
+                  <Link to="/legal/privacy" className={cn("underline cursor-pointer text-primary")}>
                     {t("footer.privacy")}
                   </Link>
                 </span>
               </label>
-              <button disabled={loading || !acceptTerms} className="btn btn-primary mt-4 w-full">
+              <Button disabled={loading || !acceptTerms} className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover mt-4 w-full")}>
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingBag className="h-4 w-4" />}
                 {t("cart.placeOrder")}
-              </button>
+              </Button>
               <p className="mt-3 text-[11px] leading-relaxed text-base-content/70">
                 {pick(
                   "The invoice is due within 14 days.",
@@ -248,12 +251,12 @@ export default function CartPage() {
             <div className="rounded-box border border-base-300 bg-base-100 p-5">
               <h2 className="text-base font-bold">{t("cart.loginToOrder")}</h2>
               <p className="mt-1 text-xs text-base-content/65">{t("cart.loginText")}</p>
-              <button
+              <Button
                 onClick={() => void navigate({ to: "/login" })}
-                className="btn btn-primary mt-4 w-full"
+                className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover mt-4 w-full")}
               >
                 {t("nav.login")}
-              </button>
+              </Button>
             </div>
           )}
         </div>

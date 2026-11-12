@@ -25,7 +25,9 @@ function readTheme(): Theme {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved === "light" || saved === "dark") return saved;
   // No choice yet: follow the operating system.
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
@@ -44,12 +46,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  // Keep the <html> attribute in sync so DaisyUI switches palettes.
+  // Keep the <html> attribute in sync with the shared token palette.
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme === "dark" ? "orbit-dark" : "orbit");
+    document.documentElement.setAttribute(
+      "data-theme",
+      theme === "dark" ? "orbit-dark" : "orbit",
+    );
     document.documentElement.style.colorScheme = theme;
     const meta = document.querySelector('meta[name="theme-color"]');
-    meta?.setAttribute("content", theme === "dark" ? "#0b1220" : "#0f4c81");
+    const canvas = getComputedStyle(document.documentElement)
+      .getPropertyValue("--canvas")
+      .trim();
+    if (canvas) meta?.setAttribute("content", canvas);
   }, [theme]);
 
   const value = useMemo<ThemeValue>(
@@ -57,7 +65,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     [theme, setTheme, toggleTheme],
   );
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  );
 }
 
 export function useTheme() {

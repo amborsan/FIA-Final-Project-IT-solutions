@@ -1,3 +1,13 @@
+import { cn } from "@/lib/utils";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { FileText, Printer, ShoppingBag } from "lucide-react";
@@ -5,16 +15,39 @@ import { api } from "../lib/api";
 import type { Order } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { usePortalNav } from "../components/nav";
-import { DashboardShell, Panel } from "../components/DashboardShell";
-import { ArchiveTabs, FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
-import { EmptyState, ErrorState, PageLoader, StatusBadge } from "../components/ui";
-import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
+import { Panel } from "../components/DashboardShell";
+import { CustomerPortalShell as DashboardShell } from "../components/CustomerPortalShell";
+import {
+  ArchiveTabs,
+  FilterSelect,
+  ListToolbar,
+  Pagination,
+  SearchField,
+} from "../components/ListControls";
+import {
+  EmptyState,
+  ErrorState,
+  PageLoader,
+  StatusBadge,
+} from "../components/ui";
+import {
+  filterByArchive,
+  matchesSearch,
+  paginate,
+  useListControls,
+} from "../lib/list";
 
 export const Route = createFileRoute("/portal/orders/")({
   component: OrdersPage,
 });
 
-const orderStatuses = ["PENDING", "CONFIRMED", "PROCESSING", "COMPLETED", "CANCELLED"];
+const orderStatuses = [
+  "PENDING",
+  "CONFIRMED",
+  "PROCESSING",
+  "COMPLETED",
+  "CANCELLED",
+];
 const archivedStatuses = new Set(["COMPLETED", "CANCELLED"]);
 
 function OrdersPage() {
@@ -47,7 +80,11 @@ function OrdersPage() {
   const pageData = paginate(filtered, controls.page, controls.pageSize);
 
   return (
-    <DashboardShell nav={nav} title={t("orders.title")} subtitle={t("orders.text")}>
+    <DashboardShell
+      nav={nav}
+      title={t("orders.title")}
+      subtitle={t("orders.text")}
+    >
       <ListToolbar>
         <SearchField
           value={controls.search}
@@ -75,7 +112,13 @@ function OrdersPage() {
             title={t("orders.noOrders")}
             text={t("products.text")}
             action={
-              <a href="/products" className="btn btn-primary btn-sm">
+              <a
+                href="/products"
+                className={cn(
+                  buttonVariants(),
+                  " bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm",
+                )}
+              >
                 {t("cart.continueShopping")}
               </a>
             }
@@ -89,12 +132,14 @@ function OrdersPage() {
             <Panel key={order.id}>
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md bg-accent-sky text-ink">
                     <ShoppingBag className="h-5 w-5" />
                   </span>
                   <div>
-                    <p className="font-mono text-sm font-bold">{order.reference}</p>
-                    <p className="text-[11px] text-base-content/70">
+                    <p className="tabular-nums text-sm font-medium">
+                      {order.reference}
+                    </p>
+                    <p className="text-xs text-ink-muted">
                       {t("orders.placedOn")} {formatDate(order.createdAt)}
                     </p>
                   </div>
@@ -103,46 +148,66 @@ function OrdersPage() {
               </div>
 
               <div className="mt-4 overflow-x-auto">
-                <table className="table table-xs">
-                  <thead>
-                    <tr>
-                      <th>{t("common.description")}</th>
-                      <th className="text-right">{t("common.quantity")}</th>
-                      <th className="text-right">{t("common.price")}</th>
-                      <th className="text-right">{t("common.total")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                <Table
+                  className={cn(
+                    " text-xs [&_td]:px-2 [&_td]:py-1 [&_th]:px-2 [&_th]:py-1",
+                  )}
+                >
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t("common.description")}</TableHead>
+                      <TableHead className="text-right">
+                        {t("common.quantity")}
+                      </TableHead>
+                      <TableHead className="text-right">
+                        {t("common.price")}
+                      </TableHead>
+                      <TableHead className="text-right">
+                        {t("common.total")}
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {order.items.map((item) => (
-                      <tr key={item.id}>
-                        <td>{item.description}</td>
-                        <td className="text-right">{item.quantity}</td>
-                        <td className="text-right">{formatMoney(item.unitPrice)}</td>
-                        <td className="text-right">{formatMoney(item.total)}</td>
-                      </tr>
+                      <TableRow key={item.id}>
+                        <TableCell>{item.description}</TableCell>
+                        <TableCell className="text-right">
+                          {item.quantity}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {formatMoney(item.unitPrice)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {formatMoney(item.total)}
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
 
-              <div className="mt-4 grid gap-4 border-t border-base-200 pt-4 sm:grid-cols-2">
-                <div className="text-xs text-base-content/70">
-                  <p className="font-semibold text-base-content/80">{t("orders.shippingAddress")}</p>
+              <div className="mt-4 grid gap-4 border-t border-hairline pt-4 sm:grid-cols-2">
+                <div className="text-xs text-ink-muted">
+                  <p className="font-semibold text-ink-soft">
+                    {t("orders.shippingAddress")}
+                  </p>
                   <p className="mt-1">{order.shippingAddress || "–"}</p>
                   {order.notes && <p className="mt-2 italic">{order.notes}</p>}
                 </div>
                 <div className="space-y-1 text-sm sm:ml-auto sm:max-w-xs sm:text-right">
                   <div className="flex justify-between">
-                    <span className="text-xs text-base-content/65">{t("common.subtotal")}</span>
+                    <span className="text-xs text-ink-muted">
+                      {t("common.subtotal")}
+                    </span>
                     <span>{formatMoney(order.subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-xs text-base-content/65">
+                    <span className="text-xs text-ink-muted">
                       {t("common.tax")} ({Number(order.taxRate)} %)
                     </span>
                     <span>{formatMoney(order.taxAmount)}</span>
                   </div>
-                  <div className="flex justify-between border-t border-base-200 pt-1 font-bold">
+                  <div className="flex justify-between border-t border-hairline pt-1 font-medium">
                     <span>{t("common.total")}</span>
                     <span>{formatMoney(order.total)}</span>
                   </div>
@@ -158,25 +223,31 @@ function OrdersPage() {
                         <p className="text-xs font-semibold">
                           {t("orders.invoice")} {order.invoice.number}
                         </p>
-                        <p className="text-[11px] text-base-content/65">
-                          {t("orders.issuedAt")}: {formatDate(order.invoice.issuedAt)} ·{" "}
-                          {t("orders.dueDate")}: {formatDate(order.invoice.dueAt)}
+                        <p className="text-xs text-ink-muted">
+                          {t("orders.issuedAt")}:{" "}
+                          {formatDate(order.invoice.issuedAt)} ·{" "}
+                          {t("orders.dueDate")}:{" "}
+                          {formatDate(order.invoice.dueAt)}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <StatusBadge status={order.invoice.status} />
-                      <span className="text-sm font-bold">{formatMoney(order.invoice.amount)}</span>
-                      <button
+                      <span className="text-sm font-medium">
+                        {formatMoney(order.invoice.amount)}
+                      </span>
+                      <Button
                         onClick={() => window.print()}
-                        className="btn btn-ghost btn-xs no-print"
+                        className={cn(
+                          " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs no-print",
+                        )}
                         title={t("common.print")}
                       >
                         <Printer className="h-3.5 w-3.5" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
-                  <p className="mt-2 text-[10px] text-base-content/70">
+                  <p className="mt-2 text-xs text-ink-muted">
                     {pick(
                       "Demo invoice. A real invoice must contain the company's full legal details, tax number and sequential number.",
                       "Demo-Rechnung. Eine echte Rechnung muss vollständige Firmendaten, Steuernummer und fortlaufende Nummer enthalten.",

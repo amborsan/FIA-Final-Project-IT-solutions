@@ -1,3 +1,5 @@
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
@@ -25,7 +27,7 @@ export default function BlogDetailPage() {
     return (
       <div className="container-page py-10">
         <ErrorState message={t("blog.notFound")} />
-        <Link to="/blog" className="btn btn-outline btn-sm">
+        <Link to="/blog" className={cn(buttonVariants(), " border-current bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm")}>
           <ArrowLeft className="h-4 w-4" /> {t("blog.back")}
         </Link>
       </div>
@@ -60,7 +62,7 @@ export default function BlogDetailPage() {
         </div>
         <div className="mt-10 flex flex-wrap items-center justify-between gap-3 rounded-box bg-base-200 p-5">
           <p className="text-sm font-semibold">{t("blog.cta")}</p>
-          <Link to="/contact" className="btn btn-primary btn-sm">
+          <Link to="/contact" className={cn(buttonVariants(), " bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm")}>
             {t("nav.contact")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

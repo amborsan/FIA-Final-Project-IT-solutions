@@ -1,3 +1,16 @@
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Alert } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -6,8 +19,13 @@ import { api, errorMessage } from "../lib/api";
 import type { User } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { useAdminNav } from "../components/nav";
-import { DashboardShell } from "../components/DashboardShell";
-import { FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
+import { AdminDashboardShell as DashboardShell } from "../components/AdminDashboardShell";
+import {
+  FilterSelect,
+  ListToolbar,
+  Pagination,
+  SearchField,
+} from "../components/ListControls";
 import { EmptyState, ErrorState, PageLoader } from "../components/ui";
 import { matchesSearch, paginate, useListControls } from "../lib/list";
 
@@ -47,7 +65,12 @@ function AdminUsersPage() {
   const filtered = users.filter(
     (user) =>
       (!controls.status || user.role === controls.status) &&
-      matchesSearch(controls.search, user.fullName, user.email, user.companyName),
+      matchesSearch(
+        controls.search,
+        user.fullName,
+        user.email,
+        user.companyName,
+      ),
   );
 
   const pageData = paginate(filtered, controls.page, controls.pageSize);
@@ -97,101 +120,162 @@ function AdminUsersPage() {
       title={t("admin.users")}
       subtitle={t("admin.manageUsers")}
       actions={
-        <button onClick={() => setShowForm((value) => !value)} className="btn btn-primary btn-sm">
+        <Button
+          onClick={() => setShowForm((value) => !value)}
+          className={cn(
+            " bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm",
+          )}
+        >
           {showForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           {t("admin.addUser")}
-        </button>
+        </Button>
       }
     >
-      {message && <div className="alert alert-success mb-4 text-sm">{message}</div>}
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+      {message && (
+        <Alert
+          className={cn(
+            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-success text-success-content border-success mb-4 text-sm",
+          )}
+        >
+          {message}
+        </Alert>
+      )}
+      {error && (
+        <Alert
+          className={cn(
+            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mb-4 text-sm",
+          )}
+        >
+          {error}
+        </Alert>
+      )}
 
       {showForm && (
-        <form onSubmit={createUser} className="mb-5 rounded-box border border-base-300 bg-base-100 p-5">
-          <h2 className="flex items-center gap-2 text-base font-bold">
+        <form
+          onSubmit={createUser}
+          className="mb-5 rounded-box border border-base-300 bg-base-100 p-6"
+        >
+          <h2 className="flex items-center gap-2 text-base font-medium">
             <UserPlus className="h-4 w-4" /> {t("admin.newUser")}
           </h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold">{t("admin.firstName")}</span>
-              <input
+              <span className="mb-1 block text-xs font-semibold">
+                {t("admin.firstName")}
+              </span>
+              <Input
                 required
                 value={form.firstName}
-                onChange={(event) => setForm({ ...form, firstName: event.target.value })}
-                className="input input-bordered w-full"
+                onChange={(event) =>
+                  setForm({ ...form, firstName: event.target.value })
+                }
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold">{t("admin.lastName")}</span>
-              <input
+              <span className="mb-1 block text-xs font-semibold">
+                {t("admin.lastName")}
+              </span>
+              <Input
                 required
                 value={form.lastName}
-                onChange={(event) => setForm({ ...form, lastName: event.target.value })}
-                className="input input-bordered w-full"
+                onChange={(event) =>
+                  setForm({ ...form, lastName: event.target.value })
+                }
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold">{t("common.email")}</span>
-              <input
+              <span className="mb-1 block text-xs font-semibold">
+                {t("common.email")}
+              </span>
+              <Input
                 required
                 type="email"
                 value={form.email}
-                onChange={(event) => setForm({ ...form, email: event.target.value })}
-                className="input input-bordered w-full"
+                onChange={(event) =>
+                  setForm({ ...form, email: event.target.value })
+                }
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold">{t("admin.password")}</span>
-              <input
+              <span className="mb-1 block text-xs font-semibold">
+                {t("admin.password")}
+              </span>
+              <Input
                 required
                 type="password"
                 minLength={10}
                 value={form.password}
-                onChange={(event) => setForm({ ...form, password: event.target.value })}
-                className="input input-bordered w-full"
+                onChange={(event) =>
+                  setForm({ ...form, password: event.target.value })
+                }
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold">{t("admin.role")}</span>
-              <select
+              <span className="mb-1 block text-xs font-semibold">
+                {t("admin.role")}
+              </span>
+              <NativeSelect
                 value={form.role}
-                onChange={(event) => setForm({ ...form, role: event.target.value })}
-                className="select select-bordered w-full"
+                onChange={(event) =>
+                  setForm({ ...form, role: event.target.value })
+                }
+                className={cn(" w-full")}
               >
                 <option value="CUSTOMER">{t("admin.roleCustomer")}</option>
                 <option value="TECHNICIAN">{t("admin.roleTechnician")}</option>
                 <option value="ADMIN">{t("admin.roleAdmin")}</option>
-              </select>
+              </NativeSelect>
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold">{t("admin.phone")}</span>
-              <input
+              <span className="mb-1 block text-xs font-semibold">
+                {t("admin.phone")}
+              </span>
+              <Input
                 value={form.phone}
-                onChange={(event) => setForm({ ...form, phone: event.target.value })}
-                className="input input-bordered w-full"
+                onChange={(event) =>
+                  setForm({ ...form, phone: event.target.value })
+                }
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold">{t("admin.company")}</span>
-              <input
+              <span className="mb-1 block text-xs font-semibold">
+                {t("admin.company")}
+              </span>
+              <Input
                 value={form.companyName}
-                onChange={(event) => setForm({ ...form, companyName: event.target.value })}
-                className="input input-bordered w-full"
+                onChange={(event) =>
+                  setForm({ ...form, companyName: event.target.value })
+                }
+                className={cn(" w-full")}
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs font-semibold">{t("common.address")}</span>
-              <input
+              <span className="mb-1 block text-xs font-semibold">
+                {t("common.address")}
+              </span>
+              <Input
                 value={form.address}
-                onChange={(event) => setForm({ ...form, address: event.target.value })}
-                className="input input-bordered w-full"
+                onChange={(event) =>
+                  setForm({ ...form, address: event.target.value })
+                }
+                className={cn(" w-full")}
               />
             </label>
           </div>
-          <button disabled={loading} className="btn btn-primary mt-4">
+          <Button
+            disabled={loading}
+            className={cn(
+              " bg-primary text-primary-content border-primary hover:bg-primary-hover mt-4",
+            )}
+          >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             {t("common.create")}
-          </button>
+          </Button>
         </form>
       )}
 
@@ -224,47 +308,61 @@ function AdminUsersPage() {
 
       {pageData.total > 0 && (
         <div className="mt-5 overflow-x-auto rounded-box border border-base-300 bg-base-100">
-          <table className="table table-zebra">
-            <thead>
-              <tr>
-                <th>{t("common.name")}</th>
-                <th>{t("common.email")}</th>
-                <th>{t("admin.company")}</th>
-                <th>{t("admin.role")}</th>
-                <th>{t("common.created")}</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
+          <Table className={cn(" [&_tbody_tr:nth-child(even)]:bg-base-200")}>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t("common.name")}</TableHead>
+                <TableHead>{t("common.email")}</TableHead>
+                <TableHead>{t("admin.company")}</TableHead>
+                <TableHead>{t("admin.role")}</TableHead>
+                <TableHead>{t("common.created")}</TableHead>
+                <TableHead />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {pageData.items.map((user) => (
-                <tr key={user.id}>
-                  <td className="font-semibold">{user.fullName}</td>
-                  <td className="text-xs">{user.email}</td>
-                  <td className="text-xs">{user.companyName || "–"}</td>
-                  <td>
-                    <select
+                <TableRow key={user.id}>
+                  <TableCell className="font-semibold">
+                    {user.fullName}
+                  </TableCell>
+                  <TableCell className="text-xs">{user.email}</TableCell>
+                  <TableCell className="text-xs">
+                    {user.companyName || "–"}
+                  </TableCell>
+                  <TableCell>
+                    <NativeSelect
                       value={user.role}
-                      onChange={(event) => void updateRole(user.id, event.target.value)}
-                      className="select select-bordered select-xs"
+                      onChange={(event) =>
+                        void updateRole(user.id, event.target.value)
+                      }
+                      className={cn(" h-6 px-2 text-xs")}
                     >
-                      <option value="CUSTOMER">{t("admin.roleCustomer")}</option>
-                      <option value="TECHNICIAN">{t("admin.roleTechnician")}</option>
+                      <option value="CUSTOMER">
+                        {t("admin.roleCustomer")}
+                      </option>
+                      <option value="TECHNICIAN">
+                        {t("admin.roleTechnician")}
+                      </option>
                       <option value="ADMIN">{t("admin.roleAdmin")}</option>
-                    </select>
-                  </td>
-                  <td className="text-xs">{formatDate(user.createdAt)}</td>
-                  <td>
-                    <button
+                    </NativeSelect>
+                  </TableCell>
+                  <TableCell className="text-xs">
+                    {formatDate(user.createdAt)}
+                  </TableCell>
+                  <TableCell>
+                    <Button
                       onClick={() => void deactivate(user.id)}
-                      className="btn btn-ghost btn-xs text-error"
+                      className={cn(
+                        " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs text-error",
+                      )}
                     >
                       {t("admin.deactivate")}
-                    </button>
-                  </td>
-                </tr>
+                    </Button>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       )}
 

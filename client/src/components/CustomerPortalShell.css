@@ -1,0 +1,152 @@
+@reference "../index.css";
+
+/* Customer routes only: shared admin/technician layouts retain their styling. */
+.customer-portal {
+  @apply bg-canvas text-ink;
+}
+.customer-portal .container-page {
+  @apply py-10 lg:py-12;
+}
+.customer-portal .container-page > .grid {
+  @apply gap-8;
+}
+.customer-portal aside,
+.customer-portal main,
+.customer-portal main > div,
+.customer-portal main .grid > * {
+  @apply min-w-0;
+}
+.customer-portal aside nav {
+  @apply gap-2 border-hairline bg-surface p-2;
+}
+.customer-portal aside a {
+  @apply min-h-control gap-inline px-4 font-normal;
+}
+.customer-portal aside a:focus-visible {
+  @apply outline-2 outline-offset-2 outline-ring;
+}
+.customer-portal main > div:first-child {
+  @apply gap-6 border-b border-hairline pb-8;
+}
+.customer-portal h1 {
+  @apply text-3xl font-normal;
+  overflow-wrap: anywhere;
+}
+.customer-portal main > div:first-child > div:first-child {
+  @apply min-w-0;
+}
+.customer-portal main > div:first-child p {
+  @apply mt-3 max-w-2xl text-sm font-normal text-ink-muted;
+}
+.customer-portal main > div:nth-child(2) {
+  @apply mt-8;
+}
+.customer-portal main section {
+  @apply rounded-box border-hairline bg-surface p-6;
+}
+.customer-portal main h2 {
+  @apply text-2xl font-medium;
+}
+.customer-portal main p,
+.customer-portal main label,
+.customer-portal main span {
+  overflow-wrap: anywhere;
+}
+.customer-portal [data-slot="button"] {
+  @apply min-h-control rounded-pill text-sm font-medium tracking-button;
+}
+.customer-portal [data-slot="input"],
+.customer-portal [data-slot="native-select"] {
+  @apply min-h-control border-hairline text-base;
+}
+.customer-portal [data-slot="textarea"] {
+  @apply border-hairline text-base;
+}
+.customer-portal [data-slot="badge"] {
+  @apply h-auto min-h-6 py-1 text-xs font-medium;
+}
+.customer-portal [data-slot="tabs-list"] {
+  @apply h-auto flex-wrap gap-2 rounded-pill;
+}
+.customer-portal [data-slot="tabs-trigger"] {
+  @apply min-h-control rounded-pill px-4 text-sm;
+}
+.customer-portal [data-slot="table-container"] {
+  @apply rounded-md;
+}
+.customer-portal [data-slot="table"] {
+  @apply text-sm;
+}
+.customer-portal [data-slot="table"] :is(th, td) {
+  @apply border-hairline px-4 py-4;
+}
+.customer-portal [data-slot="table"] th {
+  @apply bg-canvas text-xs font-medium text-ink-muted;
+}
+.customer-portal [data-slot="table"] td {
+  @apply align-top;
+}
+.customer-portal [data-slot="table"] th:not(:first-child),
+.customer-portal [data-slot="table"] td:not(:first-child) {
+  white-space: nowrap;
+}
+.customer-portal .portal-stats {
+  @apply gap-4;
+}
+.customer-portal .portal-stat {
+  @apply rounded-md border-hairline bg-surface p-6;
+}
+.customer-portal .portal-stat > p:last-child {
+  @apply mt-4 text-4xl font-normal tabular-nums;
+}
+.customer-portal section.portal-request-panel {
+  @apply border-transparent bg-brand-indigo text-panel-foreground;
+}
+.customer-portal .portal-request-panel :is(a, h2) {
+  @apply text-panel-foreground;
+}
+.customer-portal .portal-request-panel a > div p:last-child {
+  @apply text-panel-foreground/80;
+}
+.customer-portal .portal-request-panel .divide-y > * {
+  @apply border-panel-foreground/20;
+}
+.customer-portal .portal-request-panel > p {
+  @apply text-panel-foreground/80;
+}
+.customer-portal .portal-sky-panel {
+  @apply rounded-md border border-hairline bg-accent-sky p-4 text-ink;
+}
+@media (min-width: 1024px) {
+  .customer-portal aside a span {
+    white-space: normal;
+  }
+}
+@media print {
+  .customer-portal aside {
+    display: none;
+  }
+  .customer-portal .container-page > .grid {
+    display: block;
+  }
+}
+
+.customer-portal label > span {
+  @apply text-sm;
+}
+.customer-messages .container-page > div:first-child {
+  @apply gap-6 border-b border-hairline pb-8;
+}
+.customer-messages .rounded-box {
+  @apply border-hairline p-6;
+}
+.customer-messages h2 {
+  @apply text-2xl font-medium;
+}
+/* The search clear action stays compact inside its input container. */
+.customer-portal label:has(> input:not([data-slot])) {
+  @apply min-h-control;
+}
+.customer-portal label > [data-slot="button"] {
+  @apply h-6 min-h-6 w-6 shrink-0 p-0;
+}

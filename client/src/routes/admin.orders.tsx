@@ -1,3 +1,7 @@
+import { Alert } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -6,16 +10,38 @@ import { api, errorMessage } from "../lib/api";
 import type { Order } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { useAdminNav } from "../components/nav";
-import { DashboardShell } from "../components/DashboardShell";
-import { ArchiveTabs, FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
-import { EmptyState, ErrorState, PageLoader, StatusBadge } from "../components/ui";
-import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
+import { AdminDashboardShell as DashboardShell } from "../components/AdminDashboardShell";
+import {
+  ArchiveTabs,
+  FilterSelect,
+  ListToolbar,
+  Pagination,
+  SearchField,
+} from "../components/ListControls";
+import {
+  EmptyState,
+  ErrorState,
+  PageLoader,
+  StatusBadge,
+} from "../components/ui";
+import {
+  filterByArchive,
+  matchesSearch,
+  paginate,
+  useListControls,
+} from "../lib/list";
 
 export const Route = createFileRoute("/admin/orders")({
   component: AdminOrdersPage,
 });
 
-const orderStatuses = ["PENDING", "CONFIRMED", "PROCESSING", "COMPLETED", "CANCELLED"];
+const orderStatuses = [
+  "PENDING",
+  "CONFIRMED",
+  "PROCESSING",
+  "COMPLETED",
+  "CANCELLED",
+];
 const archivedStatuses = new Set(["COMPLETED", "CANCELLED"]);
 
 function AdminOrdersPage() {
@@ -79,8 +105,20 @@ function AdminOrdersPage() {
   }
 
   return (
-    <DashboardShell nav={nav} title={t("admin.orders")} subtitle={t("orders.text")}>
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+    <DashboardShell
+      nav={nav}
+      title={t("admin.orders")}
+      subtitle={t("orders.text")}
+    >
+      {error && (
+        <Alert
+          className={cn(
+            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mb-4 text-sm",
+          )}
+        >
+          {error}
+        </Alert>
+      )}
 
       <ListToolbar>
         <SearchField
@@ -112,33 +150,42 @@ function AdminOrdersPage() {
       {pageData.total > 0 && (
         <div className="mt-5 space-y-3">
           {pageData.items.map((order) => (
-            <div key={order.id} className="rounded-box border border-base-300 bg-base-100 p-4">
+            <div
+              key={order.id}
+              className="rounded-box border border-base-300 bg-base-100 p-4"
+            >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="font-mono text-sm font-bold">{order.reference}</p>
-                  <p className="text-[11px] text-base-content/70">
+                  <p className="tabular-nums text-sm font-medium">
+                    {order.reference}
+                  </p>
+                  <p className="text-xs text-ink-muted">
                     {order.customer?.fullName} · {formatDate(order.createdAt)}
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-sm font-bold">{formatMoney(order.total)}</span>
+                  <span className="text-sm font-medium">
+                    {formatMoney(order.total)}
+                  </span>
                   <StatusBadge status={order.status} />
-                  <select
+                  <NativeSelect
                     value={order.status}
-                    onChange={(event) => void updateOrder(order.id, event.target.value)}
+                    onChange={(event) =>
+                      void updateOrder(order.id, event.target.value)
+                    }
                     disabled={busy === order.id}
-                    className="select select-bordered select-xs"
+                    className={cn(" h-6 px-2 text-xs")}
                   >
                     {orderStatuses.map((status) => (
                       <option key={status} value={status}>
                         {t(`status.${status}` as "status.PENDING")}
                       </option>
                     ))}
-                  </select>
+                  </NativeSelect>
                 </div>
               </div>
 
-              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-base-content/65">
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-muted">
                 {order.items.map((item) => (
                   <span key={item.id}>
                     {item.quantity} × {item.description}
@@ -154,16 +201,22 @@ function AdminOrdersPage() {
                   </span>
                   <span className="flex items-center gap-2">
                     <StatusBadge status={order.invoice.status} />
-                    <span className="font-semibold">{formatMoney(order.invoice.amount)}</span>
+                    <span className="font-semibold">
+                      {formatMoney(order.invoice.amount)}
+                    </span>
                     {order.invoice.status !== "PAID" && (
-                      <button
+                      <Button
                         onClick={() => void markPaid(order.invoice!.id)}
                         disabled={busy === order.invoice.id}
-                        className="btn btn-success btn-xs"
+                        className={cn(
+                          " bg-primary text-primary-content border-primary hover:bg-primary-hover h-6 px-2 text-xs",
+                        )}
                       >
-                        {busy === order.invoice.id && <Loader2 className="h-3 w-3 animate-spin" />}
+                        {busy === order.invoice.id && (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        )}
                         {t("admin.markPaid")}
-                      </button>
+                      </Button>
                     )}
                   </span>
                 </div>

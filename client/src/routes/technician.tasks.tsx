@@ -1,3 +1,7 @@
+import { buttonVariants } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
+import { NativeSelect } from "@/components/ui/native-select";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -6,10 +10,26 @@ import { api, errorMessage } from "../lib/api";
 import type { ServiceRequest } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { useTechnicianNav } from "../components/nav";
-import { DashboardShell } from "../components/DashboardShell";
-import { ArchiveTabs, FilterSelect, ListToolbar, Pagination, SearchField } from "../components/ListControls";
-import { EmptyState, ErrorState, PageLoader, StatusBadge } from "../components/ui";
-import { filterByArchive, matchesSearch, paginate, useListControls } from "../lib/list";
+import { TechnicianDashboardShell as DashboardShell } from "../components/TechnicianDashboardShell";
+import {
+  ArchiveTabs,
+  FilterSelect,
+  ListToolbar,
+  Pagination,
+  SearchField,
+} from "../components/ListControls";
+import {
+  EmptyState,
+  ErrorState,
+  PageLoader,
+  StatusBadge,
+} from "../components/ui";
+import {
+  filterByArchive,
+  matchesSearch,
+  paginate,
+  useListControls,
+} from "../lib/list";
 
 export const Route = createFileRoute("/technician/tasks")({
   component: TechnicianTasksPage,
@@ -65,7 +85,10 @@ function TechnicianTasksPage() {
   async function updateStatus(id: string, status: string) {
     setError("");
     try {
-      await api(`/requests/${id}/status`, { method: "PATCH", body: { status } });
+      await api(`/requests/${id}/status`, {
+        method: "PATCH",
+        body: { status },
+      });
       await queryClient.invalidateQueries({ queryKey: ["requests"] });
       await queryClient.invalidateQueries({ queryKey: ["profile"] });
     } catch (caught) {
@@ -74,8 +97,20 @@ function TechnicianTasksPage() {
   }
 
   return (
-    <DashboardShell nav={nav} title={t("technician.assignedRequests")} subtitle={t("technician.welcomeText")}>
-      {error && <div className="alert alert-error mb-4 text-sm">{error}</div>}
+    <DashboardShell
+      nav={nav}
+      title={t("technician.assignedRequests")}
+      subtitle={t("technician.welcomeText")}
+    >
+      {error && (
+        <Alert
+          className={cn(
+            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mb-4 text-sm",
+          )}
+        >
+          {error}
+        </Alert>
+      )}
 
       <ListToolbar>
         <SearchField
@@ -86,7 +121,10 @@ function TechnicianTasksPage() {
         <FilterSelect
           value={controls.status}
           onChange={controls.setStatus}
-          options={statuses.map((value) => ({ value, label: t(`status.${value}` as "status.NEW") }))}
+          options={statuses.map((value) => ({
+            value,
+            label: t(`status.${value}` as "status.NEW"),
+          }))}
           allLabel={t("common.all")}
           ariaLabel={t("common.status")}
         />
@@ -104,47 +142,65 @@ function TechnicianTasksPage() {
       {pageData.total > 0 && (
         <div className="mt-5 space-y-3">
           {pageData.items.map((request) => (
-            <div key={request.id} className="rounded-box border border-base-300 bg-base-100 p-5">
+            <div
+              key={request.id}
+              className="rounded-box border border-base-300 bg-base-100 p-6"
+            >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono text-[11px] text-base-content/70">{request.reference}</span>
+                    <span className="tabular-nums text-xs text-ink-muted">
+                      {request.reference}
+                    </span>
                     <StatusBadge status={request.status} />
                   </div>
-                  <h2 className="mt-1 text-base font-bold">{request.title}</h2>
-                  <p className="mt-1 text-xs text-base-content/65">
-                    {request.service ? pick(request.service.nameEn, request.service.nameDe) : "–"} ·{" "}
-                    {request.customer?.fullName || request.contactName}
+                  <h2 className="mt-1 text-base font-medium">
+                    {request.title}
+                  </h2>
+                  <p className="mt-1 text-xs text-ink-muted">
+                    {request.service
+                      ? pick(request.service.nameEn, request.service.nameDe)
+                      : "–"}{" "}
+                    · {request.customer?.fullName || request.contactName}
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <select
+                  <NativeSelect
                     value={request.status}
-                    onChange={(event) => void updateStatus(request.id, event.target.value)}
-                    className="select select-bordered select-xs"
+                    onChange={(event) =>
+                      void updateStatus(request.id, event.target.value)
+                    }
+                    className={cn(" h-6 px-2 text-xs")}
                   >
                     {statuses.map((status) => (
                       <option key={status} value={status}>
                         {t(`status.${status}` as "status.NEW")}
                       </option>
                     ))}
-                  </select>
+                  </NativeSelect>
                   <Link
                     to="/technician/reports"
                     search={{ request: request.id }}
-                    className="btn btn-outline btn-xs"
+                    className={cn(
+                      buttonVariants(),
+                      " border-current bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs",
+                    )}
                   >
-                    <FileText className="h-3.5 w-3.5" /> {t("technician.addReport")}
+                    <FileText className="h-3.5 w-3.5" />{" "}
+                    {t("technician.addReport")}
                   </Link>
                 </div>
               </div>
 
-              <p className="mt-3 whitespace-pre-wrap text-xs leading-relaxed text-base-content/70">
+              <p className="mt-3 whitespace-pre-wrap text-xs leading-relaxed text-ink-muted">
                 {request.description}
               </p>
 
-              <div className="mt-3 flex flex-wrap gap-4 border-t border-base-200 pt-3 text-[11px] text-base-content/65">
-                <span>{t("requests.preferredDate")}: {formatDate(request.preferredDate)}</span>
+              <div className="mt-3 flex flex-wrap gap-4 border-t border-hairline pt-3 text-xs text-ink-muted">
+                <span>
+                  {t("requests.preferredDate")}:{" "}
+                  {formatDate(request.preferredDate)}
+                </span>
                 {request.siteAddress && (
                   <span className="flex items-center gap-1">
                     <MapPin className="h-3.5 w-3.5" /> {request.siteAddress}
