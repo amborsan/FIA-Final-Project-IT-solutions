@@ -1,7 +1,6 @@
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link, Outlet, createRootRoute, useRouterState } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { ChatWidget } from "../components/ChatWidget";
@@ -31,17 +30,12 @@ function RootLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       {!isPrintPage && <Header />}
+      {!isPrintPage && <CookieConsent />}
       <main className="flex-1">
         <Outlet />
       </main>
       {!isPrintPage && <Footer />}
       {!isPrintPage && <ChatWidget />}
-      {!isPrintPage && <CookieConsent />}
-      {import.meta.env.DEV && (
-        <>
-          <TanStackRouterDevtools />
-        </>
-      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 
 import { creationHandsData } from "./creationHandsData";
+import { getHandsMotion } from "./particleHandsMotion";
 
 export function ParticleHands() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -23,6 +24,9 @@ export function ParticleHands() {
     let lastPaint = 0;
     let elapsed = 0;
     let color = "rgb(13, 13, 13)";
+    let glyphWeight = "";
+    let minOpacity = 0;
+    let dissolveFade = 0;
     const pointer = { x: 0, y: 0 };
     const follow = { x: 0, y: 0 };
 
@@ -32,7 +36,9 @@ export function ParticleHands() {
       context.save();
       // A uniform scale keeps fingers and glyphs in proportion on narrow screens.
       const scale = width / 1000 * 1.18;
-      context.translate((width - 1000 * scale) / 2, height * 0.62 - 380 * scale);
+      const offsetX = (width - 1000 * scale) / 2;
+      const offsetY = height * 0.62 - 380 * scale;
+      context.translate(offsetX, offsetY);
       context.scale(scale, scale);
       context.fillStyle = color;
       const glyphs = ".,:;=+*xX0#@";
@@ -40,15 +46,11 @@ export function ParticleHands() {
       const glyphSize = Math.max(4.5, 4500 / width);
       const columnStride = Math.max(1, Math.ceil(glyphSize * 0.6 / 4));
       const rowStride = Math.max(1, Math.round(glyphSize / 4));
-      context.font = `500 ${glyphSize}px monospace`;
+      context.font = `${glyphWeight} ${glyphSize}px monospace`;
       context.textAlign = "center";
       context.textBaseline = "middle";
-      const time = reduced.matches ? 0 : elapsed * 1.8;
-      // Keep the fingertips close while leaving room for their faster approach.
-      const reach = (1 - Math.cos(time * 0.55)) * 12;
-      const cycle = (time % 18) / 18;
-      const dissolve = cycle < 0.6 ? 0 : Math.pow(Math.sin((cycle - 0.6) / 0.4 * Math.PI), 4);
-      const turn = Math.sin(time * 0.25) * 0.15 + follow.x * 0.12;
+      const { reach, dissolve, separation, time, pointerStrength } = getHandsMotion(reduced.matches ? 0 : elapsed);
+      const turn = Math.sin(time * 0.22) * 0.025 + follow.x * 0.035 * pointerStrength;
 
       for (const point of points) {
         if ((point.x / 4) % columnStride !== 0 || ((point.y - 200) / 4) % rowStride !== 0) continue;
@@ -56,16 +58,19 @@ export function ParticleHands() {
         const pivot = point.side === 0 ? 220 : 780;
         const rotation = turn * direction;
         const localX = pivot + (point.x - pivot) * Math.cos(rotation) + point.z * Math.sin(rotation);
-        const spread = dissolve * (12 + point.seed * 55);
+        const spread = dissolve * (24 + point.seed * 110);
         const driftX = Math.sin(point.seed * 30 + time * 0.2) * spread;
         const driftY = Math.cos(point.seed * 27 + time * 0.25) * spread;
-        const x = localX + direction * (reach - 32);
+        const x = localX + direction * (reach - 32 - separation);
         const y = point.y;
-        const wobble = Math.sin(time * 0.45 + point.x * 0.008) * 5;
+        const wobble = Math.sin(time * 0.35 + point.x * 0.004) * 1.5;
         const density = Math.min(1, 0.12 + point.shade * 1.2);
-        context.globalAlpha = (0.5 + density * 0.5) * (1 - dissolve * 0.55);
+        // Preserve the silhouette even in lighter shading and the dissolve phase.
+        const drawX = x + driftX;
+        const drawY = y + wobble + driftY + follow.y * point.z * 0.1 * pointerStrength;
+        context.globalAlpha = (minOpacity + density * (1 - minOpacity)) * (1 - dissolve * dissolveFade);
         const glyph = glyphs[Math.min(glyphs.length - 1, Math.floor(density * glyphs.length))];
-        context.fillText(glyph, x + driftX, y + wobble + driftY + follow.y * point.z * 0.1);
+        context.fillText(glyph, drawX, drawY);
       }
       context.restore();
     }
@@ -90,7 +95,17 @@ export function ParticleHands() {
       if (visible && !document.hidden && !reduced.matches) frame = requestAnimationFrame(tick);
     }
 
-    function readColor() { color = getComputedStyle(canvas!).color; draw(); }
+    function readColor() {
+      const style = getComputedStyle(canvas!);
+      // The root token updates before the canvas's inherited computed color.
+      // Read it directly so reduced-motion frames repaint in the new theme.
+      color = style.getPropertyValue("--hero-particle-color").trim()
+        || getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || style.color;
+      glyphWeight = style.fontWeight;
+      minOpacity = Number(style.getPropertyValue("--hero-particle-min-opacity"));
+      dissolveFade = Number(style.getPropertyValue("--hero-particle-dissolve-fade"));
+      draw();
+    }
     const resize = new ResizeObserver(() => {
       const bounds = canvas.getBoundingClientRect();
       width = bounds.width;

@@ -1,13 +1,12 @@
+import { StatusSelect, StatusUpdateFeedback, useStatusUpdate } from "../components/StatusControl";
 import { buttonVariants } from "@/components/ui/button";
-import { Alert } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { NativeSelect } from "@/components/ui/native-select";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, LifeBuoy } from "lucide-react";
-import { api, errorMessage } from "../lib/api";
+import { api } from "../lib/api";
 import type { Ticket } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { useTechnicianNav } from "../components/nav";
@@ -23,7 +22,6 @@ import {
   EmptyState,
   ErrorState,
   PageLoader,
-  StatusBadge,
 } from "../components/ui";
 import {
   filterByArchive,
@@ -52,7 +50,7 @@ function TechnicianTicketsPage() {
   const queryClient = useQueryClient();
   const controls = useListControls();
   const [priority, setPriority] = useState("");
-  const [error, setError] = useState("");
+
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["tickets"],
@@ -85,15 +83,10 @@ function TechnicianTicketsPage() {
     controls.setPage(1);
   }
 
-  async function updateStatus(id: string, status: string) {
-    setError("");
-    try {
-      await api(`/tickets/${id}/status`, { method: "PATCH", body: { status } });
-      await queryClient.invalidateQueries({ queryKey: ["tickets"] });
-    } catch (caught) {
-      setError(errorMessage(caught, t("common.error")));
-    }
-  }
+  const { update, pendingId, feedback } = useStatusUpdate(async (id, status) => {
+    await api(`/tickets/${id}/status`, { method: "PATCH", body: { status } });
+    await queryClient.invalidateQueries({ queryKey: ["tickets"] });
+  });
 
   return (
     <DashboardShell
@@ -101,15 +94,7 @@ function TechnicianTicketsPage() {
       title={t("technician.assignedTickets")}
       subtitle={t("tickets.text")}
     >
-      {error && (
-        <Alert
-          className={cn(
-            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mb-4 text-sm",
-          )}
-        >
-          {error}
-        </Alert>
-      )}
+      <StatusUpdateFeedback feedback={feedback} />
 
       <ListToolbar>
         <SearchField
@@ -124,7 +109,7 @@ function TechnicianTicketsPage() {
             value,
             label: t(`status.${value}` as "status.OPEN"),
           }))}
-          allLabel={t("common.all")}
+          allLabel={t("list.allStatuses")}
           ariaLabel={t("common.status")}
         />
         <FilterSelect
@@ -134,7 +119,7 @@ function TechnicianTicketsPage() {
             value,
             label: t(`priority.${value}` as "priority.LOW"),
           }))}
-          allLabel={t("common.all")}
+          allLabel={t("list.allPriorities")}
           ariaLabel={t("tickets.priority")}
         />
         <ArchiveTabs value={controls.archive} onChange={controls.setArchive} />
@@ -170,20 +155,14 @@ function TechnicianTicketsPage() {
               >
                 {t(`priority.${ticket.priority}` as "priority.LOW")}
               </Badge>
-              <StatusBadge status={ticket.status} />
-              <NativeSelect
+              <StatusSelect
                 value={ticket.status}
-                onChange={(event) =>
-                  void updateStatus(ticket.id, event.target.value)
-                }
-                className={cn(" h-6 px-2 text-xs")}
-              >
-                {statuses.map((status) => (
-                  <option key={status} value={status}>
-                    {t(`status.${status}` as "status.OPEN")}
-                  </option>
-                ))}
-              </NativeSelect>
+                options={statuses}
+                reference={ticket.reference}
+                pending={pendingId === ticket.id}
+                disabled={!!pendingId}
+                onChange={status => void update(ticket.id, ticket.reference, status)}
+              />
               <Link
                 to="/technician/tickets/$id"
                 params={{ id: ticket.id }}

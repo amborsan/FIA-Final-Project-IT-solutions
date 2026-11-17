@@ -109,8 +109,7 @@ function QuotePage() {
     <div className="bg-base-100">
       <section className="hero-grid border-b border-base-300">
         <div className="container-page py-12 sm:py-16">
-          <p className="eyebrow">{t("quote.eyebrow")}</p>
-          <h1 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">{t("quote.title")}</h1>
+          <h1 className="text-4xl font-black tracking-tight sm:text-5xl">{t("quote.title")}</h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-base-content/65">{t("quote.text")}</p>
         </div>
       </section>

@@ -255,7 +255,7 @@ function TicketsPage() {
             value,
             label: t(`status.${value}` as "status.OPEN"),
           }))}
-          allLabel={t("common.all")}
+          allLabel={t("list.allStatuses")}
           ariaLabel={t("common.status")}
         />
         <FilterSelect
@@ -265,7 +265,7 @@ function TicketsPage() {
             value,
             label: t(`priority.${value}` as "priority.LOW"),
           }))}
-          allLabel={t("common.all")}
+          allLabel={t("list.allPriorities")}
           ariaLabel={t("tickets.priority")}
         />
         <ArchiveTabs value={controls.archive} onChange={controls.setArchive} />

@@ -1,0 +1,29 @@
+@reference "../index.css";
+
+.header-navigation { @apply flex-none; }
+.header-nav-trigger, .header-nav-link {
+  @apply min-h-10 rounded-pill bg-transparent px-3 py-2 text-sm font-nav text-ink-soft hover:bg-accent-sky focus:bg-accent-sky;
+}
+.header-nav-trigger[data-state="open"], .header-nav-trigger[data-current="true"], .header-nav-link[aria-current="page"] {
+  @apply bg-accent-sky text-ink underline underline-offset-4;
+}
+.site-header > .container-page :is(a, button), .site-header nav:not(.header-navigation) a { font-weight: var(--font-weight-nav); }
+.header-navigation .header-nav-panel {
+  @apply rounded-box border border-hairline bg-surface p-0 text-ink shadow-none;
+  width: var(--header-panel-width);
+  max-width: calc(100dvw - var(--header-panel-inset));
+  max-height: calc(100dvh - var(--header-panel-top));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.header-service-link {
+  @apply flex-row items-start gap-3 rounded-md p-3 text-ink-soft hover:bg-accent-sky focus:bg-accent-sky;
+}
+.header-service-link[aria-current="page"] { @apply bg-accent-sky text-ink underline underline-offset-4; }
+.header-service-link:is(:hover, :focus, [aria-current="page"]) .text-ink-muted { @apply text-ink-soft; }
+.header-nav-footer-link { @apply min-h-10 flex-row items-center gap-2 rounded-pill px-3 text-ink-soft hover:bg-accent-sky focus:bg-accent-sky; }
+.header-navigation :is(a, button):focus-visible { @apply outline-2 outline-offset-2 outline-ring; }
+@media (prefers-reduced-motion: no-preference) {
+  .header-nav-panel[data-state="open"] { animation: header-nav-in var(--duration-ui) var(--ease-ui); }
+  @keyframes header-nav-in { from { opacity: 0; } to { opacity: 1; } }
+}

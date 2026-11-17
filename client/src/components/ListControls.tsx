@@ -1,9 +1,10 @@
+import { AnimatedPagination } from "./beui/Pagination";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { NativeSelect } from "@/components/ui/native-select";
 import type { ReactNode } from "react";
-import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useI18n } from "../i18n/I18nContext";
 import type { ArchiveMode } from "../lib/list";
 
@@ -112,7 +113,7 @@ export function ArchiveTabs({
     <Tabs
       value={value}
       onValueChange={(next) => onChange(next as ArchiveMode)}
-      className="w-full sm:w-auto"
+      className="list-archive-tabs w-full sm:w-auto"
     >
       <TabsList
         aria-label={t("list.archiveLabel")}
@@ -124,7 +125,7 @@ export function ArchiveTabs({
             value={option.mode}
             className={cn(
               buttonVariants(),
-              "h-8 flex-1 rounded-pill border border-base-300 px-4 text-sm sm:flex-none data-[state=active]:bg-primary data-[state=active]:text-primary-content dark:data-[state=active]:bg-primary dark:data-[state=active]:text-primary-content",
+              "h-8 flex-1 rounded-pill border border-base-300 px-2 text-sm sm:flex-none sm:px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-content dark:data-[state=active]:bg-primary dark:data-[state=active]:text-primary-content",
               value === option.mode
                 ? "border-primary bg-primary text-primary-content"
                 : "bg-transparent text-base-content hover:bg-base-content/10",
@@ -165,7 +166,7 @@ export function Pagination({
     <div className="mt-4 flex flex-col gap-3 border-t border-base-200 pt-3 text-xs text-base-content/70 sm:flex-row sm:items-center sm:justify-between">
       <p>{t("list.showing", { from, to, total })}</p>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex w-full flex-wrap items-center justify-between gap-3 sm:w-auto sm:justify-end">
         <label className="flex items-center gap-1.5">
           <span>{t("list.rows")}</span>
           <NativeSelect
@@ -182,38 +183,7 @@ export function Pagination({
           </NativeSelect>
         </label>
 
-        <div
-          className={cn(
-            "inline-flex [&>*:not(:first-child)]:-ml-px [&>*:not(:first-child)]:rounded-l-none [&>*:not(:last-child)]:rounded-r-none",
-          )}
-        >
-          <Button
-            type="button"
-            onClick={() => onPageChange(page - 1)}
-            disabled={page <= 1}
-            className={cn(" h-8 px-3 text-sm ")}
-            aria-label={t("list.previous")}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span
-            className={cn(
-              buttonVariants(),
-              " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm pointer-events-none",
-            )}
-          >
-            {t("list.pageOf", { page, pages: totalPages })}
-          </span>
-          <Button
-            type="button"
-            onClick={() => onPageChange(page + 1)}
-            disabled={page >= totalPages}
-            className={cn(" h-8 px-3 text-sm ")}
-            aria-label={t("list.next")}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
+        <AnimatedPagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
       </div>
     </div>
   );

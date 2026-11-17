@@ -221,7 +221,7 @@ A quiet, light interface that inverts two common SaaS conventions. First, the br
 
 Actions belong to near-black. The primary CTA is a 100px pill in `{colors.primary}`, and every interactive surface (buttons, tabs) shares that same pill geometry. Containers are rounded rectangles, so the contrast between "oval means action" and "rectangle means content" stays consistent.
 
-Everything is set in **Geist**. One typeface, three weights (300, 400, 500), no second display family.
+Everything is set in **Geist**. The standard text weights are 300, 400 and 500. The approved navbar exception uses weight 600 through `--font-weight-nav`; the existing logo wordmark remains unchanged.
 
 **Key Characteristics:**
 

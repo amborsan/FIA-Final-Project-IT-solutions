@@ -1,6 +1,6 @@
+import { StatusSelect, StatusUpdateFeedback, useStatusUpdate } from "../components/StatusControl";
 import { Alert } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
-import { NativeSelect } from "@/components/ui/native-select";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
@@ -78,18 +78,16 @@ function AdminOrdersPage() {
 
   const pageData = paginate(filtered, controls.page, controls.pageSize);
 
-  async function updateOrder(id: string, status: string) {
+  const { update, pendingId, feedback } = useStatusUpdate(async (id, status) => {
     setBusy(id);
     setError("");
     try {
       await api(`/orders/${id}/status`, { method: "PATCH", body: { status } });
       await queryClient.invalidateQueries({ queryKey: ["orders"] });
-    } catch (caught) {
-      setError(errorMessage(caught, t("common.error")));
     } finally {
       setBusy("");
     }
-  }
+  });
 
   async function markPaid(invoiceId: string) {
     setBusy(invoiceId);
@@ -120,6 +118,8 @@ function AdminOrdersPage() {
         </Alert>
       )}
 
+      <StatusUpdateFeedback feedback={feedback} />
+
       <ListToolbar>
         <SearchField
           value={controls.search}
@@ -133,7 +133,7 @@ function AdminOrdersPage() {
             value,
             label: t(`status.${value}` as "status.PENDING"),
           }))}
-          allLabel={t("common.all")}
+          allLabel={t("list.allStatuses")}
           ariaLabel={t("common.status")}
         />
         <ArchiveTabs value={controls.archive} onChange={controls.setArchive} />
@@ -167,21 +167,14 @@ function AdminOrdersPage() {
                   <span className="text-sm font-medium">
                     {formatMoney(order.total)}
                   </span>
-                  <StatusBadge status={order.status} />
-                  <NativeSelect
+                  <StatusSelect
                     value={order.status}
-                    onChange={(event) =>
-                      void updateOrder(order.id, event.target.value)
-                    }
-                    disabled={busy === order.id}
-                    className={cn(" h-6 px-2 text-xs")}
-                  >
-                    {orderStatuses.map((status) => (
-                      <option key={status} value={status}>
-                        {t(`status.${status}` as "status.PENDING")}
-                      </option>
-                    ))}
-                  </NativeSelect>
+                    options={orderStatuses}
+                    reference={order.reference}
+                    pending={pendingId === order.id}
+                    disabled={!!pendingId || busy === order.id}
+                    onChange={status => void update(order.id, order.reference, status)}
+                  />
                 </div>
               </div>
 
@@ -199,9 +192,9 @@ function AdminOrdersPage() {
                     <FileText className="h-3.5 w-3.5 text-primary" />
                     {order.invoice.number} · {formatDate(order.invoice.dueAt)}
                   </span>
-                  <span className="flex items-center gap-2">
+                  <span className="flex flex-wrap items-center gap-2">
                     <StatusBadge status={order.invoice.status} />
-                    <span className="font-semibold">
+                    <span className="whitespace-nowrap font-semibold">
                       {formatMoney(order.invoice.amount)}
                     </span>
                     {order.invoice.status !== "PAID" && (

@@ -64,6 +64,18 @@ so the team can rerun it after the demo setup is confirmed.
 
 ## Frontend follow-up
 
+### Local verification — 2026-11-16
+
+The user requested repair of all four displayed demo cards. The running local
+API rejected `admin@fia-it.de` with 401, but accepted the README-listed Admin,
+Technician, Customer and Business customer `@orbit-it.de` accounts with 200.
+Each returned the expected role and a valid `/auth/me` session. The frontend
+cards were updated to these verified addresses, with regression coverage for
+all four cards. The local customer login is no longer blocked by the original
+card/address mismatch. No backend decision, seed, database or auth code was
+changed. Confirmation of the canonical demo domain for other environments
+remains with the backend team.
+
 - [ ] Rerun `npm run test:e2e` after backend confirmation.
 - [ ] Update frontend demo labels/values only if the backend confirms a change.
 - [ ] Keep current API types if the documented contract is unchanged.

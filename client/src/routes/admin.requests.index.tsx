@@ -103,7 +103,7 @@ function AdminRequestsPage() {
             value,
             label: t(`status.${value}` as "status.NEW"),
           }))}
-          allLabel={t("common.all")}
+          allLabel={t("list.allStatuses")}
           ariaLabel={t("common.status")}
         />
         <ArchiveTabs value={controls.archive} onChange={controls.setArchive} />

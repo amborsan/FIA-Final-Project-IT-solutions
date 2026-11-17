@@ -36,9 +36,31 @@ for (const account of roles) for (const language of ["en", "de"] as const) {
     const link = sidebar.locator(`a[href="${account.next}"]`);
     await expect(link).toHaveAttribute("aria-label", /.+/);
     await page.screenshot({ path: `test-results/sidebar-${account.role}-${language}-collapsed.png` });
-    await link.focus();
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(new RegExp(`${account.next}/?$`));
+    const destinationTitle = account.role === "technician" ? t["technician.assignedRequests"] : account.role === "customer" ? t["requests.title"] : t["admin.requests"];
+    // Deliver the real lazy page module only after the URL changes. This keeps
+    // the cold-navigation regression reproducible without API mocks or sleeps.
+    const delayedModule = account.role === "technician" ? "/src/routes/technician.tasks.tsx" : "/src/routes/portal.requests.index.tsx";
+    let releaseModule: () => void = () => {};
+    const moduleReady = new Promise<void>(resolve => { releaseModule = resolve; });
+    if (account.role !== "admin" && language === "en") {
+      await page.route(url => url.pathname === delayedModule && url.searchParams.has("tsr-split"), async route => {
+        await moduleReady;
+        await route.continue();
+      });
+    }
+    try {
+      await link.focus();
+      await page.keyboard.press("Enter");
+      await expect(page).toHaveURL(new RegExp(`${account.next}/?$`));
+      if (account.role !== "admin" && language === "en") {
+        await expect(page.getByRole("heading", { level: 1, name: destinationTitle, exact: true })).not.toBeVisible();
+      }
+    } finally {
+      releaseModule();
+    }
+    // URL updates before the destination shell mounts; do not interact with
+    // the outgoing sidebar whose controls will be removed by navigation.
+    await expect(page.getByRole("heading", { level: 1, name: destinationTitle, exact: true })).toBeVisible();
     await expect(page.locator('aside[data-slot="sidebar"]')).toHaveAttribute("data-state", "collapsed");
     await page.setViewportSize({ width: 360, height: 800 });
     const mobileToggle = page.getByRole("button", { name: t["sidebar.toggle"], exact: true });

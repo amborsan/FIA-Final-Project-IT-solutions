@@ -13,18 +13,18 @@ import { errorMessage } from "../lib/api";
 const demos = [
   {
     label: "auth.demoAdmin",
-    email: "admin@fia-it.de",
+    email: "admin@orbit-it.de",
     password: "Admin12345!",
   },
-  { label: "auth.demoTech", email: "tech@fia-it.de", password: "Tech12345!" },
+  { label: "auth.demoTech", email: "tech@orbit-it.de", password: "Tech12345!" },
   {
     label: "auth.demoCustomer",
-    email: "customer@fia-it.de",
+    email: "customer@orbit-it.de",
     password: "Customer12345!",
   },
   {
     label: "auth.demoBusiness",
-    email: "business@fia-it.de",
+    email: "business@orbit-it.de",
     password: "Customer12345!",
   },
 ] as const;

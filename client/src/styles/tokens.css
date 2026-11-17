@@ -14,6 +14,25 @@
   font-display: swap;
 }
 :root {
+  --hero-gradient-start: #000000;
+  --hero-gradient-end: #17325f;
+  --hero-gradient-ink: #f5f5f5;
+  --hero-gradient-soft: #d4d4d4;
+  --hero-gradient-muted: #b8c4d6;
+  --hero-gradient-surface: #10203b;
+  --hero-gradient-hairline: rgb(255 255 255 / 25%);
+  --hero-gradient-button: #f5f5f5;
+  --hero-gradient-button-hover: #ffffff;
+  --hero-gradient-button-ink: #0d0d0d;
+  --header-drawer-width: 22rem;
+  --header-drawer-max-width: 90vw;
+  --header-drawer-padding: 1.5rem;
+  --header-drawer-blur: 0.25rem;
+  --header-drawer-backdrop: rgb(0 0 0 / 40%);
+  --header-drawer-z: 80;
+  --header-panel-width: 40rem;
+  --header-panel-inset: 4rem;
+  --header-panel-top: 5rem;
   --dashboard-sidebar-width: 16rem;
   --dashboard-sidebar-icon-width: 4.5rem;
   --dashboard-sidebar-mobile-width: 18rem;
@@ -22,7 +41,29 @@
   --dashboard-sidebar-backdrop: rgb(0 0 0 / 40%);
   --font-brand: "IBM Plex Sans", "Geist", sans-serif;
   --hero-height: 42rem;
+  --hero-particle-weight: 700;
+  --hero-particle-min-opacity: 0.82;
+  --hero-particle-dissolve-fade: 0.25;
+  --hero-particle-offset: clamp(1rem, 4vw, 3rem);
   --hero-heading-width: 36rem;
+  --hero-topics-width: 72rem;
+  --hero-topic-font-size: clamp(0.875rem, 1.6vw, 1.25rem);
+  --hero-service-detail-height: 3.5rem;
+  --hero-footer-reserve: 18rem;
+  --hero-topic-mark-gap: clamp(0.375rem, 1vw, 0.75rem);
+  --hero-topic-mark-compact-size: 0.875rem;
+  --hero-service-detail-size: 0.875rem;
+  --hero-topic-mark-size: 1.3125rem;
+  --hero-stat-size: clamp(1.75rem, 3.2vw, 2.75rem);
+  --hero-cta-icon-size: 1rem;
+  --hero-cta-arrow-travel: 0.25rem;
+  --process-marker-size: 1.5rem;
+  --process-phase-gap: 2.5rem;
+  --process-content-offset: 3rem;
+  --process-step-gap: 1.5rem;
+  --process-title-size: clamp(1.25rem, 2vw, 1.5rem);
+  --process-rail-duration: 480ms;
+  --process-node-duration: 360ms;
   --hero-heading-offset: 16rem;
   --hero-title-size: clamp(2.25rem, 3.6vw, 3.5rem);
   --hero-title-tracking: -0.04em;
@@ -152,6 +193,7 @@
   --font-weight-light: 300;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
+  --font-weight-nav: 600;
   --font-weight-semibold: 500;
   --font-weight-bold: 500;
   --font-weight-extrabold: 500;
@@ -199,6 +241,10 @@
   --shadow-2xl: none;
   --ease-ui: cubic-bezier(0, 0, 0.2, 1);
   --duration-ui: 200ms;
+  /* Be UI Circle Blur theme transition. */
+  --duration-theme-reveal: 700ms;
+  --ease-theme-reveal: cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-reveal-blur: 0.5rem;
 }
 @theme inline {
   --color-canvas: var(--canvas);

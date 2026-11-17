@@ -119,7 +119,7 @@ function AppointmentsPage() {
             value,
             label: t(`status.${value}` as "status.SCHEDULED"),
           }))}
-          allLabel={t("common.all")}
+          allLabel={t("list.allStatuses")}
           ariaLabel={t("common.status")}
         />
         <ArchiveTabs value={controls.archive} onChange={controls.setArchive} />

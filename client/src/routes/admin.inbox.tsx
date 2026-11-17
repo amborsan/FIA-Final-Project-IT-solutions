@@ -110,7 +110,7 @@ function AdminInboxPage() {
             value,
             label: t(`status.${value}` as "status.NEW"),
           }))}
-          allLabel={t("common.all")}
+          allLabel={t("list.allStatuses")}
           ariaLabel={t("admin.contactStatus")}
         />
         <ArchiveTabs value={controls.archive} onChange={controls.setArchive} />

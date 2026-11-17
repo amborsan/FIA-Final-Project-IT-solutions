@@ -1,0 +1,45 @@
+.header-drawer-layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--header-drawer-z);
+}
+
+.header-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--header-drawer-backdrop);
+  backdrop-filter: blur(var(--header-drawer-blur));
+}
+
+.header-drawer-panel {
+  position: absolute;
+  inset-block: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  width: var(--header-drawer-width);
+  max-width: var(--header-drawer-max-width);
+  background: var(--surface);
+  color: var(--ink);
+  border-left: 1px solid var(--hairline);
+  outline: none;
+}
+
+.header-drawer-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-inline);
+  padding: var(--header-drawer-padding);
+  padding-top: max(var(--header-drawer-padding), env(safe-area-inset-top));
+  border-bottom: 1px solid var(--hairline);
+}
+
+.header-drawer-scroll {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--header-drawer-padding);
+  padding-bottom: max(var(--header-drawer-padding), env(safe-area-inset-bottom));
+}

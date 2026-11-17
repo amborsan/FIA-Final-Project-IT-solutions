@@ -1,0 +1,23 @@
+/* Circle Blur from https://beui.dev/components/motion/theme-toggle. */
+html[data-beui-vt="circle-blur"]::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+html[data-beui-vt="circle-blur"]::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation: beui-circle-blur-reveal var(--duration-theme-reveal) var(--ease-theme-reveal);
+}
+
+html[data-beui-vt="circle-blur"]::view-transition {
+  pointer-events: none;
+}
+
+@keyframes beui-circle-blur-reveal {
+  from { clip-path: circle(0% at 50% 100%); filter: blur(var(--theme-reveal-blur)); }
+  to { clip-path: circle(150% at 50% 100%); filter: blur(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-beui-vt="circle-blur"]::view-transition-new(root) { animation: none; }
+}

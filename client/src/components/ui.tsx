@@ -51,24 +51,24 @@ export function StatusBadge({ status }: { status: string }) {
   );
 }
 
-export function PageLoader({ label }: { label?: string }) {
+export function PageLoader({ label, compact = false }: { label?: string; compact?: boolean }) {
   const { t } = useI18n();
   return (
-    <div role="status" className="flex min-h-[40vh] flex-col items-center justify-center gap-3">
+    <div role="status" className={cn("flex flex-col items-center justify-center gap-3", compact ? "min-h-40 py-8" : "min-h-[40vh]")}>
       <span aria-hidden="true" className={cn("inline-block size-6 animate-spin rounded-full border-2 border-current border-r-transparent motion-reduce:animate-none size-10 text-primary")} />
       <p className="text-sm text-base-content/70">{label ?? t("common.loading")}</p>
     </div>
   );
 }
 
-export function ErrorState({ message, onRetry }: { message?: string; onRetry?: () => void }) {
+export function ErrorState({ message, onRetry, retrying = false }: { message?: string; onRetry?: () => void; retrying?: boolean }) {
   const { t } = useI18n();
   return (
     <Alert className={cn("flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error my-6")}>
       <span>{message || t("common.error")}</span>
       {onRetry && (
-        <Button className={cn(" h-8 px-3 text-sm")} onClick={onRetry}>
-          {t("common.retry")}
+        <Button className={cn(" h-8 px-3 text-sm")} onClick={onRetry} disabled={retrying} aria-busy={retrying}>
+          {t(retrying ? "common.loading" : "common.retry")}
         </Button>
       )}
     </Alert>

@@ -70,7 +70,7 @@ function AdminActivityPage() {
           value={controls.status}
           onChange={controls.setStatus}
           options={entityTypes.map((value) => ({ value, label: value }))}
-          allLabel={t("common.all")}
+          allLabel={t("list.allCategories")}
           ariaLabel={t("common.category")}
         />
       </ListToolbar>

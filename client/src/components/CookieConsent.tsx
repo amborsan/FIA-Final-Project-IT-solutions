@@ -1,18 +1,11 @@
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Cookie, ShieldCheck } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useI18n } from "../i18n/I18nContext";
 
 const STORAGE_KEY = "orbit_cookie_consent";
-
-type Consent = {
-  essential: true;
-  analytics: false;
-  date: string;
-};
+type Consent = { essential: true; analytics: false; date: string };
 
 function hasConsent(): boolean {
   try {
@@ -22,18 +15,21 @@ function hasConsent(): boolean {
   }
 }
 
-/**
- * The site only sets essential cookies (session + CSRF). This banner explains
- * that and lets visitors record their choice. No marketing or analytics scripts
- * are loaded, so there is nothing optional to switch on.
- */
+/** Informational only: session/CSRF stay active; optional tracking stays off. */
 export function CookieConsent() {
   const { t } = useI18n();
   const [open, setOpen] = useState(() => !hasConsent());
   const [details, setDetails] = useState(false);
+  const id = useId();
+  const heading = useRef<HTMLHeadingElement>(null);
+  const returnFocus = useRef<HTMLElement | null>(null);
+  const focusRequested = useRef(false);
 
   useEffect(() => {
     function handleOpen() {
+      returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      focusRequested.current = true;
+      heading.current?.focus();
       setOpen(true);
       setDetails(true);
     }
@@ -41,74 +37,58 @@ export function CookieConsent() {
     return () => window.removeEventListener("orbit:open-cookie-settings", handleOpen);
   }, []);
 
+  useEffect(() => {
+    if (open && details && focusRequested.current) {
+      heading.current?.focus();
+      focusRequested.current = false;
+    }
+  }, [open, details]);
+
   function save() {
-    const consent: Consent = {
-      essential: true,
-      analytics: false,
-      date: new Date().toISOString(),
-    };
+    const consent: Consent = { essential: true, analytics: false, date: new Date().toISOString() };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(consent));
     setOpen(false);
     setDetails(false);
+    returnFocus.current?.focus();
+    returnFocus.current = null;
   }
 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-x-3 bottom-3 z-[60] mx-auto max-w-3xl sm:inset-x-6 sm:bottom-5">
-      <div className="rounded-box border border-base-300 bg-base-100 p-5 shadow-2xl">
-        <div className="flex items-start gap-3">
-          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <Cookie className="h-5 w-5" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <h2 className="text-sm font-bold sm:text-base">{t("cookie.title")}</h2>
-            <p className="mt-1 text-xs leading-relaxed text-base-content/65 sm:text-sm">
-              {t("cookie.text")}{" "}
-              <Link to="/legal/privacy" className={cn("underline cursor-pointer text-primary")}>
-                {t("cookie.privacyLink")}
-              </Link>
-            </p>
-
-            {details && (
-              <div className="mt-3 space-y-2 rounded-lg bg-base-200 p-3 text-xs">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="font-semibold">{t("cookie.essential")}</p>
-                    <p className="text-base-content/70">{t("cookie.essentialText")}</p>
-                  </div>
-                  <Badge className={cn(" bg-success text-success-content border-success h-5 text-xs")}>ON</Badge>
-                </div>
-                <div className="flex items-start justify-between gap-4 border-t border-base-300 pt-2">
-                  <div>
-                    <p className="font-semibold">{t("cookie.analytics")}</p>
-                    <p className="text-base-content/70">{t("cookie.analyticsText")}</p>
-                  </div>
-                  <Badge className={cn(" bg-base-200 text-base-content h-5 text-xs")}>OFF</Badge>
-                </div>
-              </div>
-            )}
-
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              <Button className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover h-8 px-3 text-sm")} onClick={() => save()}>
-                {t("cookie.acceptAll")}
-              </Button>
-              <Button className={cn(" border-current bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm")} onClick={() => save()}>
-                {t("cookie.essentialOnly")}
-              </Button>
-              <Button
-                className={cn(" border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm")}
-                onClick={() => setDetails((value) => !value)}
-              >
-                {t("cookie.settings")}
-              </Button>
-              <span className="ml-auto hidden items-center gap-1 text-[11px] text-base-content/65 sm:flex">
-                <ShieldCheck className="h-3.5 w-3.5" /> GDPR
-              </span>
-            </div>
+    <section aria-labelledby={`${id}-title`} className="border-b border-hairline bg-canvas text-ink">
+      <div className="container-page py-3">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+          <div className="min-w-0 max-w-3xl">
+            <h2 ref={heading} id={`${id}-title`} tabIndex={-1} className="text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              {t("cookie.title")}
+            </h2>
+            <p className="mt-1 text-sm leading-relaxed text-ink-muted">{t("cookie.text")}</p>
+          </div>
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
+            <Button variant="ghost" className="px-3 lg:px-6" aria-expanded={details} aria-controls={`${id}-details`} onClick={() => setDetails(value => !value)}>
+              {t("cookie.details")}
+              <ChevronDown aria-hidden="true" className={details ? "size-4 rotate-180" : "size-4"} />
+            </Button>
+            <Button className="px-3 lg:px-6" onClick={save}>{t("cookie.acknowledge")}</Button>
           </div>
         </div>
+        <div id={`${id}-details`} hidden={!details} className="mt-3 border-t border-hairline pt-3">
+          <dl className="grid gap-4 text-sm md:grid-cols-2">
+            <div>
+              <dt className="font-semibold">{t("cookie.essential")} · {t("cookie.active")}</dt>
+              <dd className="mt-1 text-ink-muted">{t("cookie.essentialText")}</dd>
+            </div>
+            <div>
+              <dt className="font-semibold">{t("cookie.analytics")} · {t("cookie.unused")}</dt>
+              <dd className="mt-1 text-ink-muted">{t("cookie.analyticsText")}</dd>
+            </div>
+          </dl>
+        </div>
+        <Link to="/legal/privacy" className="mt-1 inline-flex min-h-11 items-center text-sm text-ink underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-ring">
+          {t("cookie.privacyLink")}
+        </Link>
       </div>
-    </div>
+    </section>
   );
 }

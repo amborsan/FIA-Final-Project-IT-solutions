@@ -344,7 +344,7 @@ function AdminContentPage() {
             { value: "PUBLISHED", label: t("admin.published") },
             { value: "DRAFT", label: t("admin.draft") },
           ]}
-          allLabel={t("common.all")}
+          allLabel={t("list.allStatuses")}
           ariaLabel={t("admin.status")}
         />
       </ListToolbar>

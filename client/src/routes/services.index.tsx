@@ -33,8 +33,7 @@ export default function ServicesPage() {
     <div className="bg-base-100">
       <section className="hero-grid border-b border-base-300">
         <div className="container-page py-14 sm:py-20">
-          <p className="eyebrow">{t("services.eyebrow")}</p>
-          <div className="mt-4 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
             <div className="max-w-3xl">
               <h1 className="text-4xl font-black tracking-tight sm:text-5xl">{t("services.title")}</h1>
               <p className="mt-4 max-w-2xl text-base leading-relaxed text-base-content/65">

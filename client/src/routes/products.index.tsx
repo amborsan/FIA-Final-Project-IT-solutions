@@ -11,13 +11,20 @@ import { ProductCard } from "../components/ProductCard";
 import { EmptyState, ErrorState, PageLoader } from "../components/ui";
 
 export const Route = createFileRoute("/products/")({
+  validateSearch: (search: Record<string, unknown>): { category?: string } => ({
+    category: typeof search.category === "string" ? search.category.trim() || undefined : undefined,
+  }),
   component: ProductsPage,
 });
 
 export default function ProductsPage() {
   const { t, pick } = useI18n();
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
+  const { category = "" } = Route.useSearch();
+  const navigate = Route.useNavigate();
+  function setCategory(nextCategory: string) {
+    void navigate({ search: previous => ({ ...previous, category: nextCategory || undefined }) });
+  }
 
   const productsQuery = useQuery({
     queryKey: ["products"],
@@ -40,8 +47,7 @@ export default function ProductsPage() {
     <div className="bg-base-100">
       <section className="hero-grid border-b border-base-300">
         <div className="container-page py-section">
-          <p className="eyebrow">{t("products.eyebrow")}</p>
-          <h1 className="mt-4 max-w-4xl text-4xl font-medium tracking-tight sm:text-5xl">
+          <h1 className="max-w-4xl text-4xl font-medium tracking-tight sm:text-5xl">
             {t("products.title")}
           </h1>
           <p className="mt-4 max-w-2xl text-base font-light leading-relaxed text-ink-soft">
@@ -69,6 +75,7 @@ export default function ProductsPage() {
           <div className="flex items-center gap-inline overflow-x-auto pb-1">
             <SlidersHorizontal className="h-4 w-4 shrink-0 text-base-content/70" />
             <Button
+              aria-pressed={!category}
               onClick={() => setCategory("")}
               className={cn(
                 ` h-10 rounded-pill px-4 text-sm shrink-0 ${!category ? "bg-primary text-primary-content border-primary hover:bg-primary-hover" : "border-transparent bg-transparent text-base-content hover:bg-base-content/10"}`,
@@ -79,6 +86,7 @@ export default function ProductsPage() {
             {(categoriesQuery.data?.categories ?? []).map((entry) => (
               <Button
                 key={entry.id}
+                aria-pressed={category === entry.slug}
                 onClick={() => setCategory(entry.slug)}
                 className={cn(
                   ` h-10 rounded-pill px-4 text-sm shrink-0 ${category === entry.slug ? "bg-primary text-primary-content border-primary hover:bg-primary-hover" : "border-transparent bg-transparent text-base-content hover:bg-base-content/10"}`,

@@ -9,7 +9,11 @@ import {
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useId, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "../lib/api";
+import type { ProductCategory, Service } from "../lib/types";
+import { HeaderNavigation, publicLinks } from "./HeaderNavigation";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   ChevronDown,
@@ -19,23 +23,14 @@ import {
   MessageSquare,
   ShoppingCart,
   UserRound,
-  X,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { ThemeToggle } from "./ThemeToggle";
 import { BrandLogo } from "./BrandLogo";
+import { HeaderDrawer } from "./beui/HeaderDrawer";
 import { useI18n } from "../i18n/I18nContext";
 import type { Language } from "../i18n/translations";
-
-const publicLinks = [
-  { to: "/", key: "nav.home" },
-  { to: "/services", key: "nav.services" },
-  { to: "/products", key: "nav.products" },
-  { to: "/about", key: "nav.about" },
-  { to: "/blog", key: "nav.blog" },
-  { to: "/contact", key: "nav.contact" },
-] as const;
 
 function dashboardPath(role: string) {
   if (role === "ADMIN") return "/admin";
@@ -46,9 +41,26 @@ function dashboardPath(role: string) {
 export function Header() {
   const { user, logout } = useAuth();
   const { count } = useCart();
-  const { t, language, setLanguage } = useI18n();
+  const { t, pick, language, setLanguage } = useI18n();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const mobileId = useId();
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1280px)");
+    const closeOnDesktop = () => { if (desktop.matches) setMobileOpen(false); };
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, []);
+  const servicesQuery = useQuery({
+    queryKey: ["services", "footer"],
+    queryFn: () => api<{ services: Service[] }>("/services"),
+    staleTime: 10 * 60 * 1000,
+  });
+  const categoriesQuery = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => api<{ categories: ProductCategory[] }>("/categories"),
+    staleTime: 10 * 60 * 1000,
+  });
 
   async function handleLogout() {
     await logout();
@@ -72,8 +84,8 @@ export function Header() {
   );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-base-300/70 bg-surface">
-      <div className="container-page flex h-nav items-center justify-between gap-4">
+    <header className="site-header sticky top-0 z-40 border-b border-base-300/70 bg-surface">
+      <div className="container-page flex h-nav items-center justify-between gap-1 sm:gap-4">
         <Link
           to="/"
           className="flex shrink-0 items-center gap-2"
@@ -82,24 +94,9 @@ export function Header() {
           <BrandLogo />
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex">
-          {publicLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="rounded-pill px-3 py-2 text-sm font-medium text-base-content/70 transition hover:bg-base-200 hover:text-base-content"
-              activeProps={{
-                className:
-                  "rounded-pill px-3 py-2 text-sm font-semibold text-primary",
-              }}
-              activeOptions={{ exact: link.to === "/" }}
-            >
-              {t(link.key)}
-            </Link>
-          ))}
-        </nav>
+        <HeaderNavigation services={servicesQuery.data?.services ?? []} categories={categoriesQuery.data?.categories ?? []} />
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-0 sm:gap-1.5">
           <div className="hidden items-center gap-0.5 rounded-pill border border-base-300 p-0.5 sm:flex">
             {languageButton("en", "EN")}
             {languageButton("de", "DE")}
@@ -217,45 +214,65 @@ export function Header() {
             </div>
           )}
 
-          <Button
-            type="button"
-            className={cn(
-              " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm lg:hidden",
-            )}
-            onClick={() => setMobileOpen((open) => !open)}
-            aria-label={t("nav.menu")}
-            aria-expanded={mobileOpen}
+          <HeaderDrawer
+            open={mobileOpen}
+            onOpenChange={setMobileOpen}
+            id={mobileId}
+            title={t("nav.menu")}
+            closeLabel={t("nav.closeMenu")}
+            trigger={
+              <Button
+                type="button"
+                className="border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm xl:hidden"
+                aria-label={t("nav.menu")}
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+            }
           >
-            {mobileOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </Button>
-        </div>
-      </div>
-
-      {mobileOpen && (
-        <div className="border-t border-base-300 bg-base-100 px-4 pb-5 pt-3 lg:hidden">
           <div className="flex items-center justify-between pb-2">
             <div className="flex items-center gap-0.5 rounded-pill border border-base-300 p-0.5">
               {languageButton("en", "EN")}
               {languageButton("de", "DE")}
             </div>
             {user && (
-              <span className="text-xs text-base-content/70">{user.email}</span>
+              <span className="min-w-0 break-all text-right text-xs text-base-content/70">{user.email}</span>
             )}
           </div>
-          <nav className="grid gap-1">
+          <nav aria-label={t("nav.primary")} className="grid gap-1">
             {publicLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setMobileOpen(false)}
-                className="rounded-pill px-3 py-2.5 text-sm font-medium text-base-content/75 hover:bg-base-200"
-              >
-                {t(link.key)}
-              </Link>
+              <div key={link.to}>
+                {link.to === "/products" ? (
+                  <details className="group">
+                    <summary className="flex cursor-pointer list-none items-center justify-between rounded-pill px-3 py-2.5 text-sm font-medium text-base-content/75 hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-ring [&::-webkit-details-marker]:hidden">
+                      {t(link.key)}
+                      <ChevronDown aria-hidden="true" className="h-4 w-4 transition-transform group-open:rotate-180 motion-reduce:transition-none" />
+                    </summary>
+                    <ul className="ml-4 grid gap-1 border-l border-hairline pl-2">
+                      <li>
+                        <Link to="/products" search={{ category: undefined }} onClick={() => setMobileOpen(false)} className="block rounded-pill px-3 py-2.5 text-sm text-ink-soft hover:bg-accent-sky focus-visible:outline-2 focus-visible:outline-ring">
+                          {t("nav.allProducts")}
+                        </Link>
+                      </li>
+                      {(categoriesQuery.data?.categories ?? []).map(entry => (
+                        <li key={entry.id}>
+                          <Link to="/products" search={{ category: entry.slug }} onClick={() => setMobileOpen(false)} className="block rounded-pill px-3 py-2.5 text-sm text-ink-soft hover:bg-accent-sky focus-visible:outline-2 focus-visible:outline-ring">
+                            {pick(entry.nameEn, entry.nameDe)}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                ) : (
+                  <Link
+                    to={link.to}
+                    onClick={() => setMobileOpen(false)}
+                    className="block rounded-pill px-3 py-2.5 text-sm font-medium text-base-content/75 hover:bg-base-200"
+                  >
+                    {t(link.key)}
+                  </Link>
+                )}
+              </div>
             ))}
             <Link
               to="/quote"
@@ -308,8 +325,10 @@ export function Header() {
               </Link>
             )}
           </nav>
+          </HeaderDrawer>
         </div>
-      )}
+      </div>
+
     </header>
   );
 }

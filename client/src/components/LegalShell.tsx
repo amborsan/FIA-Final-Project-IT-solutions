@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { AlertTriangle, FileText, ShieldCheck } from "lucide-react";
+import { AlertTriangle, FileText } from "lucide-react";
 import { useI18n } from "../i18n/I18nContext";
 import type { TranslationKey } from "../i18n/translations";
 
@@ -28,11 +28,7 @@ export function LegalShell({
     <div className="bg-base-100">
       <section className="border-b border-base-300 bg-base-200/40">
         <div className="container-page py-10 sm:py-14">
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
-            <ShieldCheck className="h-4 w-4" />{" "}
-            {language === "de" ? "Rechtliches" : "Legal"}
-          </p>
-          <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
+          <h1 className="text-3xl font-black tracking-tight sm:text-4xl">
             {t(titleKey)}
           </h1>
           <p className="mt-3 max-w-3xl text-sm leading-relaxed text-base-content/65">

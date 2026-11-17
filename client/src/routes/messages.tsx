@@ -250,7 +250,7 @@ function MessagesContent() {
                 { value: "OPEN", label: t("status.OPEN") },
                 { value: "CLOSED", label: t("status.CLOSED") },
               ]}
-              allLabel={t("common.all")}
+              allLabel={t("list.allStatuses")}
               ariaLabel={t("common.status")}
             />
             <ArchiveTabs

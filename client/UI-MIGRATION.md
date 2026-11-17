@@ -135,3 +135,416 @@ layout effect. The corrected behavior is covered by the API-free matrix; the
 live suite still needs a fresh run after the login limiter expires. The existing
 customer demo-card credential issue is unchanged. No security control was
 disabled, and no backend changes or business mutations were made.
+
+## Demo account correction — 2026-11-16
+
+The running local API authenticates the README-listed `@orbit-it.de` demo
+accounts, while the login cards were filling `@fia-it.de`. The displayed Admin
+credentials returned 401; Admin, Technician, Customer and Business customer
+credentials with `@orbit-it.de` each returned 200 with the expected role and a
+valid `/auth/me` session. At the user's request, all four login cards now fill
+those verified local addresses. Passwords, CSRF, cookies, validation and role
+redirects are unchanged. This corrects the current local demo setup; a fresh
+database seeded with another domain requires the frontend demo values to match.
+
+`e2e/demo-login.spec.ts` exercises each card's autofill, real API login response,
+role redirect and session. The existing customer login regression now targets
+the corrected card. No database, seed or authentication implementation changed.
+
+## Header navigation menu — 2026-11-16
+
+The public navbar now uses the official shadcn/Radix Navigation Menu primitive,
+added through `npx shadcn@latest add navigation-menu`. `HeaderNavigation.tsx`
+adapts the requested shadcn.io panel pattern to the existing Radix stack.
+Services opens a two-column panel of real service destinations, with links to
+all services and the quote form. The query shares the existing Footer services
+cache; loading, empty or unavailable data still leaves both fallback links.
+
+Existing top-level destinations, logo, account menu, cart, language/theme controls
+and role redirects are retained. At widths below 1280 px the existing mobile
+navigation is used, with Escape dismissal and a linked trigger/panel. Panel
+dimensions and colors use project tokens; reduced motion removes the optional
+fade. Active pages use `aria-current` with a visible underline, and highlighted
+service descriptions use the stronger text token for contrast.
+
+Eleven unit tests, the six targeted header/login regression browser tests,
+lint, production build and boundary checks passed. The final header-only EN/DE
+confirmation also passed. Browser checks cover 1440/1280 px panels, 1113/768/360 px
+menus, light/dark themes, keyboard focus/Escape, actual service navigation and
+the existing customer login/account-menu behavior. No backend changes or new
+runtime dependency were required.
+
+## Shop category navigation — 2026-11-16
+
+Shop now opens a category panel using the same shadcn navigation primitive,
+panel classes, focus states, light/dark mappings and existing design tokens as
+Services. Categories come from the documented `GET /categories` endpoint and
+share the existing shop query cache. The all-products link remains available
+when categories are loading, empty or unavailable. Mobile navigation also lists
+the category links and closes after selection.
+
+Category destinations use `/products?category=<slug>`. The products route now
+validates that search parameter and uses it for the existing client-side filter;
+category buttons update the URL and expose `aria-pressed`. Reload and browser
+back/forward preserve the filter, while View all products explicitly clears it.
+Exact route/search matching prevents All products from also being marked current
+while a category is selected. Active-link styling uses `aria-current`.
+
+Twelve unit tests and four targeted EN/DE browser tests passed, along with lint,
+production build and the frontend boundary check. Browser checks exercise real
+categories/products, matching visible cards, reload/history, all-products reset,
+mobile category selection, themes and existing Services navigation. No design
+token values, dependencies, backend files or API contracts changed.
+
+## Restore navbar navigation treatment — 2026-11-16
+
+Restored the preceding shadcn/Radix navbar treatment with static active-link
+styling and sky hover/focus backgrounds. Removed the Be UI sliding pill,
+masked duplicate labels and their animation component. Services and Shop retain
+their dropdown contents, route links, category filtering and keyboard behavior.
+
+Navbar text now uses the user-requested --font-weight-nav: 600 token, scoped
+to the header. Other typography, the existing logo, color tokens and API
+contracts remain unchanged. DESIGN.MD records the navbar weight exception.
+
+## Hero topic hover cards — 2026-11-16
+
+The three hero topic buttons now show their existing EN/DE descriptions in
+shadcn Hover Cards, replacing the shared inline description. The official CLI
+created `components/ui/hover-card.tsx`; it uses the project's existing Radix
+implementation and cn helper. No new runtime dependency is required.
+Reference: https://ui.shadcn.com/docs/components/base/hover-card
+
+Only one card opens at a time. Hover and keyboard focus open previews; button
+activation also supports touch. Users can move into the card to read it, dismiss
+with Escape or tap outside. Descriptions are associated with their triggers via
+aria-describedby while visible. Width, corners, colors and touch target height
+reuse existing design tokens. Reduced-motion disables card animations.
+
+Verification: 12 unit tests, lint, production build and frontend boundary check
+passed. Targeted EN/DE browser coverage checks hover, moving into the card,
+focus/Escape, mobile touch, outside dismissal and viewport bounds.
+
+## Circle Blur theme switch — 2026-11-16
+
+The header theme button now uses the Circle Blur page reveal from
+https://beui.dev/components/motion/theme-toggle. The existing ThemeContext,
+EN/DE accessible labels, localStorage preference and light/dark token palettes
+remain in use; no next-themes provider or extra dependency was added.
+
+The reveal expands from the bottom center with Be UI's 700 ms timing and blur.
+Those values live in styles/tokens.css; scoped view-transition rules live in
+components/beui/ThemeToggle.css. React updates are flushed inside the snapshot
+callback so the new snapshot contains the new theme. Repeated pointer presses
+wait for the current reveal; skipped transitions clean up their marker.
+Keyboard activation, reduced motion and unsupported browsers switch instantly.
+The animation is skipped on unmount, and rejected transition promises are handled.
+
+Checks: 12 unit tests, two targeted EN/DE browser tests, lint, production build
+and the frontend boundary check passed. Browser checks cover the real view
+transition animation, saved preference after reload, keyboard focus, mobile,
+reduced motion and the unsupported-browser fallback.
+
+## Restore plain hero background — 2026-11-16
+
+Removed the experimental aurora gradient at the user’s request. The homepage
+hero again uses the existing canvas token in both themes. Removed the gradient
+pseudo-element, its scoped tokens and its design-spec extension. Particle hands
+and all existing hero content and interactions remain unchanged.
+
+## Hero particle contrast — 2026-11-16
+
+The hero retains its plain canvas background. Particle glyph weight is now 700
+and minimum opacity is 0.82; the dissolve phase reduces opacity by at most 25%
+instead of 55%, so the hand silhouettes remain easier to follow. These values
+live in styles/tokens.css and are read on resize/theme updates, outside the
+animation loop. Existing glyph positions, point counts, motion speed, pointer
+response and reduced-motion handling are preserved.
+
+Lint, production build and the frontend boundary check passed. Temporary browser
+review and screenshots checked both themes at 1440 and 360 px, the plain hero
+background, visible quote CTA and lack of horizontal overflow.
+
+## Homepage data states and 320px header — 2026-11-16
+
+Services, featured products and articles now independently show pending, error,
+successful-empty and populated states. HomeSectionState reuses PageLoader,
+ErrorState and EmptyState; query ownership stays in the homepage. Refetch calls
+only the failed section's existing query. Cached cards remain visible after a
+background update error, and retry feedback disables duplicate retry presses.
+All nine section-specific messages are provided in EN and DE.
+
+PageLoader gained an optional compact presentation; ErrorState gained an optional
+retrying flag. Both retain their existing defaults for other pages. The public
+header now uses smaller existing gap utilities below sm, retaining its padding,
+logo, button hit areas, desktop spacing, controls and dropdown behavior. No
+clipping rule was added to hide overflow. No design token, API contract, backend
+file, dependency, authentication or security behavior changed.
+
+Verification: 16 unit tests and eight targeted Chrome E2E tests passed, along
+with lint, production build, diff whitespace and frontend boundary checks.
+Unit coverage distinguishes loading/empty/error, retries and cached-content
+refresh failures. Browser checks hold then abort real requests, retry against
+the real API, verify independent recovery, and exercise EN/DE 320px navigation
+(including the inner padding boundary), keyboard Escape, Services dropdowns,
+Shop categories and history. Browser interception introduces no data fixtures or
+production mock. Light desktop error and 320px German presentation were inspected.
+
+## Hero service explanation and mobile flow — 2026-11-16
+
+The homepage now renders home.heroText below its headline. EN reads "Networks,
+IT support, security and websites for small businesses."; DE reads "Netzwerke,
+IT-Support, Sicherheit und Websites für kleine Unternehmen." Both use the
+existing body type and ink-soft token.
+
+Below the existing lg breakpoint, the particle canvas occupies its own bounded
+artwork area after the heading/actions. The desktop heading offset and large
+minimum height no longer reserve empty space on phones. Mobile topic/statistic
+gaps and bottom padding use smaller existing spacing tokens. Desktop restores
+the overlaid particle composition; its heading offset accounts for the added
+service sentence. No design token value or particle motion/sampling parameter
+changed; the hero background remains canvas with no gradient.
+
+A reduced-motion theme-switch defect found during screenshots was also fixed:
+the particle renderer reads the existing root --ink token directly, since the
+canvas's inherited computed color can remain stale at the mutation callback.
+This preserves visible hand contours after switching themes without another
+animation loop or new color token.
+
+Verification: 16 unit tests, 10 targeted Chrome E2E tests, lint, production build,
+whitespace and frontend boundary checks passed. Hero tests cover EN/DE at 320,
+360, 390, 768 and 1440 px, visible service copy and quote CTA, mobile non-overlap
+and bounded gaps, no horizontal overflow, pure background and visible dark-mode
+canvas pixels under reduced motion. Existing hover cards, theme behavior and
+homepage data-state/retry tests also passed. Desktop/mobile screenshots reviewed.
+
+## Homepage service and process hierarchy — 2026-11-16
+
+The homepage service grid now uses a two-column list at lg and a single column
+below it. Inline icons and stronger service headings lead each item; the full
+API description, localized starting price and Details destination remain visible.
+The list uses hairline separators instead of repeated filled cards. No service
+is removed, reordered or truncated. The shared ServiceCard used elsewhere was
+left unchanged. Existing homepage loading/error/empty/retry behavior remains.
+
+All eight original process titles and descriptions now sit in three named
+phases: Your requirements (steps 1–2), Quote and scheduling (3–5), and Delivery
+and support (6–8). Desktop displays the three phases side by side; smaller
+screens stack them in the same reading order. Ordered lists retain numbering,
+phase headings add navigation hierarchy, and step descriptions use the existing
+body-sm size. All original headings, descriptions, service links and content
+remain; EN/DE translations were added only for the three new phase headings.
+
+Changes stay within the homepage route because this presentation is specific
+to its content. No token values, dependencies, API contracts or backend files
+changed. The hero and other homepage sections retain their existing behavior.
+
+Verification: 16 unit tests, six targeted browser tests, lint, production build,
+whitespace and frontend boundary checks passed. EN/DE browser coverage compares
+all service names/descriptions/prices with the real GET /services response,
+checks all eight step titles/texts in order and phase starts 1/3/6, tests keyboard
+focus/activation and existing routes, and checks 320/768/1440 px, dark mobile,
+no horizontal overflow, and independent data-state recovery. Desktop/mobile
+screenshots reviewed. No production mock or backend write was introduced.
+
+## German resize regression timing — 2026-11-16
+
+The reported 345px width was reproduced with fonts already loaded. Diagnostic
+sampling found innerWidth=320 and the small-screen media query false, while the
+same pre-frame snapshot still used desktop header padding (32px), header gap
+(16px), action gap (6px) and section heading size (36px). This temporarily pushed
+the header group and German section heading past the layout width. The first
+rendering frame and the next two all measured scrollWidth=320 with the correct
+mobile padding (16px) and header gap (4px).
+
+The regression test was reading immediately after setViewportSize, before
+responsive styles were recalculated. It now measures the first rendering frame
+and two following frames with requestAnimationFrame. Each frame still asserts
+innerWidth matches the requested viewport and scrollWidth does not exceed it;
+the limit was not relaxed. No sleeps, retry polling, overflow clipping, hidden
+content, application CSS changes or token changes were introduced.
+
+The resize sequence now crosses wide-to-320px three times per run
+(1440→320, 1280→320, 768→320), retaining the service content, prices, workflow,
+keyboard navigation and screenshot checks. Overflow diagnostics remain in the
+assertion message to identify actual future failures.
+
+Verification: 16 unit tests, all 12 targeted homepage browser tests, lint,
+production build, frontend boundary and whitespace checks passed. The German
+regression was additionally repeated five times to check stability. Existing
+application behavior and the design-token file are unchanged.
+
+### Cookie notice: compact disclosure without covering page content
+
+Moved the existing CookieConsent component directly below Header in RootLayout,
+inside normal document flow. It no longer overlays the hero, navigation or page
+controls. The initial notice keeps the existing privacy explanation and policy
+link. Two buttons that saved identical consent were replaced with one localized
+acknowledgement; a separate disclosure reveals the existing essential/analytics
+explanations and localized read-only statuses. Both controls stay on one row at
+320px in EN and DE, with existing control-height tokens.
+
+The storage key and payload are unchanged: essential=true, analytics=false and
+an ISO date. Previously stored acknowledgements remain valid. No optional
+tracking, session cookies, CSRF behavior or API integration was changed. Footer
+settings still reopen the notice with details expanded; focus moves to its
+heading and returns to the footer trigger on acknowledgement. Print layouts
+continue to omit the notice. Shared design tokens are unchanged.
+
+Regression coverage: unit tests exercise disclosure, one acknowledgement,
+persistence and footer focus return. Browser tests check EN/DE at 1440/360/320px,
+no horizontal overflow or content overlap, light/dark rendering, keyboard
+activation, reload persistence and the existing footer reopening flow.
+
+Verification: 18 unit tests, lint, production build, frontend boundary and
+whitespace checks passed. Both Cookie E2E cases passed on the final layout,
+including EN/DE 320px, light/dark, persistence and footer focus return. The full
+browser suite finished with 42 passed and 2 failed in the existing English
+technician/customer sidebar focus checks (entering the dialog / restoring focus
+on Escape). These tests pre-acknowledge the cookie notice. On their isolated
+rerun both stopped at login navigation instead, while both cookie cases passed.
+No sidebar, authentication or backend changes were made for this task; the
+full suite is not reported as passing.
+The isolated sidebar rerun displayed "Too many requests. Please wait a moment."
+on the login page. Existing rate limiting was preserved.
+
+### Sidebar focus regression: wait for the destination shell
+
+The Technician/Customer English failures came from an E2E navigation race.
+TanStack Router updates the URL before a lazy destination page finishes
+mounting. The test immediately resized and opened the outgoing page's sidebar.
+When the destination mounted, it removed that dialog and its focused control.
+The focus log showed focus leaving the old dialog without its normal native
+close event. Warm module loads and reduced-motion tests often avoided the race.
+
+The regression now waits for the destination's exact localized h1 before
+resizing or opening its sidebar. The original focus-enter, modal containment,
+Escape dismissal, trigger-focus-return, route-link and overflow assertions
+remain. No timeouts were increased and no sleeps were added. To reproduce cold
+navigation reliably, the two English cases hold the real Vite lazy page module
+until the URL changes, confirm the destination has not mounted, and then deliver
+the unmodified module. API responses are never mocked; the gate always releases
+in finally.
+
+The API-free sidebar harness now uses StrictMode like the real application and
+remounts the shell when its route changes. Coverage adds desktop page navigation
+before resizing and direct Escape dismissal without first manually moving
+focus. Existing repeated open/close, Tab/inertness, backdrop and link-navigation
+checks remain in all three roles and both languages.
+
+Only frontend tests and this log changed for this fix. The runtime sidebar,
+design tokens, authentication, CSRF, role checks and rate limits were preserved.
+The general API and login limiter windows were allowed to expire normally before
+authenticated verification; neither limiter was bypassed or reconfigured.
+
+Verification: all 12 sidebar browser tests passed (three roles, EN/DE, real login
+and API-free harness), including both deliberately delayed English destination
+modules. All 18 unit tests, lint, production build, frontend boundary and
+whitespace checks passed. The design-token SHA256 remains
+998FC47B1964D56EA9061822C9FA20834BDD90BA7D329A0573620744E12FB0D3.
+
+### Apply the Hallmark label audit: public headers, decorative ordinals, quote placeholder
+
+Removed standalone eyebrow text from Services, Shop, About, Contact, Quote and
+Insights. Contact's h1 now reads "Contact our team" / "Kontaktieren Sie unser
+Team", retaining an explicit page purpose. Quote's h1 now reads "Request a free
+quote" / "Kostenloses Angebot anfordern", merging the free-quote information
+rather than discarding it. Removed the common Legal/Rechtliches eyebrow from
+LegalShell, retaining each document title, update date, body, notice and document
+navigation. Removed only the now-orphaned heading margins; existing spacing and
+typography tokens were reused without modification.
+
+Removed the decorative 01–04 beneath the four homepage benefit cards and the
+unused map index. The real eight-step service workflow still has all its step
+numbers and full text. Quote's placeholder is now "Choose a service" / "Leistung
+wählen"; the persistent Service (optional) label, empty option and optional
+validation behavior are unchanged. Existing service preselection still works.
+
+Kept Account's purpose label, functional dates/categories/statuses, footer and
+navigation labels, form labels and legal/privacy text. No staff status controls,
+API behavior, native validation, shared label CSS or tokens were changed.
+Existing eyebrow translation keys were retained, including the service-detail
+back-navigation use. No new components or dependencies were introduced.
+
+Verification: 18 unit tests, 2 EN/DE label-cleanup browser cases and the 2 existing
+homepage hierarchy cases passed. Coverage includes all 11 affected public/legal
+headers at 320px, legal navigation/update text, the four benefit cards, eight
+workflow items, real-API quote service preselection, empty optional selection
+and native form validity. No forms were submitted. Lint, production build,
+frontend boundary and whitespace checks passed. Desktop and mobile screenshots
+were inspected. Design-token SHA256 remains
+998FC47B1964D56EA9061822C9FA20834BDD90BA7D329A0573620744E12FB0D3.
+
+### Consolidate editable status controls in staff lists
+
+Technician Assigned requests, Assigned tickets and Admin Orders now show one
+native status select per record instead of a repeated badge plus select. The
+selected option still displays the confirmed status, with the same status
+options and existing PATCH endpoints. Added a localized accessible name scoped
+to the record reference. Kept ticket priority badges, invoice status badges and
+invoice payment controls; order and invoice states remain separate.
+
+Shared StatusControl.tsx reuses the existing NativeSelect. Its useStatusUpdate
+hook keeps pending/success/error feedback at page level, above the list, so
+archiving or filtering a changed row does not remove the result message. Pending
+updates disable the status controls and a synchronous guard prevents duplicate
+submissions. It waits for the existing request and query invalidations before
+announcing success, and keeps the server-confirmed value on failure. Errors use
+the existing ApiError formatter and can be retried; there is no automatic retry
+or optimistic permission bypass. Admin invoice-payment error handling remains.
+
+The shared module lives in components/ because it includes translated feedback
+and UI state; components/ui/ remains free of business operations and translation
+lookups. Endpoint calls and query invalidation stay in each owning route. No
+new UI primitives, libraries, server changes, auth/CSRF edits or token changes.
+
+Verification: 20 unit tests passed, including deferred success after row removal,
+pending/duplicate prevention, unchanged confirmed value after an ApiError 403,
+and explicit retry clearing the error. Four new read-only EN/DE status-control
+browser cases and four existing Admin/Technician design cases passed across the
+regression run and Admin confirmation. The browser cases verify real API values,
+one named editable control per record, preserved priority/invoice badges and
+1440/320px layouts, with no record-update requests after login. They do not
+submit real status or invoice changes; mutation feedback is covered by unit
+callbacks, not invented API responses.
+
+The first 320px Admin German check exposed a 2px overflow in the existing invoice
+payment group. Allowing that group to wrap and keeping the amount unbroken fixed
+it; both Admin language cases then passed. Payment logic is unchanged. Desktop
+and mobile screenshots were inspected. Final lint, production build, frontend
+boundary and whitespace checks passed. Token SHA256 is unchanged:
+998FC47B1964D56EA9061822C9FA20834BDD90BA7D329A0573620744E12FB0D3.
+
+### Distinguish status and archive list filters
+
+Renamed the empty status filter to "All statuses" / "Alle Statuswerte" and the
+archive tab to "All records" / "Alle Einträge". Updated 21 filter call sites
+across 18 Admin, Customer Portal, Technician and shared message-list routes.
+Priority, role and category filters now say "All priorities", "All roles" and
+"All categories" (with German equivalents), rather than reintroducing ambiguous
+"All" options beside the status/archive controls. Generic common.all remains
+unchanged, including the public shop filter.
+
+Only display labels changed: empty filter values remain "", archive mode remains
+"all", and the existing options, matching, archive logic, pagination resets,
+query keys and API calls are untouched. Active and Archived labels and keyboard
+semantics remain. The longer German archive label needed compact mobile spacing:
+archive tab triggers use existing spacing-2 below sm and spacing-4 at sm and up.
+A selector scoped to list-archive-tabs overrides the dashboard themes' generic
+tab padding without changing unrelated tabs or any design token.
+
+A temporary Vite preview rendered the actual shared components with each of the
+three dashboard CSS scopes in EN/DE at 1440 and 320px. It verified separate
+status/archive values, keyboard End selection, resetting status to an empty
+value, all three archive tabs on one row and no horizontal overflow. This
+component-level browser check made no API calls and used no auth/API mocks.
+The temporary preview was removed; screenshots and results remain outside the
+repository in hallmark-label-audit-2026-11-16/filter-names/.
+
+Verification: all 20 unit tests and 8 existing related browser regressions
+(Admin, Technician, customer session, native forms, navigation and theme) passed.
+The API-free shared-control checks passed for all 3 dashboard scopes, both
+languages and both viewport widths. Final lint, production build, frontend
+boundary and whitespace checks passed. Design-token SHA256 remains
+998FC47B1964D56EA9061822C9FA20834BDD90BA7D329A0573620744E12FB0D3.
+No new components, dependencies, production test data or backend changes.

@@ -129,7 +129,7 @@ test("demo customer session opens portal and account menu closes with Escape", a
   await page.goto("/login");
   await page
     .getByRole("button")
-    .filter({ hasText: "customer@fia-it.de" })
+    .filter({ hasText: "customer@orbit-it.de" })
     .click();
   await page
     .locator("form")

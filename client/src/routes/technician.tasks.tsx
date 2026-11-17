@@ -1,12 +1,10 @@
+import { StatusSelect, StatusUpdateFeedback, useStatusUpdate } from "../components/StatusControl";
 import { buttonVariants } from "@/components/ui/button";
-import { Alert } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
-import { NativeSelect } from "@/components/ui/native-select";
-import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { FileText, MapPin } from "lucide-react";
-import { api, errorMessage } from "../lib/api";
+import { api } from "../lib/api";
 import type { ServiceRequest } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { useTechnicianNav } from "../components/nav";
@@ -22,7 +20,6 @@ import {
   EmptyState,
   ErrorState,
   PageLoader,
-  StatusBadge,
 } from "../components/ui";
 import {
   filterByArchive,
@@ -53,7 +50,7 @@ function TechnicianTasksPage() {
   const nav = useTechnicianNav();
   const queryClient = useQueryClient();
   const controls = useListControls();
-  const [error, setError] = useState("");
+
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["requests"],
@@ -82,19 +79,11 @@ function TechnicianTasksPage() {
 
   const pageData = paginate(filtered, controls.page, controls.pageSize);
 
-  async function updateStatus(id: string, status: string) {
-    setError("");
-    try {
-      await api(`/requests/${id}/status`, {
-        method: "PATCH",
-        body: { status },
-      });
-      await queryClient.invalidateQueries({ queryKey: ["requests"] });
-      await queryClient.invalidateQueries({ queryKey: ["profile"] });
-    } catch (caught) {
-      setError(errorMessage(caught, t("common.error")));
-    }
-  }
+  const { update, pendingId, feedback } = useStatusUpdate(async (id, status) => {
+    await api(`/requests/${id}/status`, { method: "PATCH", body: { status } });
+    await queryClient.invalidateQueries({ queryKey: ["requests"] });
+    await queryClient.invalidateQueries({ queryKey: ["profile"] });
+  });
 
   return (
     <DashboardShell
@@ -102,15 +91,7 @@ function TechnicianTasksPage() {
       title={t("technician.assignedRequests")}
       subtitle={t("technician.welcomeText")}
     >
-      {error && (
-        <Alert
-          className={cn(
-            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mb-4 text-sm",
-          )}
-        >
-          {error}
-        </Alert>
-      )}
+      <StatusUpdateFeedback feedback={feedback} />
 
       <ListToolbar>
         <SearchField
@@ -125,7 +106,7 @@ function TechnicianTasksPage() {
             value,
             label: t(`status.${value}` as "status.NEW"),
           }))}
-          allLabel={t("common.all")}
+          allLabel={t("list.allStatuses")}
           ariaLabel={t("common.status")}
         />
         <ArchiveTabs value={controls.archive} onChange={controls.setArchive} />
@@ -152,7 +133,6 @@ function TechnicianTasksPage() {
                     <span className="tabular-nums text-xs text-ink-muted">
                       {request.reference}
                     </span>
-                    <StatusBadge status={request.status} />
                   </div>
                   <h2 className="mt-1 text-base font-medium">
                     {request.title}
@@ -165,19 +145,14 @@ function TechnicianTasksPage() {
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <NativeSelect
+                  <StatusSelect
                     value={request.status}
-                    onChange={(event) =>
-                      void updateStatus(request.id, event.target.value)
-                    }
-                    className={cn(" h-6 px-2 text-xs")}
-                  >
-                    {statuses.map((status) => (
-                      <option key={status} value={status}>
-                        {t(`status.${status}` as "status.NEW")}
-                      </option>
-                    ))}
-                  </NativeSelect>
+                    options={statuses}
+                    reference={request.reference}
+                    pending={pendingId === request.id}
+                    disabled={!!pendingId}
+                    onChange={status => void update(request.id, request.reference, status)}
+                  />
                   <Link
                     to="/technician/reports"
                     search={{ request: request.id }}

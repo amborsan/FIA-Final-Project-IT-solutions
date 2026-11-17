@@ -293,7 +293,7 @@ function AdminUsersPage() {
             { value: "TECHNICIAN", label: t("admin.roleTechnician") },
             { value: "ADMIN", label: t("admin.roleAdmin") },
           ]}
-          allLabel={t("common.all")}
+          allLabel={t("list.allRoles")}
           ariaLabel={t("admin.role")}
         />
       </ListToolbar>
