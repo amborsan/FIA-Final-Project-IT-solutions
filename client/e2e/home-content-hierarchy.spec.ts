@@ -18,18 +18,21 @@ for (const language of ["en", "de"] as const) {
     await page.goto("/");
     const serviceSection = page.getByRole("region", { name: t["home.servicesTitle"], exact: true });
     const process = page.getByRole("region", { name: t["home.processTitle"], exact: true });
-    await expect(serviceSection.getByRole("list")).toBeVisible();
+    await expect(serviceSection.locator(".service-accordion")).toBeVisible();
     await expect(serviceSection.locator('a[href^="/services/"]')).toHaveCount(services.length);
     for (const service of services) {
       const name = language === "en" ? service.nameEn : service.nameDe;
       const description = language === "en" ? service.descriptionEn : service.descriptionDe;
-      const link = serviceSection.getByRole("link", { name, exact: true });
+      const trigger = serviceSection.getByRole("button", { name, exact: true });
+      if (await trigger.getAttribute("aria-expanded") !== "true") await trigger.click();
+      const panel = serviceSection.getByRole("region", { name, exact: true });
+      const link = panel.getByRole("link");
       await expect(link).toHaveAttribute("href", `/services/${service.slug}`);
-      await expect(link.locator("p")).toHaveText(description);
-      await expect(link.locator("p")).toHaveCSS("-webkit-line-clamp", "none");
+      await expect(panel.locator("p")).toHaveText(description);
+      await expect(panel.locator("p")).toHaveCSS("-webkit-line-clamp", "none");
       if (service.startingPrice) {
         const price = new Intl.NumberFormat(language === "de" ? "de-DE" : "en-GB", { style: "currency", currency: "EUR" }).format(Number(service.startingPrice));
-        await expect(link).toContainText(`${t["services.startingAt"]} ${price}`);
+        await expect(panel).toContainText(`${t["services.startingAt"]} ${price}`);
       }
     }
     await expect(process.getByRole("heading", { level: 3 })).toHaveCount(3);
@@ -42,8 +45,10 @@ for (const language of ["en", "de"] as const) {
     }
     for (const width of [1440, 320, 1280, 320, 768, 320, 1440]) {
       await page.setViewportSize({ width, height: 1000 });
-      // The viewport can update before responsive styles have been recalculated.
-      // Check the first rendering frame and the next two, without polling or sleeps.
+      // Wait for both viewport units and the responsive component to finish resizing.
+      await expect.poll(() => page.locator(".hero-particle-hands").evaluate(el => Math.round(el.getBoundingClientRect().width))).toBe(width);
+      await expect(serviceSection.locator(".service-accordion-column")).toHaveCount(width >= 1024 ? 2 : 1);
+      // Then check three painted frames for real overflow, including transitions.
       const frames = await page.evaluate(async () => {
         const measurements = [];
         for (let frame = 0; frame < 3; frame++) {
@@ -77,10 +82,14 @@ for (const language of ["en", "de"] as const) {
     await expect(page.locator("html")).toHaveAttribute("data-theme", "orbit-dark");
     await process.screenshot({ path: `test-results/home-process-${language}-mobile-dark.png`, style: "header.site-header { visibility: hidden; }" });
     const first = services[0];
-    await serviceSection.getByRole("link", { name: language === "en" ? first.nameEn : first.nameDe, exact: true }).focus();
+    const firstName = language === "en" ? first.nameEn : first.nameDe;
+    const firstTrigger = serviceSection.getByRole("button", { name: firstName, exact: true });
+    if (await firstTrigger.getAttribute("aria-expanded") !== "true") await firstTrigger.click();
+    const firstLink = serviceSection.getByRole("region", { name: firstName, exact: true }).getByRole("link");
+    await firstLink.focus();
     await page.keyboard.press("Tab");
     await page.keyboard.press("Shift+Tab");
-    await expect(serviceSection.getByRole("link", { name: language === "en" ? first.nameEn : first.nameDe, exact: true })).toHaveCSS("outline-style", "solid");
+    await expect(firstLink).toHaveCSS("outline-style", "solid");
     await page.keyboard.press("Enter");
     await expect.poll(() => new URL(page.url()).pathname).toBe(`/services/${first.slug}`);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();

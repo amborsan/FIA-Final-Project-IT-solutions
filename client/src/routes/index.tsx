@@ -17,7 +17,7 @@ import type { ContentSummary, Product, Service } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import type { TranslationKey } from "../i18n/translations";
 import { SectionHeading } from "../components/ui";
-import { ServiceIcon } from "../components/ServiceIcon";
+import { HomeServicesAccordion } from "../components/HomeServicesAccordion";
 import { ParticleHands } from "../components/ParticleHands";
 import Grainient from "../components/Grainient";
 import { TextReveal } from "../components/beui/TextReveal";
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/")({
 import { ProductCard } from "../components/ProductCard";
 
 export default function HomePage() {
-  const { t, pick, formatDate, formatMoney } = useI18n();
+  const { t, pick, formatDate } = useI18n();
   const [heroTopic, setHeroTopic] = useState<number | null>(null);
   const [topicReplays, setTopicReplays] = useState([0, 0, 0]);
   const [headingReplay, setHeadingReplay] = useState(0);
@@ -218,35 +218,7 @@ export default function HomePage() {
               loadingLabel={t("home.servicesLoading")} errorLabel={t("home.servicesError")}
               emptyTitle={t("home.servicesEmpty")} onRetry={() => { void servicesQuery.refetch(); }}
             >
-              <ul role="list" className="grid gap-x-12 lg:grid-cols-2">
-                {services.map(service => (
-                  <li key={service.id} className="border-b border-hairline">
-                    <Link
-                      to="/services/$slug" params={{ slug: service.slug }}
-                      aria-labelledby={`home-service-title-${service.id}`}
-                      className="group flex h-full flex-col gap-3 rounded-md px-3 py-6 text-ink transition-colors hover:bg-accent-sky focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                    >
-                      <div className="flex items-start gap-3">
-                        <ServiceIcon name={service.icon} className="mt-0.5 size-5 shrink-0" />
-                        <h3 id={`home-service-title-${service.id}`} className="min-w-0 text-lg font-medium leading-snug">
-                          {pick(service.nameEn, service.nameDe)}
-                        </h3>
-                      </div>
-                      <p className="text-sm leading-relaxed text-ink-soft">
-                        {pick(service.descriptionEn, service.descriptionDe)}
-                      </p>
-                      <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-1 text-sm">
-                        <span className="text-ink-soft">
-                          {service.startingPrice ? `${t("services.startingAt")} ${formatMoney(service.startingPrice)}` : ""}
-                        </span>
-                        <span className="inline-flex items-center gap-2 font-medium group-hover:underline underline-offset-4">
-                          {t("common.details")}<ArrowRight aria-hidden="true" className="size-4" />
-                        </span>
-                      </div>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <HomeServicesAccordion services={services} />
             </HomeSectionState>
           </div>
         </div>
@@ -422,41 +394,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="container-page pb-16">
-        <div className="overflow-hidden rounded-box bg-brand-indigo px-6 py-12 text-panel-foreground sm:px-12">
-          <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
-            <div className="max-w-2xl">
-              <h2 className="text-3xl font-bold sm:text-4xl">
-                {t("home.ctaTitle")}
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-panel-foreground/80 sm:text-base">
-                {t("home.ctaText")}
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                to="/quote"
-                search={{ service: undefined }}
-                className={cn(
-                  buttonVariants(),
-                  " bg-primary text-primary-content border-panel-foreground hover:bg-primary-hover h-control px-6 text-sm",
-                )}
-              >
-                {t("home.ctaButton")} <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/contact"
-                className={cn(
-                  buttonVariants(),
-                  " border-current bg-transparent text-base-content hover:bg-base-content/10 h-control px-6 text-sm border-panel-foreground/30 text-panel-foreground hover:bg-panel-foreground hover:text-brand-indigo",
-                )}
-              >
-                {t("nav.contact")}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+
     </>
   );
 }

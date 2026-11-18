@@ -64,6 +64,11 @@
   --process-title-size: clamp(1.25rem, 2vw, 1.5rem);
   --process-rail-duration: 480ms;
   --process-node-duration: 360ms;
+  --process-carousel-height: 34rem;
+  --process-carousel-body-height: 18rem;
+  --service-accordion-gap: 0.75rem;
+  --footer-section-space: clamp(2rem, 4vw, 3rem);
+  --footer-cta-title-size: clamp(1.75rem, 3vw, 2.25rem);
   --hero-heading-offset: 16rem;
   --hero-title-size: clamp(2.25rem, 3.6vw, 3.5rem);
   --hero-title-tracking: -0.04em;

@@ -52,6 +52,12 @@ for (const language of ["en", "de"] as const) {
       await page.locator("html").evaluate(el => el.setAttribute("data-theme", "orbit-dark"));
       await next.click();
       await expect(active).toHaveText("3");
+      await expect.poll(() => active.evaluate(el => getComputedStyle(el.parentElement!).opacity)).toBe("1");
+      const colors = await active.evaluate(el => ({
+        text: getComputedStyle(el).color,
+        background: getComputedStyle(el.querySelector('span[aria-hidden="true"]')!).backgroundColor,
+      }));
+      expect(colors.text).not.toBe(colors.background);
       await page.screenshot({ path: `test-results/pagination-${language}-${scope}-mobile-dark.png` });
     });
   }

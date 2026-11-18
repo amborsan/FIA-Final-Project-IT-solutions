@@ -1,6 +1,6 @@
 // Adapted from Be UI Animated Pagination; uses the project's controlled list state and i18n.
 import { useId, useLayoutEffect, useRef, useSyncExternalStore, type ComponentPropsWithoutRef } from "react";
-import { AnimatePresence, LayoutGroup, motion, useIsPresent, useReducedMotion } from "motion/react";
+import { AnimatePresence, LayoutGroup, motion, useIsPresent } from "motion/react";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useI18n } from "../../i18n/I18nContext";
 import { cn } from "../../lib/utils";
@@ -14,6 +14,13 @@ function subscribeWidth(notify: () => void) {
   return () => query.removeEventListener("change", notify);
 }
 const isWide = () => window.matchMedia(desktopQuery).matches;
+const reducedQuery = "(prefers-reduced-motion: reduce)";
+function subscribeReducedMotion(notify: () => void) {
+  const query = window.matchMedia(reducedQuery);
+  query.addEventListener("change", notify);
+  return () => query.removeEventListener("change", notify);
+}
+const isReduced = () => window.matchMedia(reducedQuery).matches;
 const controlClass = "relative inline-flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full px-2 text-sm tabular-nums outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40";
 
 function PageButton(props: ComponentPropsWithoutRef<"button">) {
@@ -30,7 +37,7 @@ export function AnimatedPagination({ page, totalPages, onPageChange }: {
 }) {
   const { t } = useI18n();
   const id = useId();
-  const reduce = useReducedMotion();
+  const reduce = useSyncExternalStore(subscribeReducedMotion, isReduced, () => false);
   const wide = useSyncExternalStore(subscribeWidth, isWide, () => false);
   const nav = useRef<HTMLElement>(null);
   const keyboardTarget = useRef<number | null>(null);
