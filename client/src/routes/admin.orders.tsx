@@ -1,5 +1,6 @@
+import { ActionSwapText } from "../components/beui/ActionSwap";
+import { ActionFeedback } from "../components/ActionFeedback";
 import { StatusSelect, StatusUpdateFeedback, useStatusUpdate } from "../components/StatusControl";
-import { Alert } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -109,13 +110,7 @@ function AdminOrdersPage() {
       subtitle={t("orders.text")}
     >
       {error && (
-        <Alert
-          className={cn(
-            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mb-4 text-sm",
-          )}
-        >
-          {error}
-        </Alert>
+        <ActionFeedback message={error} status="error" />
       )}
 
       <StatusUpdateFeedback feedback={feedback} />
@@ -208,7 +203,7 @@ function AdminOrdersPage() {
                         {busy === order.invoice.id && (
                           <Loader2 className="h-3 w-3 animate-spin" />
                         )}
-                        {t("admin.markPaid")}
+                        <ActionSwapText value={String(busy)} animation="cascade">{t("admin.markPaid")}</ActionSwapText>
                       </Button>
                     )}
                   </span>

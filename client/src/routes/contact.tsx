@@ -1,4 +1,6 @@
-import { Alert } from "@/components/ui/alert";
+import { ActionButtonContent } from "../components/ActionButtonContent";
+import { useToast } from "../context/ToastContext";
+import { ActionFeedback } from "../components/ActionFeedback";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,7 +9,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
-  CheckCircle2,
   Clock,
   Loader2,
   Mail,
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/contact")({
 
 export default function ContactPage() {
   const { t, pick } = useI18n();
+  const { notify } = useToast();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -35,7 +37,7 @@ export default function ContactPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -43,7 +45,7 @@ export default function ContactPage() {
     setError("");
     try {
       await api("/contact", { method: "POST", body: form });
-      setSuccess(true);
+      notify({ status: "success", title: t("contact.success") });
       setForm({
         name: "",
         email: "",
@@ -75,12 +77,6 @@ export default function ContactPage() {
       <section className="container-page grid gap-8 py-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
         <div className="rounded-box border border-base-300 bg-base-100 p-6">
           <h2 className="text-lg font-bold">{t("contact.formTitle")}</h2>
-
-          {success && (
-            <Alert className={cn("flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-success text-success-content border-success mt-4 text-sm")}>
-              <CheckCircle2 className="h-5 w-5" /> {t("contact.success")}
-            </Alert>
-          )}
 
           <form onSubmit={submit} className="mt-5 grid gap-4 sm:grid-cols-2">
             <label className="block">
@@ -173,19 +169,13 @@ export default function ContactPage() {
             </label>
 
             {error && (
-              <Alert className={cn("flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error py-2 text-sm sm:col-span-2")}>
-                {error}
-              </Alert>
+              <ActionFeedback message={error} status="error" />
             )}
 
             <div className="sm:col-span-2">
               <Button disabled={loading} className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover")}>
-                {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Send className="h-4 w-4" />
-                )}
-                {t("common.send")}
+                <ActionButtonContent state={loading ? "processing" : "idle"} label={t("common.send")}
+                  icon={loading ? <Loader2 className="size-4 animate-spin motion-reduce:animate-none" /> : <Send className="size-4" />} />
               </Button>
             </div>
           </form>

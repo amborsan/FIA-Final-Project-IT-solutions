@@ -37,14 +37,14 @@ for (const language of ["en", "de"] as const) {
         await expect(trigger).toBeFocused();
       }
     }
-    // Follow an actual service destination from the running API, without mocks.
+    // Follow a service theme into its catalogue section.
     await trigger.focus();
     await page.keyboard.press("Enter");
-    const service = page.locator('[data-slot="navigation-menu-content"] a[href^="/services/"]').first();
+    const service = page.locator('[data-slot="navigation-menu-content"] a[href^="/services#"]').first();
     await expect(service).toBeVisible();
     const href = await service.getAttribute("href");
     await service.click();
-    await expect.poll(() => new URL(page.url()).pathname).toBe(href);
+    await expect.poll(() => new URL(page.url()).pathname + new URL(page.url()).hash).toBe(href);
     await expect(page.locator("h1")).toBeVisible();
     await expect(trigger).toHaveAttribute("aria-expanded", "false");
     for (const width of [1113, 768, 360]) {
@@ -52,7 +52,7 @@ for (const language of ["en", "de"] as const) {
       const menu = page.getByRole("button", { name: t["nav.menu"], exact: true });
       await menu.click();
       const nav = page.getByRole("navigation", { name: t["nav.primary"], exact: true });
-      await expect(nav.getByRole("link", { name: t["nav.services"], exact: true })).toBeVisible();
+      await expect(nav.locator("summary", { hasText: t["nav.services"] })).toBeVisible();
       await fits();
       if (width === 360) await page.screenshot({ path: `test-results/navbar-${language}-mobile.png` });
       await page.keyboard.press("Escape");

@@ -15,7 +15,7 @@ import { api } from "../lib/api";
 import type { Service } from "../lib/types";
 import { useI18n } from "../i18n/I18nContext";
 import { ServiceIcon } from "../components/ServiceIcon";
-import { ServiceCard } from "../components/ServiceCard";
+import { ServicePreviewCard } from "../components/ServicePreviewCard";
 import { ErrorState, PageLoader } from "../components/ui";
 
 export const Route = createFileRoute("/services/$slug")({
@@ -63,12 +63,12 @@ export default function ServiceDetailPage() {
           >
             <ArrowLeft className="h-4 w-4" /> {t("nav.services")}
           </Link>
-          <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-            <div>
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div className="min-w-0">
               <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-content shadow-lg">
                 <ServiceIcon name={service.icon} className="h-7 w-7" />
               </span>
-              <h1 className="mt-5 text-4xl font-black tracking-tight sm:text-5xl">
+              <h1 className="mt-5 text-3xl font-black tracking-tight [overflow-wrap:anywhere] sm:text-5xl">
                 {pick(service.nameEn, service.nameDe)}
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-relaxed text-base-content/65 sm:text-lg">
@@ -123,11 +123,11 @@ export default function ServiceDetailPage() {
       </section>
 
       {related.length > 0 && (
-        <section className="container-page py-12">
-          <h2 className="text-2xl font-bold">{t("services.related")}</h2>
+        <section className="container-page py-12" aria-labelledby="related-services-title">
+          <h2 id="related-services-title" className="text-2xl font-bold">{t("services.related")}</h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((entry) => (
-              <ServiceCard key={entry.id} service={entry} />
+              <ServicePreviewCard key={entry.id} service={entry} />
             ))}
           </div>
         </section>

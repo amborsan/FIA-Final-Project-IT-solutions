@@ -27,7 +27,7 @@ The landing page introduces the services, explains the request-to-delivery proce
 
 Development is ongoing. Payments are not processed online, email delivery is not integrated, and chat uses polling rather than WebSockets. Invoices record payment status inside the application.
 
-Demo login shortcuts still need to be aligned with the current seeded email domain. Enter the seeded account details manually when testing. Existing databases may retain earlier account emails because the seed does not overwrite existing users.
+Demo login shortcuts use the seeded `fia-it.de` accounts. Existing databases may retain earlier account emails because the seed does not overwrite existing users. If a shortcut returns 401, ask the backend developer to check the local demo accounts.
 
 ## My Role
 
@@ -235,7 +235,7 @@ Backend variables belong in `server/.env`. The optional frontend override belong
 | [Backend-to-frontend handoffs](docs/handoffs/backend-to-frontend.md) | Contract changes announced by the backend |
 | [Demo script](docs/demo-script.md) | Presentation walkthrough |
 
-Some supporting documents still contain earlier branding. The current interface uses **IT Solutions.**, and newly seeded accounts use **fia-it.de**.
+The interface and supporting documentation use **IT Solutions.**, and demo login shortcuts use **fia-it.de**. Internal cookie, storage, and theme identifiers keep their existing names for compatibility.
 
 ## Author
 

@@ -1,21 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
-import { api } from "../lib/api";
-import type { Service } from "../lib/types";
+import { serviceGroups } from "../lib/serviceGroups";
 import { useI18n } from "../i18n/I18nContext";
 import { BrandLogo } from "./BrandLogo";
 import { buttonVariants } from "./ui/button";
 import { cn } from "../lib/utils";
 
 export function Footer() {
-  const { t, pick } = useI18n();
-  const { data } = useQuery({
-    queryKey: ["services", "footer"],
-    queryFn: () => api<{ services: Service[] }>("/services"),
-    staleTime: 10 * 60 * 1000,
-  });
-  const services = (data?.services ?? []).slice(0, 6);
+  const { t } = useI18n();
   const companyLinks = [
     ["/about", "nav.about"], ["/services", "nav.services"], ["/products", "nav.products"],
     ["/blog", "nav.blog"], ["/contact", "nav.contact"],
@@ -37,7 +29,7 @@ export function Footer() {
           <div className="flex flex-wrap items-center gap-5">
             <Link to="/quote" search={{ service: undefined }} className={cn(buttonVariants(), "group")}>
               {t("home.ctaQuote")}
-              <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transform-none" />
+              <ArrowRight aria-hidden="true" className="size-4" />
             </Link>
             <Link to="/contact" className="footer-link text-sm">{t("nav.contact")}</Link>
           </div>
@@ -64,10 +56,12 @@ export function Footer() {
           <nav aria-label={t("footer.services")}>
             <h2 className="text-sm font-medium text-ink">{t("footer.services")}</h2>
             <ul className="mt-5 grid gap-3 text-sm text-ink-muted">
-              {services.map(service => <li key={service.id}>
-                <Link to="/services/$slug" params={{ slug: service.slug }} className="footer-link">{pick(service.nameEn, service.nameDe)}</Link>
+              {serviceGroups.map(group => <li key={group.id}>
+                <Link to="/services" hash={group.id} className="footer-link flex min-h-11 items-start gap-2 py-2">
+                  <span className="min-w-0">{t(group.titleKey)}</span>
+                  <ArrowRight aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+                </Link>
               </li>)}
-              {services.length === 0 && <li><Link to="/services" className="footer-link">{t("nav.services")}</Link></li>}
             </ul>
           </nav>
         </div>

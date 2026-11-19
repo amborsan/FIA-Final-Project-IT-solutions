@@ -13,7 +13,7 @@ async function signIn(page: Page) {
   await page.goto("/login");
   await page
     .getByLabel("Email address", { exact: true })
-    .fill(process.env.E2E_TECH_EMAIL ?? "tech@orbit-it.de");
+    .fill(process.env.E2E_TECH_EMAIL ?? "tech@fia-it.de");
   await page
     .getByLabel("Password", { exact: true })
     .fill(process.env.E2E_TECH_PASSWORD ?? "Tech12345!");

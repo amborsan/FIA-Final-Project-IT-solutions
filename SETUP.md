@@ -152,19 +152,7 @@ this explicitly after installing or migrating.
 npm run db:seed
 ```
 
-Expected output:
-
-```text
-Running seed command `tsx prisma/seed.ts` ...
-Seeding Orbit IT Solutions demo data...
-Seed complete.
-Admin:    admin@fia-it.de / Admin12345!
-Tech:     tech@fia-it.de / Tech12345!
-Customer: customer@fia-it.de / Customer12345!
-Business: business@fia-it.de / Customer12345!
-
-🌱  The seed command has been executed.
-```
+The seed prints progress and development-only login credentials. Newly created demo accounts use fia-it.de; existing demo users are not overwritten.
 
 ### What the seed creates
 
@@ -212,9 +200,7 @@ The API health check should return JSON:
 curl http://localhost:3000/api/health
 ```
 
-```json
-{ "status": "ok", "service": "Orbit IT Solutions API" }
-```
+Check that the response contains `"status": "ok"`. The backend may still return a legacy service label; it is not the current display brand.
 
 ---
 
@@ -369,7 +355,7 @@ cd client \
 | `P1001: can't reach database server` | PostgreSQL is not running or wrong host/port | Start PostgreSQL; check host and port |
 | `P2021: table does not exist` | Migrations were not applied | `npm run db:deploy` |
 | `Cannot find module .../generated/prisma` | Prisma client missing | `npm run db:generate` |
-| Seed runs but old users remain | You used the old `orbit_platform` database; fixed-ID upserts do not change emails | Point `.env` to the new DB (e.g. `fia`) and seed the empty DB |
+| Seed runs but old users remain | You used a previously seeded database; fixed-ID upserts do not change emails | Point `.env` to the new DB (e.g. `fia`) and seed the empty DB |
 | Seed runs but the frontend still shows old data | Backend is using a different database | Check `server/.env` and restart `npm run dev` |
 | `EADDRINUSE :3000` | Port 3000 is already used | Stop the old backend or change `PORT` |
 | Frontend requests fail | Backend is not running | Start `server` before `client` |

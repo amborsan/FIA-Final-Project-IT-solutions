@@ -1,3 +1,5 @@
+import { useToast } from "../context/ToastContext";
+import { ActionButtonContent } from "../components/ActionButtonContent";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -28,6 +30,7 @@ export const Route = createFileRoute("/products/$slug")({
 export default function ProductDetailPage() {
   const { slug } = useParams({ from: "/products/$slug" });
   const { t, pick, formatMoney } = useI18n();
+  const { notify } = useToast();
   const { add } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -64,6 +67,7 @@ export default function ProductDetailPage() {
 
   function handleAdd() {
     add(product, quantity);
+    notify({ id: `cart-${product.id}`, status: "success", title: t("products.added"), description: pick(product.nameEn, product.nameDe) });
     setAdded(true);
     window.setTimeout(() => setAdded(false), 2000);
   }
@@ -154,8 +158,9 @@ export default function ProductDetailPage() {
                   disabled={product.stock <= 0}
                   className={cn(` flex-1 ${added ? "bg-success text-success-content border-success hover:bg-success/90" : "bg-primary text-primary-content border-primary hover:bg-primary-hover"}`)}
                 >
-                  {added ? <Check className="h-4 w-4" /> : <ShoppingCart className="h-4 w-4" />}
-                  {added ? t("products.added") : t("products.addToCart")}
+                  <ActionButtonContent state={added ? "added" : "add"} label={added ? t("products.addedShort") : t("products.addToCart")}
+                    reserveLabel={t("products.addToCart")}
+                    icon={added ? <Check className="size-4" /> : <ShoppingCart className="size-4" />} />
                 </Button>
               </div>
             </div>
@@ -178,11 +183,11 @@ export default function ProductDetailPage() {
             <div className="mt-5 rounded-box bg-secondary/5 p-4">
               <p className="text-sm font-semibold">{t("products.advice")}</p>
               <p className="mt-1 text-xs text-base-content/70">{t("products.adviceText")}</p>
-              <div className="mt-3 flex gap-2">
-                <Link to="/contact" className={cn(buttonVariants(), " border-current bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs")}>
+              <div className="mt-3 flex flex-wrap gap-3">
+                <Link to="/contact" className={cn(buttonVariants(), " border-current bg-transparent text-base-content hover:bg-base-content/10 h-11 px-2 text-xs sm:h-6")}>
                   {t("nav.contact")}
                 </Link>
-                <Link to="/quote" search={{ service: undefined }} className={cn(buttonVariants(), " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-6 px-2 text-xs")}>
+                <Link to="/quote" search={{ service: undefined }} className={cn(buttonVariants(), " border-transparent bg-transparent text-base-content hover:bg-base-content/10 h-11 px-2 text-xs sm:h-6")}>
                   {t("nav.quote")} <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>

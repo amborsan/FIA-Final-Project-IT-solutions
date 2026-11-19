@@ -1,3 +1,6 @@
+import { ActionButtonContent } from "../components/ActionButtonContent";
+import { useToast } from "../context/ToastContext";
+import { ActionFeedback } from "../components/ActionFeedback";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,6 +23,7 @@ export default function CartPage() {
   const { items, subtotal, count, setQuantity, remove, clear } = useCart();
   const { user } = useAuth();
   const { t, pick, formatMoney } = useI18n();
+  const { notify } = useToast();
   const navigate = useNavigate();
   const [address, setAddress] = useState(user?.address ?? "");
   const [notes, setNotes] = useState("");
@@ -49,6 +53,7 @@ export default function CartPage() {
         },
       });
       setCompleted(data.order);
+      notify({ status: "success", title: t("cart.successTitle"), description: t("cart.successText") });
       clear();
     } catch (caught) {
       setError(errorMessage(caught, t("cart.error")));
@@ -67,7 +72,7 @@ export default function CartPage() {
           <p className="mt-4 rounded-lg bg-base-200 px-3 py-2 font-mono text-sm">
             {completed.reference}
           </p>
-          <div className="mt-6 flex justify-center gap-2">
+          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <Link to="/portal/orders" className={cn(buttonVariants(), " bg-primary text-primary-content border-primary hover:bg-primary-hover")}>
               {t("cart.viewOrders")}
             </Link>
@@ -104,7 +109,7 @@ export default function CartPage() {
       <Link to="/products" className="inline-flex items-center gap-1.5 text-sm text-base-content/65 hover:text-primary">
         <ArrowLeft className="h-4 w-4" /> {t("cart.continueShopping")}
       </Link>
-      <div className="mt-4 flex items-end justify-between">
+      <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black">{t("cart.title")}</h1>
           <p className="mt-1 text-sm text-base-content/65">{t("cart.items", { count })}</p>
@@ -213,7 +218,7 @@ export default function CartPage() {
                   maxLength={1000}
                 />
               </label>
-              {error && <p className="mt-3 text-xs text-error">{error}</p>}
+              {error && <ActionFeedback message={error} status="error" />}
               <label className="mt-3 flex items-start gap-2 text-[11px] leading-relaxed text-base-content/70">
                 <input
                   type="checkbox"
@@ -237,8 +242,8 @@ export default function CartPage() {
                 </span>
               </label>
               <Button disabled={loading || !acceptTerms} className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover mt-4 w-full")}>
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingBag className="h-4 w-4" />}
-                {t("cart.placeOrder")}
+                <ActionButtonContent state={loading ? "processing" : "idle"} label={t("cart.placeOrder")}
+                  icon={loading ? <Loader2 className="size-4 animate-spin motion-reduce:animate-none" /> : <ShoppingBag className="size-4" />} />
               </Button>
               <p className="mt-3 text-[11px] leading-relaxed text-base-content/70">
                 {pick(

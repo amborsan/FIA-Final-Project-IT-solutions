@@ -19,7 +19,7 @@ export function TextReveal({ text, delay = 0, replay = 0 }: TextRevealProps) {
 
   return (
     <span ref={ref} className="block">
-      {/* Keep the button name intact for screen readers while words animate. */}
+      {/* Keep the full label intact for screen readers while words animate. */}
       <span className="sr-only">{text}</span>
       <span aria-hidden="true">
         {words.map((word, index) => (

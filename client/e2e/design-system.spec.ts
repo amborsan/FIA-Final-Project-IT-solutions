@@ -49,7 +49,7 @@ for (const language of ["en", "de"] as const) {
     await expect(add).toBeVisible();
     await add.click();
     await expect(
-      page.getByText(t["products.added"], { exact: true }),
+      page.getByText(t["products.addedShort"], { exact: true }),
     ).toBeVisible();
     await page.goto("/cart");
     await expect(

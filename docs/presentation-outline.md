@@ -5,7 +5,7 @@
 
 | # | Slide | Speaker | Time | Notes |
 | --- | --- | --- | --- | --- |
-| 1 | Title + team | All | 20 s | Orbit IT Solutions — IT service platform. Names, course, date. |
+| 1 | Title + team | All | 20 s | IT Solutions. — IT service platform. Names, course, date. |
 | 2 | The problem | Frontend 1 | 60 s | Small IT firms run on email, WhatsApp and spreadsheets. Customers do not know the status; quotes get lost. |
 | 3 | Our solution | Frontend 1 | 45 s | Public site + customer portal + staff dashboards in one platform. |
 | 4 | Users and roles | Frontend 1 | 60 s | Visitor, customer, technician, admin. Show the role diagram. |

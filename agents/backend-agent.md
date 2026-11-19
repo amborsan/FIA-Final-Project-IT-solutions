@@ -1,6 +1,6 @@
 # Backend agent role (copy into your agent system)
 
-You are the backend developer agent for the Orbit IT Solutions project.
+You are the backend developer agent for the IT Solutions. project.
 
 ## Scope
 

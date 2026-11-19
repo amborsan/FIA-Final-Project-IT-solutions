@@ -1,15 +1,18 @@
+import { ActionButtonContent } from "../components/ActionButtonContent";
+import { useToast } from "../context/ToastContext";
+import { ActionFeedback } from "../components/ActionFeedback";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
-import { Alert } from "@/components/ui/alert";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
   CheckCircle2,
   ClipboardCheck,
+  ChevronDown,
   FileText,
   Loader2,
   Send,
@@ -32,6 +35,7 @@ function QuotePage() {
   const { service: preselectedService } = Route.useSearch();
   const { user } = useAuth();
   const { t, pick } = useI18n();
+  const { notify } = useToast();
 
   const servicesQuery = useQuery({
     queryKey: ["services"],
@@ -60,6 +64,8 @@ function QuotePage() {
     }
   }, [preselectedService]);
 
+  const selectedService = servicesQuery.data?.services.find(service => service.id === form.serviceId);
+
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     setLoading(true);
@@ -75,6 +81,7 @@ function QuotePage() {
         },
       });
       setReference(data.reference);
+      notify({ status: "success", title: t("quote.successTitle"), description: t("quote.successText", { reference: data.reference }) });
     } catch (caught) {
       setError(errorMessage(caught, t("quote.error")));
     } finally {
@@ -111,6 +118,10 @@ function QuotePage() {
         <div className="container-page py-12 sm:py-16">
           <h1 className="text-4xl font-black tracking-tight sm:text-5xl">{t("quote.title")}</h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-base-content/65">{t("quote.text")}</p>
+          <p className="mt-4 inline-flex max-w-full items-start gap-2 rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
+            <Sparkles aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+            {t("quote.responseTime")}
+          </p>
         </div>
       </section>
 
@@ -125,6 +136,8 @@ function QuotePage() {
               </span>
               <Input
                 required
+                name="contactName"
+                autoComplete="name"
                 minLength={2}
                 value={form.contactName}
                 onChange={(event) => setForm({ ...form, contactName: event.target.value })}
@@ -138,37 +151,12 @@ function QuotePage() {
               <Input
                 required
                 type="email"
+                name="contactEmail"
+                autoComplete="email"
                 value={form.contactEmail}
                 onChange={(event) => setForm({ ...form, contactEmail: event.target.value })}
                 className={cn(" w-full")}
               />
-            </label>
-            <label className="block">
-              <span className="mb-1 block text-xs font-semibold">
-                {t("quote.phone")} ({t("common.optional")})
-              </span>
-              <Input
-                value={form.contactPhone}
-                onChange={(event) => setForm({ ...form, contactPhone: event.target.value })}
-                className={cn(" w-full")}
-              />
-            </label>
-            <label className="block">
-              <span className="mb-1 block text-xs font-semibold">
-                {t("quote.service")} ({t("common.optional")})
-              </span>
-              <NativeSelect
-                value={form.serviceId}
-                onChange={(event) => setForm({ ...form, serviceId: event.target.value })}
-                className={cn(" w-full")}
-              >
-                <option value="">{t("quote.servicePlaceholder")}</option>
-                {(servicesQuery.data?.services ?? []).map((service) => (
-                  <option key={service.id} value={service.id}>
-                    {pick(service.nameEn, service.nameDe)}
-                  </option>
-                ))}
-              </NativeSelect>
             </label>
           </div>
 
@@ -178,11 +166,12 @@ function QuotePage() {
             </span>
             <Input
               required
+              name="title"
               minLength={3}
               maxLength={160}
               value={form.title}
               onChange={(event) => setForm({ ...form, title: event.target.value })}
-              placeholder={pick("New office network", "Neues Büronetzwerk")}
+              placeholder={t("quote.titlePlaceholder")}
               className={cn(" w-full")}
             />
           </label>
@@ -193,6 +182,7 @@ function QuotePage() {
             </span>
             <Textarea
               required
+              name="description"
               minLength={20}
               maxLength={4000}
               rows={5}
@@ -203,47 +193,104 @@ function QuotePage() {
             />
           </label>
 
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="mb-1 block text-xs font-semibold">
-                {t("quote.address")} ({t("common.optional")})
+          <details
+            className="group mt-6 border-y border-base-300 py-2"
+            onInvalidCapture={(event) => {
+              // Reveal invalid optional values before the browser tries to focus them.
+              event.currentTarget.open = true;
+            }}
+          >
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-field px-1 py-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [&::-webkit-details-marker]:hidden">
+              <span className="min-w-0">
+                <span className="block">{t("quote.optionalTitle")}</span>
+                {selectedService && (
+                  <span className="mt-1 block text-xs font-normal text-base-content/70">
+                    {t("quote.selectedService", { service: pick(selectedService.nameEn, selectedService.nameDe) })}
+                  </span>
+                )}
               </span>
-              <Input
-                value={form.siteAddress}
-                onChange={(event) => setForm({ ...form, siteAddress: event.target.value })}
-                className={cn(" w-full")}
-              />
-            </label>
-            <label className="block">
-              <span className="mb-1 block text-xs font-semibold">
-                {t("quote.preferredDate")} ({t("common.optional")})
-              </span>
-              <Input
-                type="date"
-                value={form.preferredDate}
-                onChange={(event) => setForm({ ...form, preferredDate: event.target.value })}
-                className={cn(" w-full")}
-              />
-            </label>
-            <label className="block">
-              <span className="mb-1 block text-xs font-semibold">
-                {t("quote.budget")}
-              </span>
-              <Input
-                type="number"
-                min={0}
-                step={50}
-                value={form.budget}
-                onChange={(event) => setForm({ ...form, budget: event.target.value })}
-                className={cn(" w-full")}
-                placeholder="2500"
-              />
-            </label>
-          </div>
+              <ChevronDown aria-hidden="true" className="size-4 shrink-0 transition-transform duration-200 group-open:rotate-180 motion-reduce:transition-none" />
+            </summary>
+            <p className="mt-2 text-sm text-base-content/70">{t("quote.optionalHint")}</p>
+            <div className="grid gap-4 pb-4 pt-4 sm:grid-cols-2">
+              <label className="block">
+                <span className="mb-1 block text-xs font-semibold">
+                  {t("quote.phone")} ({t("common.optional")})
+                </span>
+                <Input
+                  name="contactPhone"
+                  type="tel"
+                  autoComplete="tel"
+                  value={form.contactPhone}
+                  onChange={(event) => setForm({ ...form, contactPhone: event.target.value })}
+                  className={cn(" w-full")}
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-xs font-semibold">
+                  {t("quote.service")} ({t("common.optional")})
+                </span>
+                <NativeSelect
+                  name="serviceId"
+                  value={form.serviceId}
+                  onChange={(event) => setForm({ ...form, serviceId: event.target.value })}
+                  className={cn(" w-full")}
+                >
+                  <option value="">{t("quote.servicePlaceholder")}</option>
+                  {(servicesQuery.data?.services ?? []).map((service) => (
+                    <option key={service.id} value={service.id}>
+                      {pick(service.nameEn, service.nameDe)}
+                    </option>
+                  ))}
+                </NativeSelect>
+              </label>
+  
+              <label className="block">
+                <span className="mb-1 block text-xs font-semibold">
+                  {t("quote.address")} ({t("common.optional")})
+                </span>
+                <Input
+                  name="siteAddress"
+                  autoComplete="section-site street-address"
+                  value={form.siteAddress}
+                  onChange={(event) => setForm({ ...form, siteAddress: event.target.value })}
+                  className={cn(" w-full")}
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-xs font-semibold">
+                  {t("quote.preferredDate")} ({t("common.optional")})
+                </span>
+                <Input
+                  type="date"
+                  name="preferredDate"
+                  value={form.preferredDate}
+                  onChange={(event) => setForm({ ...form, preferredDate: event.target.value })}
+                  className={cn(" w-full")}
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-xs font-semibold">
+                  {t("quote.budget")}
+                </span>
+                <Input
+                  type="number"
+                  name="budget"
+                  min={0}
+                  step={50}
+                  value={form.budget}
+                  onChange={(event) => setForm({ ...form, budget: event.target.value })}
+                  className={cn(" w-full")}
+                  placeholder="2500"
+                />
+              </label>
+            </div>
+          </details>
 
           <label className="mt-5 flex items-start gap-2.5 rounded-lg bg-base-200 p-3 text-xs leading-relaxed text-base-content/65">
             <input
               type="checkbox"
+              name="acceptPrivacy"
               required
               checked={form.acceptPrivacy}
               onChange={(event) => setForm({ ...form, acceptPrivacy: event.target.checked })}
@@ -257,11 +304,11 @@ function QuotePage() {
             </span>
           </label>
 
-          {error && <Alert className={cn("flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mt-4 py-2 text-sm")}>{error}</Alert>}
+          {error && <ActionFeedback message={error} status="error" />}
 
           <Button disabled={loading} className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover mt-5 w-full sm:w-auto")}>
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            {t("quote.submit")}
+            <ActionButtonContent state={loading ? "processing" : "idle"} label={t("quote.submit")}
+                  icon={loading ? <Loader2 className="size-4 animate-spin motion-reduce:animate-none" /> : <Send className="size-4" />} />
           </Button>
 
           {!user && (
@@ -293,9 +340,7 @@ function QuotePage() {
                 </li>
               ))}
             </ol>
-            <div className="mt-4 flex items-center gap-2 rounded-lg bg-success/10 px-3 py-2 text-xs text-success">
-              <Sparkles className="h-4 w-4" /> {t("quote.responseTime")}
-            </div>
+
           </div>
 
           <div className="rounded-box bg-gradient-to-br from-primary to-secondary p-6 text-primary-content">

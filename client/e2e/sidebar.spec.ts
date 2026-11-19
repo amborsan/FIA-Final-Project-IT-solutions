@@ -2,9 +2,9 @@ import { test, expect } from "@playwright/test";
 import { translations } from "../src/i18n/translations";
 
 const roles = [
-  { role: "admin", email: "admin@orbit-it.de", password: "Admin12345!", root: "/admin", next: "/admin/requests" },
-  { role: "technician", email: "tech@orbit-it.de", password: "Tech12345!", root: "/technician", next: "/technician/tasks" },
-  { role: "customer", email: "customer@orbit-it.de", password: "Customer12345!", root: "/portal", next: "/portal/requests" },
+  { role: "admin", email: "admin@fia-it.de", password: "Admin12345!", root: "/admin", next: "/admin/requests" },
+  { role: "technician", email: "tech@fia-it.de", password: "Tech12345!", root: "/technician", next: "/technician/tasks" },
+  { role: "customer", email: "customer@fia-it.de", password: "Customer12345!", root: "/portal", next: "/portal/requests" },
 ] as const;
 
 for (const account of roles) for (const language of ["en", "de"] as const) {

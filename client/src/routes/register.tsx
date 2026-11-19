@@ -1,3 +1,4 @@
+import { ActionSwapText } from "../components/beui/ActionSwap";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Alert } from "@/components/ui/alert";
@@ -186,7 +187,7 @@ export default function RegisterPage() {
             <div className="sm:col-span-2">
               <Button disabled={loading} className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover w-full sm:w-auto")}>
                 {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-                {t("auth.registerButton")}
+                <ActionSwapText value={String(loading)} animation="cascade">{t("auth.registerButton")}</ActionSwapText>
               </Button>
             </div>
           </form>

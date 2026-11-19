@@ -1,3 +1,4 @@
+import { ActionFeedback } from "../components/ActionFeedback";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -147,7 +148,7 @@ function TicketDetailPage() {
               onSubmit={sendReply}
               className="mt-4 border-t border-hairline pt-4"
             >
-              {error && <p className="mb-2 text-xs text-error">{error}</p>}
+              {error && <ActionFeedback message={error} status="error" />}
               <div className="flex items-end gap-2">
                 <Textarea
                   value={reply}

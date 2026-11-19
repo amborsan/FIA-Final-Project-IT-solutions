@@ -1,4 +1,4 @@
-# Orbit IT Solutions — Frontend
+# IT Solutions. — Frontend
 
 React 19 + TypeScript + TanStack Router + TanStack Query + Tailwind CSS 4 +
 DaisyUI 5.
@@ -118,7 +118,7 @@ Never hardcode user-facing English or German text in a component.
 
 ## Design system
 
-- DaisyUI theme `orbit` in `src/index.css` (professional blue/teal).
+- IT Solutions. uses shadcn/ui (Radix) and Tailwind CSS v4, with shared tokens in `src/styles/tokens.css`. The internal theme selectors remain `orbit` and `orbit-dark`.
 - Reusable classes: `container-page`, `section-space`, `eyebrow`, `card-hover`,
   `prose-content`, `legal-copy`.
 - Shared components: `Header`, `Footer`, `ProductCard`, `ServiceCard`,

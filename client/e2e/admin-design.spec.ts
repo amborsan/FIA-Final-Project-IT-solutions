@@ -14,7 +14,7 @@ async function signIn(page: Page) {
   // README documents this demo account. Overrides allow team-managed test accounts.
   await page
     .getByLabel("Email address", { exact: true })
-    .fill(process.env.E2E_ADMIN_EMAIL ?? "admin@orbit-it.de");
+    .fill(process.env.E2E_ADMIN_EMAIL ?? "admin@fia-it.de");
   await page
     .getByLabel("Password", { exact: true })
     .fill(process.env.E2E_ADMIN_PASSWORD ?? "Admin12345!");

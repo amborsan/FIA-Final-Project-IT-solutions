@@ -7,6 +7,7 @@ import { I18nProvider } from "./i18n/I18nContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
+import { ToastProvider } from "./context/ToastContext";
 import "./index.css";
 
 const queryClient = new QueryClient({
@@ -37,11 +38,13 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <ThemeProvider>
+          <ToastProvider>
           <AuthProvider>
             <CartProvider>
               <RouterProvider router={router} />
             </CartProvider>
           </AuthProvider>
+          </ToastProvider>
         </ThemeProvider>
       </I18nProvider>
     </QueryClientProvider>

@@ -47,6 +47,7 @@ for (const language of ["en", "de"] as const) {
     const { services } = await response.json() as { services: Service[] };
     expect(services.length).toBeGreaterThan(0);
     await page.goto(`/quote?service=${services[0].id}`);
+    await page.locator("form details > summary").click();
     const select = page.getByRole("combobox", { name: `${t["quote.service"]} (${t["common.optional"]})`, exact: true });
     await expect(select).toHaveValue(services[0].id);
     const blankOption = select.locator('option[value=""]');

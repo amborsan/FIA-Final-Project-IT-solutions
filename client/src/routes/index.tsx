@@ -1,3 +1,4 @@
+import { ScrollReveal } from "../components/beui/ScrollReveal";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 import { api } from "../lib/api";
 import type { ContentSummary, Product, Service } from "../lib/types";
+import { serviceGroups } from "../lib/serviceGroups";
 import { useI18n } from "../i18n/I18nContext";
 import type { TranslationKey } from "../i18n/translations";
 import { SectionHeading } from "../components/ui";
@@ -35,11 +37,9 @@ export default function HomePage() {
   const [heroTopic, setHeroTopic] = useState<number | null>(null);
   const [topicReplays, setTopicReplays] = useState([0, 0, 0]);
   const [headingReplay, setHeadingReplay] = useState(0);
-  const heroTopics = [
-    { label: t("home.topicNetworks"), text: t("home.topicNetworksText") },
-    { label: t("home.topicSecurity"), text: t("home.topicSecurityText") },
-    { label: t("home.topicWebsites"), text: t("home.topicWebsitesText") },
-  ];
+  const heroTopics = serviceGroups.map(group => ({
+    id: group.id, label: t(group.titleKey), text: t(group.heroDescriptionKey),
+  }));
 
   const servicesQuery = useQuery({
     queryKey: ["services"],
@@ -116,7 +116,6 @@ export default function HomePage() {
                 {t("home.ctaQuote")}
                 <span className="home-hero-cta-icon" aria-hidden="true">
                   <ArrowRight className="home-hero-cta-arrow h-4 w-4" />
-                  <span className="home-hero-topic-mark home-hero-cta-mark"><i /><i /><i /><i /></span>
                 </span>
               </Link>
               <Link
@@ -143,14 +142,12 @@ export default function HomePage() {
                   onPointerLeave={() => setHeroTopic(null)}
                   onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setHeroTopic(null); }}
                 >
-                      <button
+                      <Link
+                        to="/services"
+                        hash={topic.id}
                         id={`hero-topic-${index}`}
-                        type="button"
                         className="home-hero-topic"
-                        aria-expanded={heroTopic === index}
-                        aria-controls={heroTopic === index ? `hero-topic-card-${index}` : undefined}
                         aria-describedby={heroTopic === index ? `hero-topic-text-${index}` : undefined}
-                        onClick={() => setHeroTopic(current => current === index ? null : index)}
                         onFocus={event => { if (event.currentTarget.matches(":focus-visible")) setHeroTopic(index); }}
                         onKeyDown={event => { if (event.key === "Escape") setHeroTopic(null); }}
                         onPointerEnter={event => {
@@ -160,7 +157,7 @@ export default function HomePage() {
                       >
                         <span className="home-hero-topic-mark" aria-hidden="true"><i /><i /><i /><i /></span>
                         <TextReveal text={topic.label} delay={index * 0.12} replay={topicReplays[index]} />
-                      </button>
+                      </Link>
                     <div
                       id={`hero-topic-card-${index}`}
                       role="region"
@@ -195,7 +192,7 @@ export default function HomePage() {
       </section>
       {/* Services */}
       <section aria-label={t("home.servicesTitle")} className="section-space bg-base-200/60 pt-10 sm:pt-12">
-        <div className="container-page">
+        <ScrollReveal className="container-page">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <SectionHeading
               title={t("home.servicesTitle")}
@@ -205,10 +202,10 @@ export default function HomePage() {
               to="/services"
               className={cn(
                 buttonVariants(),
-                " border-current bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm",
+                " border-current bg-transparent text-base-content hover:bg-base-content/10 h-11 px-3 text-sm sm:h-8",
               )}
             >
-              {t("services.title")} <ArrowRight className="h-4 w-4" />
+              {t("home.ctaServices")} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="mt-9">
@@ -221,23 +218,23 @@ export default function HomePage() {
               <HomeServicesAccordion services={services} />
             </HomeSectionState>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Process */}
       <section aria-label={t("home.processTitle")} className="section-space bg-base-100">
-        <div className="container-page">
+        <ScrollReveal className="container-page">
           <SectionHeading
             title={t("home.processTitle")}
             text={t("home.processText")}
           />
           <ProcessTimeline phases={processPhases} />
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Featured products */}
       <section aria-label={t("home.productsTitle")} className="section-space bg-base-200/60">
-        <div className="container-page">
+        <ScrollReveal className="container-page">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <SectionHeading
               title={t("home.productsTitle")}
@@ -247,10 +244,10 @@ export default function HomePage() {
               to="/products"
               className={cn(
                 buttonVariants(),
-                " border-current bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm",
+                " border-current bg-transparent text-base-content hover:bg-base-content/10 h-11 px-3 text-sm sm:h-8",
               )}
             >
-              {t("products.title")} <ArrowRight className="h-4 w-4" />
+              {t("home.ctaProducts")} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="mt-9">
@@ -267,12 +264,12 @@ export default function HomePage() {
               </div>
             </HomeSectionState>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Why us */}
       <section className="section-space bg-base-100">
-        <div className="container-page grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <ScrollReveal className="container-page grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div>
             <SectionHeading
               title={t("home.whyTitle")}
@@ -335,12 +332,12 @@ export default function HomePage() {
                   );
                 })}
               </div>
-            </div>
+            </ScrollReveal>
           </section>
 
           {/* Insights */}
           <section aria-label={t("home.blogTitle")} className="section-space bg-base-200/60">
-            <div className="container-page">
+            <ScrollReveal className="container-page">
               <div className="flex flex-wrap items-end justify-between gap-6">
                 <SectionHeading
                   title={t("home.blogTitle")}
@@ -350,7 +347,7 @@ export default function HomePage() {
                   to="/blog"
                   className={cn(
                     buttonVariants(),
-                    " border-current bg-transparent text-base-content hover:bg-base-content/10 h-8 px-3 text-sm",
+                    " border-current bg-transparent text-base-content hover:bg-base-content/10 h-11 px-3 text-sm sm:h-8",
                   )}
                 >
                   {t("blog.title")} <ArrowRight className="h-4 w-4" />
@@ -390,7 +387,7 @@ export default function HomePage() {
               </div>
             </HomeSectionState>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* CTA */}

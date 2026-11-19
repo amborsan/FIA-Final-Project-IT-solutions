@@ -1,3 +1,5 @@
+import { ActionSwapText } from "../components/beui/ActionSwap";
+import { ActionFeedback } from "../components/ActionFeedback";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -166,7 +168,7 @@ function TechnicianTicketDetail() {
             onSubmit={sendReply}
             className="mt-4 border-t border-hairline pt-4"
           >
-            {error && <p className="mb-2 text-xs text-error">{error}</p>}
+            {error && <ActionFeedback message={error} status="error" />}
             <Textarea
               value={reply}
               onChange={(event) => setReply(event.target.value)}
@@ -199,7 +201,7 @@ function TechnicianTicketDetail() {
                 ) : (
                   <Send className="h-4 w-4" />
                 )}
-                {t("tickets.sendReply")}
+                <ActionSwapText value={String(sending)} animation="cascade">{t("tickets.sendReply")}</ActionSwapText>
               </Button>
             </div>
           </form>

@@ -22,7 +22,7 @@ for (const language of ["en", "de"] as const) {
       await expect(dialog.getByRole("button", { name: t["nav.closeMenu"] })).toBeFocused();
       await page.keyboard.press("Shift+Tab");
       expect(await dialog.evaluate((el) => el.contains(document.activeElement))).toBe(true);
-      const shop = dialog.locator("details");
+      const shop = dialog.locator("details").filter({ has: page.locator("summary", { hasText: t["nav.products"] }) });
       const shopToggle = shop.locator("summary");
       const allProducts = shop.getByRole("link", { name: t["nav.allProducts"], exact: true });
       await expect(shop).not.toHaveAttribute("open");

@@ -1,3 +1,5 @@
+import { useToast } from "../context/ToastContext";
+import { ActionButtonContent } from "./ActionButtonContent";
 import { cn } from "@/lib/utils";
 import { CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -59,10 +61,12 @@ export function ProductVisual({
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
   const { t, pick, formatMoney } = useI18n();
+  const { notify } = useToast();
   const [added, setAdded] = useState(false);
 
   function handleAdd() {
     add(product);
+    notify({ id: `cart-${product.id}`, status: "success", title: t("products.added"), description: pick(product.nameEn, product.nameDe) });
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1800);
   }
@@ -106,8 +110,8 @@ export function ProductCard({ product }: { product: Product }) {
         <p className="line-clamp-2 text-xs leading-relaxed text-base-content/65">
           {pick(product.descriptionEn, product.descriptionDe)}
         </p>
-        <div className="mt-auto flex items-end justify-between gap-2 pt-2">
-          <div>
+        <div className="mt-auto flex flex-wrap items-end justify-between gap-x-2 gap-y-3 pt-2">
+          <div className="shrink-0">
             <p className="text-base font-bold">{formatMoney(product.price)}</p>
             <p
               className={`text-[11px] ${product.stock > 0 ? "text-success" : "text-error"}`}
@@ -126,14 +130,9 @@ export function ProductCard({ product }: { product: Product }) {
             )}
             aria-label={t("products.addToCart")}
           >
-            {added ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <ShoppingCart className="h-4 w-4" />
-            )}
-            <span className="hidden sm:inline">
-              {added ? t("products.added") : t("products.addToCart")}
-            </span>
+            <ActionButtonContent state={added ? "added" : "add"} label={added ? t("products.addedShort") : t("products.addToCart")}
+              reserveLabel={t("products.addToCart")} textClassName="hidden sm:inline-grid"
+              icon={added ? <Check className="size-4" /> : <ShoppingCart className="size-4" />} />
           </Button>
         </div>
       </CardContent>

@@ -3,6 +3,7 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { useI18n } from "../i18n/I18nContext";
 import type { TranslationKey } from "../i18n/translations";
 import { errorMessage } from "../lib/api";
+import { ActionFeedback } from "./ActionFeedback";
 
 type StatusFeedback = {
   state: "saving" | "saved" | "error";
@@ -69,11 +70,7 @@ export function StatusUpdateFeedback({ feedback }: { feedback: StatusFeedback | 
   const key = feedback.state === "error" ? "statusUpdate.failed"
     : feedback.state === "saving" ? "statusUpdate.saving" : "statusUpdate.saved";
   return (
-    <p
-      role={feedback.state === "error" ? "alert" : "status"}
-      className={feedback.state === "error" ? "mb-4 text-sm text-error" : "mb-4 text-sm text-ink-muted"}
-    >
-      {t(key, { reference: feedback.reference })}{feedback.error && ` ${feedback.error}`}
-    </p>
+    <ActionFeedback status={feedback.state === "saving" ? "loading" : feedback.state === "error" ? "error" : "success"}
+      message={`${t(key, { reference: feedback.reference })}${feedback.error ? ` ${feedback.error}` : ""}`} />
   );
 }

@@ -30,6 +30,10 @@
   --header-drawer-blur: 0.25rem;
   --header-drawer-backdrop: rgb(0 0 0 / 40%);
   --header-drawer-z: 80;
+  --modal-z: 100;
+  --toast-z: 110;
+  --toast-top: 5rem;
+  --modal-max-width: 40rem;
   --header-panel-width: 40rem;
   --header-panel-inset: 4rem;
   --header-panel-top: 5rem;
@@ -56,7 +60,7 @@
   --hero-topic-mark-size: 1.3125rem;
   --hero-stat-size: clamp(1.75rem, 3.2vw, 2.75rem);
   --hero-cta-icon-size: 1rem;
-  --hero-cta-arrow-travel: 0.25rem;
+  --cta-arrow-travel: 4px;
   --process-marker-size: 1.5rem;
   --process-phase-gap: 2.5rem;
   --process-content-offset: 3rem;
@@ -135,7 +139,7 @@
   --dark-semantic-success: #6fcf7f;
   --surface: #ffffff;
   --surface-raised: #ffffff;
-  --focus-ring: #879fc8;
+  --focus-ring: #526c9e;
   --coral-chip-text: #690031;
   --coral-chip-bg: #ffeaec;
   --panel-foreground: #ffffff;

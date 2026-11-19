@@ -18,6 +18,23 @@ for (const language of ["en", "de"] as const) {
     await expect(footer.locator('a[href="tel:+493055500100"]')).toBeVisible();
     await expect(footer.locator('a[href="mailto:hello@fia-it.de"]')).toBeVisible();
     await expect(footer.getByRole("navigation", { name: t["footer.company"], exact: true }).getByRole("link")).toHaveCount(5);
+    const serviceNavigation = footer.getByRole("navigation", { name: t["footer.services"], exact: true });
+    const themes = [
+      { id: "connected-teams", title: t["home.topicNetworks"] },
+      { id: "secure-systems", title: t["home.topicSecurity"] },
+      { id: "business-online", title: t["home.topicWebsites"] },
+    ];
+    await expect(serviceNavigation.getByRole("link")).toHaveCount(3);
+    for (const theme of themes) {
+      await expect(serviceNavigation.getByRole("link", { name: theme.title, exact: true })).toHaveAttribute("href", `/services#${theme.id}`);
+    }
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    const firstTheme = serviceNavigation.getByRole("link").first();
+    await firstTheme.hover();
+    await expect(firstTheme.locator(".lucide-arrow-right")).toHaveCSS("transform", "matrix(1, 0, 0, 1, 4, 0)");
+    await page.mouse.move(0, 0);
+    await expect(firstTheme.locator(".lucide-arrow-right")).toHaveCSS("transform", "none");
+    await page.emulateMedia({ reducedMotion: "reduce" });
     const legal = footer.getByRole("navigation", { name: t["footer.legal"], exact: true });
     for (const path of ["privacy", "terms", "withdrawal", "imprint", "cookies"]) {
       await expect(legal.locator(`a[href="/legal/${path}"]`)).toBeVisible();
@@ -39,6 +56,12 @@ for (const language of ["en", "de"] as const) {
       if (width >= 1024) expect(layout.nav.x).toBeGreaterThan(layout.brand.right);
       else expect(layout.nav.top).toBeGreaterThan(layout.brand.bottom);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      for (const link of await serviceNavigation.getByRole("link").all()) {
+        const bounds = await link.boundingBox();
+        expect(bounds!.height).toBeGreaterThanOrEqual(44);
+        expect(bounds!.x).toBeGreaterThanOrEqual(0);
+        expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width);
+      }
       if (width === 1440 || width === 360) await footer.screenshot({ path: `test-results/footer-${language}-${width}.png`, style: "header.site-header, header.site-header * { visibility: hidden !important; }" });
     }
     await page.locator("html").evaluate(el => el.setAttribute("data-theme", "orbit-dark"));
@@ -53,5 +76,10 @@ for (const language of ["en", "de"] as const) {
     await expect(settings).toBeFocused();
     await legal.getByRole("link", { name: t["footer.privacy"], exact: true }).click();
     await expect.poll(() => new URL(page.url()).pathname).toBe("/legal/privacy");
+    for (const theme of themes) {
+      await serviceNavigation.getByRole("link", { name: theme.title, exact: true }).click();
+      await expect(page).toHaveURL(new RegExp(`/services#${theme.id}$`));
+      await expect(page.locator(`#${theme.id}`)).toBeInViewport();
+    }
   });
 }

@@ -1,4 +1,5 @@
-import { Alert } from "@/components/ui/alert";
+import { ActionSwapText } from "../components/beui/ActionSwap";
+import { ActionFeedback } from "../components/ActionFeedback";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
@@ -146,22 +147,10 @@ function ProfilePage() {
       subtitle={t("portal.profileText")}
     >
       {message && (
-        <Alert
-          className={cn(
-            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-success text-success-content border-success mb-4 text-sm",
-          )}
-        >
-          {message}
-        </Alert>
+        <ActionFeedback message={message} status="success" />
       )}
       {error && (
-        <Alert
-          className={cn(
-            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mb-4 text-sm",
-          )}
-        >
-          {error}
-        </Alert>
+        <ActionFeedback message={error} status="error" />
       )}
 
       <div className="grid gap-6 xl:grid-cols-2">
@@ -244,7 +233,7 @@ function ProfilePage() {
                 {busy === "profile" && (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 )}
-                {t("portal.saveProfile")}
+                <ActionSwapText value={String(busy === "profile")} animation="cascade">{t("portal.saveProfile")}</ActionSwapText>
               </Button>
             </div>
           </form>
@@ -302,7 +291,7 @@ function ProfilePage() {
               )}
             >
               <KeyRound className="h-4 w-4" />
-              {t("portal.updatePassword")}
+              <ActionSwapText value={String(busy === "password")} animation="cascade">{t("portal.updatePassword")}</ActionSwapText>
             </Button>
           </form>
         </Panel>
@@ -402,7 +391,7 @@ function ProfilePage() {
                   ) : (
                     <Trash2 className="h-3.5 w-3.5" />
                   )}
-                  {t("portal.deleteButton")}
+                  <ActionSwapText value={String(busy === "delete")} animation="cascade">{t("portal.deleteButton")}</ActionSwapText>
                 </Button>
               </div>
             </div>

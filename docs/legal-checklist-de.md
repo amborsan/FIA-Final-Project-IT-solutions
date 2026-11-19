@@ -169,7 +169,7 @@ contrast in most places, but has not been formally audited.
 ## 9. Other German/EU points
 
 - [ ] Domain and email provider contracts.
-- [ ] Trademark check for "Orbit IT Solutions".
+- [ ] Trademark check for "IT Solutions.".
 - [ ] Copyright for images/fonts/icons (Lucide is ISC licensed).
 - [ ] Photo credits if real photos are added.
 - [ ] Youth protection (not relevant for B2B IT services).

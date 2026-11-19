@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 
-// "light" is the default Orbit theme, "dark" is the matching night palette.
+// "light" is the default IT Solutions. theme, "dark" is the matching night palette.
 export type Theme = "light" | "dark";
 
 type ThemeValue = {

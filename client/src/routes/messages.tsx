@@ -1,8 +1,8 @@
+import { ActionFeedback } from "../components/ActionFeedback";
 import "../components/TechnicianDashboardShell.css";
 import "../components/CustomerPortalShell.css";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -187,13 +187,7 @@ function MessagesContent() {
         </div>
 
         {error && (
-          <Alert
-            className={cn(
-              "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mt-4 text-sm",
-            )}
-          >
-            {error}
-          </Alert>
+          <ActionFeedback message={error} status="error" />
         )}
 
         {showNew && (

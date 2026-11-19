@@ -1,3 +1,4 @@
+import { ActionSwapText } from "../components/beui/ActionSwap";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Alert } from "@/components/ui/alert";
@@ -13,18 +14,18 @@ import { errorMessage } from "../lib/api";
 const demos = [
   {
     label: "auth.demoAdmin",
-    email: "admin@orbit-it.de",
+    email: "admin@fia-it.de",
     password: "Admin12345!",
   },
-  { label: "auth.demoTech", email: "tech@orbit-it.de", password: "Tech12345!" },
+  { label: "auth.demoTech", email: "tech@fia-it.de", password: "Tech12345!" },
   {
     label: "auth.demoCustomer",
-    email: "customer@orbit-it.de",
+    email: "customer@fia-it.de",
     password: "Customer12345!",
   },
   {
     label: "auth.demoBusiness",
-    email: "business@orbit-it.de",
+    email: "business@fia-it.de",
     password: "Customer12345!",
   },
 ] as const;
@@ -118,7 +119,7 @@ export default function LoginPage() {
             )}
             <Button disabled={loading} className={cn(" bg-primary text-primary-content border-primary hover:bg-primary-hover w-full")}>
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {t("auth.loginButton")}
+              <ActionSwapText value={String(loading)} animation="cascade">{t("auth.loginButton")}</ActionSwapText>
             </Button>
           </form>
 

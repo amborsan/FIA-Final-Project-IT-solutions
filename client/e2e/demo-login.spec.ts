@@ -1,10 +1,10 @@
 import { test, expect } from "@playwright/test";
 
 const demos = [
-  { email: "admin@orbit-it.de", password: "Admin12345!", role: "ADMIN", path: "/admin" },
-  { email: "tech@orbit-it.de", password: "Tech12345!", role: "TECHNICIAN", path: "/technician" },
-  { email: "customer@orbit-it.de", password: "Customer12345!", role: "CUSTOMER", path: "/portal" },
-  { email: "business@orbit-it.de", password: "Customer12345!", role: "CUSTOMER", path: "/portal" },
+  { email: "admin@fia-it.de", password: "Admin12345!", role: "ADMIN", path: "/admin" },
+  { email: "tech@fia-it.de", password: "Tech12345!", role: "TECHNICIAN", path: "/technician" },
+  { email: "customer@fia-it.de", password: "Customer12345!", role: "CUSTOMER", path: "/portal" },
+  { email: "business@fia-it.de", password: "Customer12345!", role: "CUSTOMER", path: "/portal" },
 ] as const;
 
 for (const demo of demos) {

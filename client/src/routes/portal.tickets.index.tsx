@@ -1,3 +1,5 @@
+import { ActionSwapText } from "../components/beui/ActionSwap";
+import { ActionFeedback } from "../components/ActionFeedback";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -229,7 +231,7 @@ function TicketsPage() {
               />
             </label>
           </div>
-          {error && <p className="mt-3 text-xs text-error">{error}</p>}
+          {error && <ActionFeedback message={error} status="error" />}
           <Button
             disabled={loading}
             className={cn(
@@ -237,7 +239,7 @@ function TicketsPage() {
             )}
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-            {t("tickets.create")}
+            <ActionSwapText value={String(loading)} animation="cascade">{t("tickets.create")}</ActionSwapText>
           </Button>
         </form>
       )}

@@ -1,4 +1,4 @@
-import { Alert } from "@/components/ui/alert";
+import { ActionFeedback } from "../components/ActionFeedback";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useState } from "react";
@@ -88,13 +88,7 @@ function AdminInboxPage() {
       subtitle={t("contact.text")}
     >
       {error && (
-        <Alert
-          className={cn(
-            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mb-4 text-sm",
-          )}
-        >
-          {error}
-        </Alert>
+        <ActionFeedback message={error} status="error" />
       )}
 
       <ListToolbar>

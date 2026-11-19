@@ -1,8 +1,9 @@
+import { ActionSwapText } from "../components/beui/ActionSwap";
+import { ActionFeedback } from "../components/ActionFeedback";
 import "../components/TechnicianDashboardShell.css";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { useState } from "react";
@@ -172,22 +173,10 @@ function AccountContent() {
         </div>
 
         {message && (
-          <Alert
-            className={cn(
-              "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-success text-success-content border-success mt-4 text-sm",
-            )}
-          >
-            {message}
-          </Alert>
+          <ActionFeedback message={message} status="success" />
         )}
         {error && (
-          <Alert
-            className={cn(
-              "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mt-4 text-sm",
-            )}
-          >
-            {error}
-          </Alert>
+          <ActionFeedback message={error} status="error" />
         )}
 
         <div className="mt-6 grid gap-5 lg:grid-cols-2">
@@ -274,7 +263,7 @@ function AccountContent() {
                   {busy === "profile" && (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   )}
-                  {t("portal.saveProfile")}
+                  <ActionSwapText value={String(busy === "profile")} animation="cascade">{t("portal.saveProfile")}</ActionSwapText>
                 </Button>
               </div>
             </form>
@@ -325,7 +314,7 @@ function AccountContent() {
                 )}
               >
                 <KeyRound className="h-4 w-4" />
-                {t("portal.updatePassword")}
+                <ActionSwapText value={String(busy === "password")} animation="cascade">{t("portal.updatePassword")}</ActionSwapText>
               </Button>
             </form>
           </section>

@@ -68,7 +68,7 @@ so the team can rerun it after the demo setup is confirmed.
 
 The user requested repair of all four displayed demo cards. The running local
 API rejected `admin@fia-it.de` with 401, but accepted the README-listed Admin,
-Technician, Customer and Business customer `@orbit-it.de` accounts with 200.
+Technician, Customer and Business customer accounts using the previous demo domain with 200.
 Each returned the expected role and a valid `/auth/me` session. The frontend
 cards were updated to these verified addresses, with regression coverage for
 all four cards. The local customer login is no longer blocked by the original
@@ -80,3 +80,36 @@ remains with the backend team.
 - [ ] Update frontend demo labels/values only if the backend confirms a change.
 - [ ] Keep current API types if the documented contract is unchanged.
 - [ ] Set status to `FRONTEND CONSUMED` and move the index link after verification.
+
+### Branding alignment — 2026-11-18
+
+The user confirmed **IT Solutions.** and **fia-it.de** as the canonical branding. The four frontend demo shortcuts and browser-test defaults now use fia-it.de, matching the committed seed. The November 16 verification above remains a historical result for the previous local database. No backend decision or database content was changed. If the local database still contains earlier demo emails, the backend developer must align it before real login verification can pass.
+
+Verification on November 18: all four shortcuts fill the expected fia-it.de email in both English and German. The real API login for admin@fia-it.de returns HTTP 401, and both admin layout checks remain on /login. The backend developer must check the configured local demo accounts; the frontend domain must remain fia-it.de. No backend files or database data were changed.
+
+### Root cause confirmed through the running API — 2026-11-18
+
+A direct login request with a valid CSRF token returned HTTP 401 for admin@fia-it.de and the generic incorrect-credentials response. The previous-domain admin address authenticated with the same seeded password and returned ADMIN with ID 10000000-0000-4000-8000-000000000001. An authenticated GET /api/admin/users query found no active fia-it.de users and found all five previous-domain demo users with the fixed IDs from the committed seed. The diagnostic session was logged out successfully. No server files, environment configuration, or account records were changed; normal login created its session and activity entry.
+
+The seed looks up each demo user by fixed ID and has an empty update object. Its create object uses fia-it.de, but existing rows keep their previous email. Rerunning the unchanged seed cannot repair this database. The login controller looks up the submitted email exactly and rejects missing/deleted accounts or incorrect passwords. The evidence establishes stale demo email data for the known fixed-ID admin; the seeded password still works for that existing account.
+
+#### Required backend fix
+
+1. Confirm that the database being corrected is the one used by the running local API. Check for canonical-email collisions, including soft-deleted rows, before making changes.
+2. Rename the five existing demo users in place, using their fixed seed IDs: suffix 001 to admin@fia-it.de, 002 to tech@fia-it.de, 003 to tech2@fia-it.de, 004 to customer@fia-it.de, and 005 to business@fia-it.de. The shared ID prefix is 10000000-0000-4000-8000-000000000. Preserve IDs, roles, password hashes, deletion state, and relationships. Do not reset or recreate the database.
+3. Add an explicit, guarded development/demo data repair or update the demo seed's update branch for these known accounts so an existing demo database can adopt the canonical addresses. Do not reset passwords, reactivate deleted accounts, rewrite unrelated users, or apply demo credential changes in production automatically. A schema migration is not required for an email-only correction.
+4. Verify that admin@fia-it.de with the seeded admin password returns 200 and ADMIN, that GET /api/auth/me returns the same fixed ID and canonical email, and that the frontend reaches /admin. Verify the other demo shortcuts. Invalid credentials must still return 401; preserve CSRF, cookies, and rate limits. Rerun the demo-login browser tests.
+
+No API contract change or frontend address rollback is needed. This investigation does not read database connection secrets or inspect deleted rows; checking for collisions and applying the repair remain backend responsibilities.
+
+### Repeat report — 2026-11-18
+
+The user reported that the demo shortcuts cannot log in again. Fresh HTTP
+requests through `http://localhost:5173/api`, each obtaining a valid CSRF token
+and cookie first, returned HTTP 401 with `Email or password is incorrect.` for
+all four displayed accounts: `admin@fia-it.de`, `tech@fia-it.de`,
+`customer@fia-it.de`, and `business@fia-it.de`. The submitted passwords match
+the current demo cards and SETUP.md. The API is reachable; this is not a missing
+API connection or a CSRF rejection. The previously documented canonical-email
+data repair is still required. No frontend authentication, backend files,
+database records, or security controls were changed during this repeat check.

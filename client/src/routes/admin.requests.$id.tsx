@@ -1,5 +1,6 @@
+import { ActionSwapText } from "../components/beui/ActionSwap";
+import { ActionFeedback } from "../components/ActionFeedback";
 import { cn } from "@/lib/utils";
-import { Alert } from "@/components/ui/alert";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -213,22 +214,10 @@ function AdminRequestDetailPage() {
       }
     >
       {message && (
-        <Alert
-          className={cn(
-            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-success text-success-content border-success mb-4 text-sm",
-          )}
-        >
-          {message}
-        </Alert>
+        <ActionFeedback message={message} status="success" />
       )}
       {error && (
-        <Alert
-          className={cn(
-            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mb-4 text-sm",
-          )}
-        >
-          {error}
-        </Alert>
+        <ActionFeedback message={error} status="error" />
       )}
 
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
@@ -328,7 +317,7 @@ function AdminRequestDetailPage() {
                           ) : (
                             <Send className="h-3.5 w-3.5" />
                           )}
-                          {t("admin.sendQuote")}
+                          <ActionSwapText value={String(busy)} animation="cascade">{t("admin.sendQuote")}</ActionSwapText>
                         </Button>
                       )}
                     </div>
@@ -504,7 +493,7 @@ function AdminRequestDetailPage() {
                   {busy === "quote" && (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   )}
-                  {t("admin.createQuote")}
+                  <ActionSwapText value={String(busy === "quote")} animation="cascade">{t("admin.createQuote")}</ActionSwapText>
                 </Button>
               </form>
             </Panel>
@@ -559,7 +548,7 @@ function AdminRequestDetailPage() {
               ) : (
                 <UserPlus className="h-4 w-4" />
               )}
-              {t("admin.assign")}
+              <ActionSwapText value={String(busy === "assign")} animation="cascade">{t("admin.assign")}</ActionSwapText>
             </Button>
           </Panel>
 
@@ -585,7 +574,7 @@ function AdminRequestDetailPage() {
               {busy === "status" && (
                 <Loader2 className="h-4 w-4 animate-spin" />
               )}
-              {t("common.update")}
+              <ActionSwapText value={String(busy === "status")} animation="cascade">{t("common.update")}</ActionSwapText>
             </Button>
           </Panel>
 

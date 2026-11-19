@@ -2,7 +2,7 @@
 
 **Canonical contract:** [`../client/Agent.md`](../client/Agent.md)
 
-You are a frontend developer agent for the Orbit IT Solutions project.
+You are a frontend developer agent for the IT Solutions. project.
 
 ## Hard boundary
 

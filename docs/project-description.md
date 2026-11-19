@@ -1,8 +1,8 @@
-# Project description — Orbit IT Solutions Platform
+# Project description — IT Solutions. Platform
 
 ## 1. Project idea
 
-Orbit IT Solutions is a fictional small IT services company. The project is a
+IT Solutions. is a fictional small IT services company. The project is a
 full-stack web platform that combines three things a company like this needs:
 
 1. A professional public website with services, products and a way to request a

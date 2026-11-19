@@ -1,3 +1,4 @@
+import { ToastProvider } from "../context/ToastContext";
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
@@ -25,7 +26,7 @@ function Harness({ action, removeOnSuccess = false }: { action: (id: string, val
 it("keeps the current value while saving, blocks duplicates and announces success even if the row disappears", async () => {
   let finish: () => void = () => {};
   const action = vi.fn(() => new Promise<void>(resolve => { finish = resolve; }));
-  render(<I18nProvider><Harness action={action} removeOnSuccess /></I18nProvider>);
+  render(<I18nProvider><ToastProvider><Harness action={action} removeOnSuccess /></ToastProvider></I18nProvider>);
   const select = screen.getByRole("combobox", { name: "Status for SR-1" });
   expect(select).toHaveValue("NEW");
   await userEvent.selectOptions(select, "COMPLETED");
@@ -42,7 +43,7 @@ it("keeps the current value while saving, blocks duplicates and announces succes
 
 it("preserves the confirmed value and exposes a permission error without reporting success", async () => {
   const action = vi.fn().mockRejectedValueOnce(new ApiError(403, "Forbidden")).mockResolvedValueOnce(undefined);
-  render(<I18nProvider><Harness action={action} /></I18nProvider>);
+  render(<I18nProvider><ToastProvider><Harness action={action} /></ToastProvider></I18nProvider>);
   const select = screen.getByRole("combobox");
   await userEvent.selectOptions(select, "COMPLETED");
   expect(await screen.findByRole("alert")).toHaveTextContent("Forbidden");

@@ -1,7 +1,8 @@
+import { ActionSwapText } from "../components/beui/ActionSwap";
+import { ActionFeedback } from "../components/ActionFeedback";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
@@ -296,22 +297,10 @@ function AdminCatalogPage() {
       }
     >
       {message && (
-        <Alert
-          className={cn(
-            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-success text-success-content border-success mb-4 text-sm",
-          )}
-        >
-          {message}
-        </Alert>
+        <ActionFeedback message={message} status="success" />
       )}
       {error && (
-        <Alert
-          className={cn(
-            "flex flex-col items-start gap-4 rounded-box border border-base-300 bg-base-200 p-4 sm:flex-row sm:items-center bg-error text-error-content border-error mb-4 text-sm",
-          )}
-        >
-          {error}
-        </Alert>
+        <ActionFeedback message={error} status="error" />
       )}
 
       <Tabs
@@ -521,7 +510,7 @@ function AdminCatalogPage() {
                 )}
               >
                 {busy && <Loader2 className="h-4 w-4 animate-spin" />}
-                {t("admin.save")}
+                <ActionSwapText value={String(busy)} animation="cascade">{t("admin.save")}</ActionSwapText>
               </Button>
             </form>
           )}
@@ -864,7 +853,7 @@ function AdminCatalogPage() {
                 )}
               >
                 {busy && <Loader2 className="h-4 w-4 animate-spin" />}
-                {t("admin.save")}
+                <ActionSwapText value={String(busy)} animation="cascade">{t("admin.save")}</ActionSwapText>
               </Button>
             </form>
           )}

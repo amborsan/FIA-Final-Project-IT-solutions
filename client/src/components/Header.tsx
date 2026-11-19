@@ -14,8 +14,10 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import type { ProductCategory, Service } from "../lib/types";
 import { HeaderNavigation, publicLinks } from "./HeaderNavigation";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { serviceGroups } from "../lib/serviceGroups";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
+  Check,
   ChevronDown,
   LayoutDashboard,
   LogOut,
@@ -30,7 +32,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { BrandLogo } from "./BrandLogo";
 import { HeaderDrawer } from "./beui/HeaderDrawer";
 import { useI18n } from "../i18n/I18nContext";
-import type { Language } from "../i18n/translations";
+import { LanguageTabs } from "./LanguageTabs";
 
 function dashboardPath(role: string) {
   if (role === "ADMIN") return "/admin";
@@ -41,8 +43,11 @@ function dashboardPath(role: string) {
 export function Header() {
   const { user, logout } = useAuth();
   const { count } = useCart();
-  const { t, pick, language, setLanguage } = useI18n();
+  const { t, pick } = useI18n();
   const navigate = useNavigate();
+  const pathname = useRouterState({ select: state => state.location.pathname.replace(/\/$/, "") || "/" });
+  const selectedCategory = useRouterState({ select: state => (state.location.search as { category?: string }).category });
+  const isShop = pathname === "/products";
   const [mobileOpen, setMobileOpen] = useState(false);
   const mobileId = useId();
   useEffect(() => {
@@ -68,21 +73,6 @@ export function Header() {
     void navigate({ to: "/" });
   }
 
-  const languageButton = (code: Language, label: string) => (
-    <button
-      type="button"
-      onClick={() => setLanguage(code)}
-      className={`rounded-pill px-2 py-1 text-xs font-semibold transition ${
-        language === code
-          ? "bg-primary text-primary-content"
-          : "text-base-content/70 hover:bg-base-200"
-      }`}
-      aria-pressed={language === code}
-    >
-      {label}
-    </button>
-  );
-
   return (
     <header className="site-header sticky top-0 z-40 border-b border-base-300/70 bg-surface">
       <div className="container-page flex h-nav items-center justify-between gap-1 sm:gap-4">
@@ -97,10 +87,7 @@ export function Header() {
         <HeaderNavigation services={servicesQuery.data?.services ?? []} categories={categoriesQuery.data?.categories ?? []} />
 
         <div className="flex items-center gap-0 sm:gap-1.5">
-          <div className="hidden items-center gap-0.5 rounded-pill border border-base-300 p-0.5 sm:flex">
-            {languageButton("en", "EN")}
-            {languageButton("de", "DE")}
-          </div>
+          <LanguageTabs className="hidden md:block" />
 
           <ThemeToggle />
 
@@ -230,11 +217,8 @@ export function Header() {
               </Button>
             }
           >
-          <div className="flex items-center justify-between pb-2">
-            <div className="flex items-center gap-0.5 rounded-pill border border-base-300 p-0.5">
-              {languageButton("en", "EN")}
-              {languageButton("de", "DE")}
-            </div>
+          <div className="flex items-center justify-between gap-3 pb-2">
+            <LanguageTabs />
             {user && (
               <span className="min-w-0 break-all text-right text-xs text-base-content/70">{user.email}</span>
             )}
@@ -242,7 +226,24 @@ export function Header() {
           <nav aria-label={t("nav.primary")} className="grid gap-1">
             {publicLinks.map((link) => (
               <div key={link.to}>
-                {link.to === "/products" ? (
+                {link.to === "/services" ? (
+                  <details className="group">
+                    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-pill px-3 py-2.5 text-sm font-medium text-base-content/75 hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-ring [&::-webkit-details-marker]:hidden">
+                      {t(link.key)}
+                      <ChevronDown aria-hidden="true" className="size-4 shrink-0 transition-transform group-open:rotate-180 motion-reduce:transition-none" />
+                    </summary>
+                    <ul className="ml-4 grid gap-1 border-l border-hairline pl-2">
+                      {serviceGroups.map(group => (
+                        <li key={group.id}>
+                          <Link to="/services" hash={group.id} onClick={() => setMobileOpen(false)}
+                            className="flex min-h-11 items-center rounded-pill px-3 py-2.5 text-sm text-ink-soft hover:bg-accent-sky focus-visible:outline-2 focus-visible:outline-ring">
+                            {t(group.titleKey)}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                ) : link.to === "/products" ? (
                   <details className="group">
                     <summary className="flex cursor-pointer list-none items-center justify-between rounded-pill px-3 py-2.5 text-sm font-medium text-base-content/75 hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-ring [&::-webkit-details-marker]:hidden">
                       {t(link.key)}
@@ -250,14 +251,22 @@ export function Header() {
                     </summary>
                     <ul className="ml-4 grid gap-1 border-l border-hairline pl-2">
                       <li>
-                        <Link to="/products" search={{ category: undefined }} onClick={() => setMobileOpen(false)} className="block rounded-pill px-3 py-2.5 text-sm text-ink-soft hover:bg-accent-sky focus-visible:outline-2 focus-visible:outline-ring">
-                          {t("nav.allProducts")}
+                        <Link to="/products" search={{ category: undefined }} activeOptions={{ exact: true }}
+                          aria-current={isShop && !selectedCategory ? "page" : undefined}
+                          onClick={() => setMobileOpen(false)}
+                          className={cn("flex min-h-11 items-center justify-between gap-2 rounded-pill px-3 py-2.5 text-sm hover:bg-accent-sky focus-visible:outline-2 focus-visible:outline-ring", isShop && !selectedCategory ? "bg-accent-sky font-nav text-ink" : "text-ink-soft")}>
+                          <span className="min-w-0">{t("nav.allProducts")}</span>
+                          {isShop && !selectedCategory && <Check aria-hidden="true" className="size-4 shrink-0" />}
                         </Link>
                       </li>
                       {(categoriesQuery.data?.categories ?? []).map(entry => (
                         <li key={entry.id}>
-                          <Link to="/products" search={{ category: entry.slug }} onClick={() => setMobileOpen(false)} className="block rounded-pill px-3 py-2.5 text-sm text-ink-soft hover:bg-accent-sky focus-visible:outline-2 focus-visible:outline-ring">
-                            {pick(entry.nameEn, entry.nameDe)}
+                          <Link to="/products" search={{ category: entry.slug }} activeOptions={{ exact: true }}
+                            aria-current={isShop && selectedCategory === entry.slug ? "page" : undefined}
+                            onClick={() => setMobileOpen(false)}
+                            className={cn("flex min-h-11 items-center justify-between gap-2 rounded-pill px-3 py-2.5 text-sm hover:bg-accent-sky focus-visible:outline-2 focus-visible:outline-ring", isShop && selectedCategory === entry.slug ? "bg-accent-sky font-nav text-ink" : "text-ink-soft")}>
+                            <span className="min-w-0 [overflow-wrap:anywhere]">{pick(entry.nameEn, entry.nameDe)}</span>
+                            {isShop && selectedCategory === entry.slug && <Check aria-hidden="true" className="size-4 shrink-0" />}
                           </Link>
                         </li>
                       ))}

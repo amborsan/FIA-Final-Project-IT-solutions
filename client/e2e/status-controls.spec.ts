@@ -11,7 +11,7 @@ for (const role of ["admin", "technician"] as const) for (const language of ["en
       localStorage.setItem("orbit_theme", "light");
     });
     await page.goto("/login");
-    await page.getByLabel("Email address", { exact: true }).fill(role === "admin" ? "admin@orbit-it.de" : "tech@orbit-it.de");
+    await page.getByLabel("Email address", { exact: true }).fill(role === "admin" ? "admin@fia-it.de" : "tech@fia-it.de");
     await page.getByLabel("Password", { exact: true }).fill(role === "admin" ? "Admin12345!" : "Tech12345!");
     await page.locator("form").getByRole("button", { name: "Log in", exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`/${role}/?$`));

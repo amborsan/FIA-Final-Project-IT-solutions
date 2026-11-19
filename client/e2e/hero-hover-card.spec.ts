@@ -25,7 +25,7 @@ for (const language of ["en", "de"] as const) {
       await expect(headingWord).toHaveCSS("opacity", "1");
     }
     for (const label of ["home.topicNetworks", "home.topicSecurity", "home.topicWebsites"] as const) {
-      const topic = page.getByRole("button", { name: t[label], exact: true });
+      const topic = page.locator(".home-hero").getByRole("link", { name: t[label], exact: true });
       await topic.scrollIntoViewIfNeeded();
       const word = topic.locator('[aria-hidden="true"] > span').first();
       await expect(word).toHaveCSS("opacity", "1");
@@ -39,7 +39,7 @@ for (const language of ["en", "de"] as const) {
       }
     }
     await page.mouse.move(0, 0);
-    const trigger = page.getByRole("button", { name: t["home.topicNetworks"], exact: true });
+    const trigger = page.locator(".home-hero").getByRole("link", { name: t["home.topicNetworks"], exact: true });
     const card = page.locator('[data-slot="hero-service-detail"]');
     await trigger.scrollIntoViewIfNeeded();
     const revealedWord = trigger.locator('[aria-hidden="true"] > span').first();
@@ -57,28 +57,33 @@ for (const language of ["en", "de"] as const) {
     await page.mouse.move(0, 0);
     await expect(card).toBeHidden();
     await trigger.focus();
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Shift+Tab");
     await expect(card).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(card).toBeHidden();
     await expect(trigger).toBeFocused();
+    await trigger.press("Enter");
+    await expect(page).toHaveURL(/\/services#connected-teams$/);
+    await expect(page.locator("#connected-teams")).toBeInViewport();
     await page.setViewportSize({ width: 360, height: 931 });
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.locator("html").evaluate(el => el.setAttribute("data-theme", "orbit-dark"));
-    for (const [label, text] of [
-      ["home.topicSecurity", "home.topicSecurityText"],
-      ["home.topicWebsites", "home.topicWebsitesText"],
+    for (const [label, id] of [
+      ["home.topicNetworks", "connected-teams"],
+      ["home.topicSecurity", "secure-systems"],
+      ["home.topicWebsites", "business-online"],
     ] as const) {
-      const button = page.getByRole("button", { name: t[label], exact: true });
-      await button.tap();
-      await expect(button.locator('[aria-hidden="true"] > span').first()).toHaveCSS("opacity", "1");
-      await expect(card).toBeVisible();
-      await expect(card).toContainText(t[text]);
-      const box = await card.boundingBox();
-      expect(box!.x).toBeGreaterThanOrEqual(0);
-      expect(box!.x + box!.width).toBeLessThanOrEqual(360);
-      await page.screenshot({ path: `test-results/hero-hover-${language}-mobile.png` });
-      await page.getByRole("heading", { level: 1 }).click();
-      await expect(card).toBeHidden();
+      await page.goto("/");
+      await page.locator("html").evaluate(el => el.setAttribute("data-theme", "orbit-dark"));
+      const topic = page.locator(".home-hero").getByRole("link", { name: t[label], exact: true });
+      await expect(topic).toHaveAttribute("href", `/services#${id}`);
+      await topic.scrollIntoViewIfNeeded();
+      await expect(topic.locator('[aria-hidden="true"] > span').first()).toHaveCSS("opacity", "1");
+      await topic.tap();
+      await expect(page).toHaveURL(new RegExp(`/services#${id}$`));
+      await expect(page.locator(`#${id}`)).toBeInViewport();
+      await expect(page.locator('main a[href^="/services/"]')).toHaveCount(10);
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
   });

@@ -1,7 +1,7 @@
 # UI library migration
 
-The current Orbit interface now uses shadcn/ui (Radix) and Tailwind CSS v4.
-The original component migration preserved Orbit styling. The approved DESIGN.md
+The current IT Solutions. interface now uses shadcn/ui (Radix) and Tailwind CSS v4.
+The original component migration preserved the existing styling. The approved DESIGN.md
 follow-up now applies the Indigo Panel System: locally hosted Geist, neutral pill
 actions, hairline containers and indigo panels. Existing theme names, translated
 copy, controlled fields and API calls remain in place.
@@ -36,8 +36,7 @@ the backend. Test artifacts and authenticated state directories are ignored by G
 The fresh-session customer demo login currently returns HTTP 401. This test remains
 failing rather than masking the API response. See
 [FE-20261110-demo-customer-login](../docs/handoffs/tickets/FE-20261110-demo-customer-login.md).
-Admin read-only workflows are now tested with the README-documented `admin@orbit-it.de`
-account (overridable through `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD`). The displayed
+Admin read-only workflows use configurable demo credentials (overridable through `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD`). The current default is `admin@fia-it.de`; earlier verification used the previous demo domain. The displayed
 customer demo still requires confirmation. Technician read-only workflows are
 covered separately below.
 
@@ -138,18 +137,11 @@ disabled, and no backend changes or business mutations were made.
 
 ## Demo account correction — 2026-11-16
 
-The running local API authenticates the README-listed `@orbit-it.de` demo
-accounts, while the login cards were filling `@fia-it.de`. The displayed Admin
-credentials returned 401; Admin, Technician, Customer and Business customer
-credentials with `@orbit-it.de` each returned 200 with the expected role and a
-valid `/auth/me` session. At the user's request, all four login cards now fill
-those verified local addresses. Passwords, CSRF, cookies, validation and role
-redirects are unchanged. This corrects the current local demo setup; a fresh
-database seeded with another domain requires the frontend demo values to match.
+The November 16 check authenticated all four demo roles using a previous demo domain, while the then-displayed fia-it.de credentials returned 401. Those results describe the local database at that time, not the current canonical branding.
 
-`e2e/demo-login.spec.ts` exercises each card's autofill, real API login response,
-role redirect and session. The existing customer login regression now targets
-the corrected card. No database, seed or authentication implementation changed.
+As of November 18, the user confirmed **IT Solutions.** and **fia-it.de** as the current branding. Login shortcuts and browser-test defaults now use fia-it.de, matching the committed seed. An existing database may retain earlier demo emails because the seed does not overwrite existing users. Any required database correction belongs to the backend developer.
+
+The demo-login browser tests exercise each card's autofill, real API login response, role redirect, and session. Passwords, CSRF, cookies, validation, and role redirects are unchanged. No database, seed, or authentication implementation changed.
 
 ## Header navigation menu — 2026-11-16
 
