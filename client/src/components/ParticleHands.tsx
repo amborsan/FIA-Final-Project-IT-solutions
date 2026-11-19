@@ -18,6 +18,7 @@ export function ParticleHands() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     let width = 0;
     let height = 0;
+    let artworkHeight = 0;
     let visible = false;
     let frame = 0;
     let previousTime = 0;
@@ -37,7 +38,7 @@ export function ParticleHands() {
       // A uniform scale keeps fingers and glyphs in proportion on narrow screens.
       const scale = width / 1000 * 1.18;
       const offsetX = (width - 1000 * scale) / 2;
-      const offsetY = height * 0.62 - 380 * scale;
+      const offsetY = artworkHeight * 0.62 - 380 * scale;
       context.translate(offsetX, offsetY);
       context.scale(scale, scale);
       context.fillStyle = color;
@@ -110,6 +111,8 @@ export function ParticleHands() {
       const bounds = canvas.getBoundingClientRect();
       width = bounds.width;
       height = bounds.height;
+      // The canvas extends below the layout, but the hand's position stays anchored to its artwork box.
+      artworkHeight = canvas.parentElement?.clientHeight ?? height;
       const ratio = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.round(width * ratio);
       canvas.height = Math.round(height * ratio);

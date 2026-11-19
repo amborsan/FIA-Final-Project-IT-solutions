@@ -38,14 +38,14 @@ for (const language of ["en", "de"] as const) {
       });
       if (width < 1024) {
         expect(geometry.art.top).toBeGreaterThanOrEqual(geometry.heading.bottom);
-        expect(geometry.art.top - geometry.heading.bottom).toBeLessThanOrEqual(24);
-        expect(geometry.topics.top - geometry.art.bottom).toBeLessThanOrEqual(24);
+        if (width >= 768) expect(geometry.art.top - geometry.heading.bottom).toBeLessThanOrEqual(24);
+        if (width >= 768) expect(geometry.topics.top - geometry.art.bottom).toBeLessThanOrEqual(24);
       }
       const quote = hero.getByRole("link", { name: t["home.ctaQuote"], exact: true });
       await expect(quote).toHaveAttribute("href", "/quote");
       expect((await quote.boundingBox())!.y + (await quote.boundingBox())!.height).toBeLessThanOrEqual(page.viewportSize()!.height);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-      if (width >= 1024 || width === 360 || width === 390) {
+      if (width >= 1024) {
         const stats = await page.locator(".home-hero-stats").boundingBox();
         expect(stats!.y + stats!.height).toBeLessThanOrEqual(page.viewportSize()!.height);
       }

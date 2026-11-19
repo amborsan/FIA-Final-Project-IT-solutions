@@ -83,7 +83,7 @@ for (const language of ["en", "de"] as const) {
       await topic.tap();
       await expect(page).toHaveURL(new RegExp(`/services#${id}$`));
       await expect(page.locator(`#${id}`)).toBeInViewport();
-      await expect(page.locator('main a[href^="/services/"]')).toHaveCount(10);
+      await expect(page.locator('main button[aria-haspopup="dialog"]')).toHaveCount(10);
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
   });
