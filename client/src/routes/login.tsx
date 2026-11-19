@@ -83,7 +83,12 @@ function LoginPage() {
 
   return (
     <div className="hero-grid flex min-h-[80vh] items-center py-12">
-      <div className="container-page grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-center">
+      <div
+        className={cn(
+          "container-page grid gap-8 lg:items-center",
+          import.meta.env.DEV && "lg:grid-cols-[1fr_1fr]",
+        )}
+      >
         <div className="mx-auto w-full max-w-md rounded-box border border-base-300 bg-base-100 p-6 shadow-lg sm:p-8">
           <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-primary-content">
             <LogIn className="h-5 w-5" />
@@ -141,42 +146,44 @@ function LoginPage() {
           </p>
         </div>
 
-        <div className="mx-auto w-full max-w-md">
-          <div className="rounded-box border border-base-300 bg-base-100/80 p-6 backdrop-blur">
-            <h2 className="text-base font-bold">{t("auth.demoTitle")}</h2>
-            <p className="mt-1 text-xs text-base-content/65">
-              {t("auth.demoText")}
-            </p>
-            <div className="mt-4 grid gap-2">
-              {demos.map((demo) => (
-                <button
-                  key={demo.email}
-                  type="button"
-                  onClick={() => {
-                    setEmail(demo.email);
-                    setPassword(demo.password);
-                  }}
-                  className="flex items-center justify-between gap-2 rounded-lg border border-base-300 px-3 py-2.5 text-left transition hover:border-primary/40 hover:bg-primary/5"
-                >
-                  <span>
-                    <span className="block text-xs font-semibold">
-                      {t(demo.label)}
+        {import.meta.env.DEV && (
+          <div className="mx-auto w-full max-w-md">
+            <div className="rounded-box border border-base-300 bg-base-100/80 p-6 backdrop-blur">
+              <h2 className="text-base font-bold">{t("auth.demoTitle")}</h2>
+              <p className="mt-1 text-xs text-base-content/65">
+                {t("auth.demoText")}
+              </p>
+              <div className="mt-4 grid gap-2">
+                {demos.map((demo) => (
+                  <button
+                    key={demo.email}
+                    type="button"
+                    onClick={() => {
+                      setEmail(demo.email);
+                      setPassword(demo.password);
+                    }}
+                    className="flex items-center justify-between gap-2 rounded-lg border border-base-300 px-3 py-2.5 text-left transition hover:border-primary/40 hover:bg-primary/5"
+                  >
+                    <span>
+                      <span className="block text-xs font-semibold">
+                        {t(demo.label)}
+                      </span>
+                      <span className="block text-[11px] text-base-content/70">
+                        {demo.email}
+                      </span>
                     </span>
-                    <span className="block text-[11px] text-base-content/70">
-                      {demo.email}
+                    <span className="rounded bg-base-200 px-2 py-1 font-mono text-[10px] text-base-content/70">
+                      {demo.password}
                     </span>
-                  </span>
-                  <span className="rounded bg-base-200 px-2 py-1 font-mono text-[10px] text-base-content/70">
-                    {demo.password}
-                  </span>
-                </button>
-              ))}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-4 text-[11px] leading-relaxed text-base-content/70">
+                {t("footer.demo")}
+              </p>
             </div>
-            <p className="mt-4 text-[11px] leading-relaxed text-base-content/70">
-              {t("footer.demo")}
-            </p>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
