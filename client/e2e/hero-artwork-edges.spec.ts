@@ -8,6 +8,7 @@ for (const language of ["en", "de"] as const) {
       localStorage.setItem("orbit_theme", "dark");
     }, language);
     await page.goto("/");
+    await expect(page.locator(".hero-particle-hands")).toBeVisible();
     await page.evaluate(() => document.fonts.ready);
     const checkLayout = async (width: number, height: number) => {
       await page.setViewportSize({ width, height });

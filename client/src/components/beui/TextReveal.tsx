@@ -7,15 +7,17 @@ type TextRevealProps = {
   text: string;
   delay?: number;
   replay?: number;
+  revealOnMount?: boolean;
 };
 
-export function TextReveal({ text, delay = 0, replay = 0 }: TextRevealProps) {
+export function TextReveal({ text, delay = 0, replay = 0, revealOnMount = true }: TextRevealProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.4 });
   const reduce = useReducedMotion();
   const words = text.match(/\S+\s*/g) ?? [];
   // Hover replays start immediately; only the first entrance staggers the groups.
   const startDelay = replay > 0 ? 0 : delay;
+  const reveal = !reduce && (revealOnMount || replay > 0);
 
   return (
     <span ref={ref} className="block">
@@ -26,8 +28,8 @@ export function TextReveal({ text, delay = 0, replay = 0 }: TextRevealProps) {
           <motion.span
             key={`${replay}-${index}-${word}`}
             className="inline-block whitespace-pre"
-            initial={reduce ? false : { y: "40%", opacity: 0, filter: "blur(6px)" }}
-            animate={inView || reduce
+            initial={reveal ? { y: "40%", opacity: 0, filter: "blur(6px)" } : false}
+            animate={inView || !reveal
               ? { y: 0, opacity: 1, filter: "blur(0px)" }
               : { y: "40%", opacity: 0, filter: "blur(6px)" }}
             transition={reduce ? { duration: 0 } : {

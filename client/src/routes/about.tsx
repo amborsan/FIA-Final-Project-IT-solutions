@@ -16,26 +16,35 @@ export const Route = createFileRoute("/about")({
   component: AboutPage,
 });
 
-export default function AboutPage() {
+function AboutPage() {
   const { t } = useI18n();
 
   const team = [
-    { initials: "AD", name: "Aylin Demir", role: t("about.roleAdmin"), color: "bg-primary" },
-    { initials: "JW", name: "Jonas Weber", role: t("about.roleTech"), color: "bg-teal-700" },
-    { initials: "MK", name: "Marcel Koch", role: t("about.roleTech2"), color: "bg-amber-700" },
-    { initials: "SR", name: "Sofia Reed", role: t("about.roleCustomer"), color: "bg-neutral" },
+    { initials: "IL", name: "I-Chieh Liu", role: t("about.roleTeam"), color: "bg-primary" },
+    { initials: "FH", name: "Feras Hifean", role: t("about.roleTeam"), color: "bg-teal-700" },
+    { initials: "AB", name: "Ali Borsan", role: t("about.roleTeam"), color: "bg-amber-700" },
+    { initials: "OM", name: "Otto Mueller", role: t("about.roleAdmin"), color: "bg-neutral" },
   ];
 
   return (
     <div className="bg-base-100">
       <section className="hero-grid border-b border-base-300">
-        <div className="container-page py-14 sm:py-20">
-          <h1 className="max-w-4xl text-4xl font-black tracking-tight sm:text-5xl">
-            {t("about.title")}
-          </h1>
-          <p className="mt-5 max-w-3xl text-base leading-relaxed text-base-content/65 sm:text-lg">
-            {t("about.text")}
-          </p>
+        <div className="container-page grid items-center gap-8 py-14 sm:py-20 lg:grid-cols-2">
+          <div>
+            <h1 className="max-w-4xl text-4xl font-black tracking-tight sm:text-5xl">
+              {t("about.title")}
+            </h1>
+            <p className="mt-5 max-w-3xl text-base leading-relaxed text-base-content/65 sm:text-lg">
+              {t("about.text")}
+            </p>
+          </div>
+          <img
+            src="/site-photos/workspace.webp"
+            alt={t("about.workspacePhoto")}
+            width={975}
+            height={650}
+            className="aspect-video w-full rounded-box border border-hairline object-cover"
+          />
         </div>
       </section>
 
@@ -91,7 +100,7 @@ export default function AboutPage() {
                 key={member.name}
                 className="rounded-box border border-base-300 bg-base-100 p-6 text-center"
               >
-                <span
+                <span aria-hidden="true"
                   className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full text-lg font-bold text-white ${member.color}`}
                 >
                   {member.initials}

@@ -5,23 +5,11 @@
 
 ## Before the demo
 
-```bash
-cd server && npm run dev
-cd client && npm run dev
-```
+Follow the [fresh-clone setup guide](../SETUP.md) to seed a clean local demo database and start the application. Use the [presentation build](../SETUP.md#6-run-the-final-build-for-rehearsal) at `http://localhost:3000` for the live run. For development rehearsal, run `npm run dev` from the root and open `http://localhost:5173`.
 
-- Open `http://localhost:5173` in a clean profile.
-- Log in as customer in profile A, technician in B, admin in C.
-- Make sure the seed data exists (`npm run db:seed`).
-- Have `customer@fia-it.de / Customer12345!` ready.
-
-If you prefer the production build:
-
-```bash
-cd client && npm run build
-cd server && npm start
-# open http://localhost:3000
-```
+- Sign in as the customer in profile A, technician in B, and admin in C.
+- Confirm the demo request and its sent quote are available before presenting.
+- Have the local demo login details ready.
 
 ---
 
@@ -132,9 +120,9 @@ If something fails:
 
 - Use the seeded demo request `SR-2026-DEMO01`, which already has a sent quote.
 - Use `customer@fia-it.de` and accept it live.
-- If the database is empty, run `npm run db:seed` and reload.
+- If the database is empty during rehearsal, use the [seed setup](../SETUP.md#3-configure-and-seed-the-server).
 - If the dev server fails, use the already built app at `http://localhost:3000`
-  (`cd server && npm start`).
+  (`npm --prefix server start` from the repository root).
 - Keep screenshots of the dashboards in the slides as a last resort.
 
 ## Do not do during the demo

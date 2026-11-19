@@ -16,10 +16,12 @@ const links: { to: string; key: TranslationKey }[] = [
 export function LegalShell({
   titleKey,
   introKey,
+  lastUpdated,
   children,
 }: {
   titleKey: TranslationKey;
   introKey: TranslationKey;
+  lastUpdated?: string;
   children: ReactNode;
 }) {
   const { t, language } = useI18n();
@@ -36,7 +38,7 @@ export function LegalShell({
           </p>
           <p className="mt-3 text-[11px] text-base-content/70">
             {t("legal.lastUpdated")}:{" "}
-            {language === "de" ? "1. November 2026" : "1 November 2026"}
+            {lastUpdated ?? (language === "de" ? "1. November 2026" : "1 November 2026")}
           </p>
         </div>
       </section>

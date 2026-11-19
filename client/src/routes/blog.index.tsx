@@ -12,7 +12,7 @@ export const Route = createFileRoute("/blog/")({
   component: BlogPage,
 });
 
-export default function BlogPage() {
+function BlogPage() {
   const { t, pick, formatDate } = useI18n();
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["content"],

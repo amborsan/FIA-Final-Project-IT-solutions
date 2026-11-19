@@ -12,8 +12,9 @@ for (const language of ["en", "de"] as const) {
     }, language);
     await page.goto("/");
     const brand = page.locator(".site-header .brand-lockup");
-    const tile = brand.locator(".brand-symbol i").first();
-    await expect(brand.locator(".brand-symbol i")).toHaveCount(4);
+    const tiles = brand.locator(".brand-symbol rect");
+    const tile = tiles.first();
+    await expect(tiles).toHaveCount(4);
     await expect(tile).toHaveCSS("transform", "none");
     await brand.hover();
     await expect(tile).toHaveCSS("transform", /matrix/);

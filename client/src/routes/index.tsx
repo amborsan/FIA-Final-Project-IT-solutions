@@ -1,7 +1,7 @@
 import { ScrollReveal } from "../components/beui/ScrollReveal";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -21,7 +21,6 @@ import type { TranslationKey } from "../i18n/translations";
 import { SectionHeading } from "../components/ui";
 import { HomeServicesAccordion } from "../components/HomeServicesAccordion";
 import { ParticleHands } from "../components/ParticleHands";
-import Grainient from "../components/Grainient";
 import { TextReveal } from "../components/beui/TextReveal";
 import { DecodedStat } from "../components/DecodedStat";
 import { ProcessTimeline } from "../components/ProcessTimeline";
@@ -32,7 +31,9 @@ export const Route = createFileRoute("/")({
 
 import { ProductCard } from "../components/ProductCard";
 
-export default function HomePage() {
+const Grainient = lazy(() => import("../components/Grainient"));
+
+function HomePage() {
   const { t, pick, formatDate } = useI18n();
   const [heroTopic, setHeroTopic] = useState<number | null>(null);
   const [topicReplays, setTopicReplays] = useState([0, 0, 0]);
@@ -76,23 +77,26 @@ export default function HomePage() {
     <>
       {/* Hero */}
       <section className="home-hero">
-        <Grainient
-          className="home-hero-gradient"
-          aria-hidden="true"
-          colors={["var(--hero-gradient-start)", "var(--hero-gradient-end)"]}
-          angle={180}
-          flow={2}
-          silk={0.37}
-          grainAmount={0.03}
-          scale={0.6}
-          speed={0.6}
-          grainSize={0.6}
-          contrast={1.23}
-          saturation={1.19}
-          variation={15}
-          stir={0.75}
-          grainAnimated={false}
-        />
+        <Suspense fallback={null}>
+          <Grainient
+            className="home-hero-gradient"
+            aria-hidden="true"
+            colors={["var(--hero-gradient-start)", "var(--hero-gradient-end)"]}
+            angle={180}
+            flow={2}
+            silk={0.37}
+            grainAmount={0.03}
+            scale={0.6}
+            speed={0.6}
+            grainSize={0.6}
+            contrast={1.23}
+            saturation={1.19}
+            variation={15}
+            stir={0.75}
+            grainAnimated={false}
+            dpr={1}
+          />
+        </Suspense>
         <div className="container-page home-hero-layout">
           <div className="home-hero-topline">
           <div className="home-hero-heading">
@@ -102,7 +106,7 @@ export default function HomePage() {
                 if (event.pointerType === "mouse") setHeadingReplay(current => current + 1);
               }}
             >
-              <TextReveal text={`${t("home.heroTitle")} ${t("home.heroHighlight")}`} replay={headingReplay} />
+              <TextReveal text={`${t("home.heroTitle")} ${t("home.heroHighlight")}`} replay={headingReplay} revealOnMount={false} />
             </h1>
             <p className="mt-4 text-center text-base leading-normal text-ink-soft">
               {t("home.heroText")}

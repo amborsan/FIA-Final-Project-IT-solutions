@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 338 72" role="img" aria-labelledby="title" fill="#0d0d0d">
+  <title id="title">IT Solutions.</title>
+  <style>@media (prefers-color-scheme: dark) { svg { fill: #f5f5f5; } }</style>
+  <g transform="translate(9 9)">
+    <rect x="19" width="16" height="16" rx="2"/>
+    <rect y="19" width="16" height="16" rx="2"/>
+    <rect x="38" y="19" width="16" height="16" rx="2"/>
+    <rect x="19" y="38" width="16" height="16" rx="2"/>
+  </g>
+  <text x="81" y="49" font-family="system-ui, sans-serif" font-size="36" font-weight="750" letter-spacing="-1.2">IT Solutions.</text>
+</svg>

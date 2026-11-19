@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { translations } from "../src/i18n/translations";
 
 const demos = [
   { email: "admin@fia-it.de", password: "Admin12345!", role: "ADMIN", path: "/admin" },
@@ -28,5 +29,20 @@ for (const demo of demos) {
     const session = await page.request.get("/api/auth/me");
     expect(session.status()).toBe(200);
     expect((await session.json()).user.email).toBe(demo.email);
+  });
+}
+
+for (const language of ["en", "de"] as const) {
+  test(`${language}: login reports an unavailable connection without blaming the credentials`, async ({ page }) => {
+    const t = translations[language];
+    await page.addInitScript(language => {
+      localStorage.setItem("orbit_language", language);
+      localStorage.setItem("orbit_cookie_consent", "true");
+    }, language);
+    await page.route("**/api/auth/csrf", route => route.abort());
+    await page.goto("/login");
+    await page.getByRole("button").filter({ hasText: demos[0].email }).click();
+    await page.locator("form").getByRole("button", { name: t["auth.loginButton"], exact: true }).click();
+    await expect(page.locator("form").getByRole("alert")).toHaveText(t["common.error"]);
   });
 }

@@ -32,7 +32,7 @@ for (const language of ["en", "de"] as const) {
                   else await link.click();
                 } else if (source === "header") {
                   const header = page.locator(".site-header");
-                  await header.getByRole("button", { name: t["nav.services"], exact: true }).click();
+                  await header.getByRole("button", { name: t["nav.services"], exact: true }).press("Enter");
                   const link = page.locator(`[data-slot="navigation-menu-content"] a[href="/services#${theme.id}"]`);
                   await expect(link).toContainText(theme.title);
                   await link.click();

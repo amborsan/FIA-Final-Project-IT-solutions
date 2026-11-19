@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { api } from "../lib/api";
 import type { Product } from "../lib/types";
+import type { TranslationKey } from "../i18n/translations";
 import { useI18n } from "../i18n/I18nContext";
 import { useCart } from "../context/CartContext";
 import { ProductCard, ProductVisual } from "../components/ProductCard";
@@ -27,7 +28,16 @@ export const Route = createFileRoute("/products/$slug")({
   component: ProductDetailPage,
 });
 
-export default function ProductDetailPage() {
+const categoryGuidance = new Map<string, TranslationKey>([
+  ["network", "products.guidance.network"],
+  ["surveillance", "products.guidance.surveillance"],
+  ["computers", "products.guidance.computers"],
+  ["servers", "products.guidance.servers"],
+  ["communication", "products.guidance.communication"],
+  ["accessories", "products.guidance.accessories"],
+]);
+
+function ProductDetailPage() {
   const { slug } = useParams({ from: "/products/$slug" });
   const { t, pick, formatMoney } = useI18n();
   const { notify } = useToast();
@@ -59,6 +69,7 @@ export default function ProductDetailPage() {
   }
 
   const product = productQuery.data.product;
+  const guidance = categoryGuidance.get(product.category?.slug ?? "");
   const related = (relatedQuery.data?.products ?? [])
     .filter(
       (entry) => entry.id !== product.id && entry.category?.id === product.category?.id,
@@ -84,7 +95,7 @@ export default function ProductDetailPage() {
 
         <div className="mt-6 grid gap-10 lg:grid-cols-2">
           <div className="overflow-hidden rounded-box border border-base-300 bg-base-100">
-            <ProductVisual product={product} className="h-80 sm:h-[26rem]" />
+            <ProductVisual product={product} className="h-80 sm:h-[26rem]" sizes="(min-width: 1024px) 50vw, 100vw" />
             <div className="grid grid-cols-3 gap-2 border-t border-base-200 p-3 text-center text-[11px] text-base-content/65">
               <div className="rounded-lg bg-base-200/70 p-2">
                 <Truck className="mx-auto mb-1 h-4 w-4 text-primary" />
@@ -119,6 +130,12 @@ export default function ProductDetailPage() {
             <p className="mt-4 text-sm leading-relaxed text-base-content/65">
               {pick(product.descriptionEn, product.descriptionDe)}
             </p>
+            {guidance && (
+              <section className="mt-4 rounded-box border border-hairline p-4">
+                <h2 className="text-sm font-semibold">{t("products.compatibility")}</h2>
+                <p className="mt-1 text-sm leading-relaxed text-ink-soft">{t(guidance)}</p>
+              </section>
+            )}
 
             <div className="mt-6 rounded-box border border-base-300 bg-base-200/50 p-5">
               <div className="flex items-end justify-between gap-4">

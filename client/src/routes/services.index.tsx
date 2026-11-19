@@ -17,7 +17,7 @@ export const Route = createFileRoute("/services/")({
   component: ServicesPage,
 });
 
-export default function ServicesPage() {
+function ServicesPage() {
   const { t } = useI18n();
   const [search, setSearch] = useState("");
 
@@ -35,16 +35,23 @@ export default function ServicesPage() {
     <div className="bg-base-100">
       <section className="hero-grid border-b border-base-300">
         <ScrollReveal className="container-page py-14 sm:py-20">
-          <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="grid gap-6 lg:grid-cols-2 lg:items-center">
             <div className="max-w-3xl">
               <h1 className="text-4xl font-black tracking-tight sm:text-5xl">{t("services.title")}</h1>
               <p className="mt-4 max-w-2xl text-base leading-relaxed text-base-content/65">
                 {t("services.text")}
               </p>
+              <Link to="/quote" search={{ service: undefined }} className={cn(buttonVariants(), "mt-6 bg-primary text-primary-content border-primary hover:bg-primary-hover")}>
+                {t("nav.quote")} <ArrowRight aria-hidden="true" className="h-4 w-4" />
+              </Link>
             </div>
-            <Link to="/quote" search={{ service: undefined }} className={cn(buttonVariants(), " bg-primary text-primary-content border-primary hover:bg-primary-hover")}>
-              {t("nav.quote")} <ArrowRight className="h-4 w-4" />
-            </Link>
+            <img
+              src="/catalog/service.webp"
+              alt={t("services.technicianPhoto")}
+              width={960}
+              height={638}
+              className="aspect-video w-full rounded-box border border-hairline object-cover"
+            />
           </div>
         </ScrollReveal>
       </section>
@@ -77,9 +84,6 @@ export default function ServicesPage() {
         </label>
         </ScrollReveal>
 
-        {isLoading && <PageLoader />}
-        {isError && <ErrorState onRetry={() => void refetch()} />}
-
         {!isLoading && !isError && (
           <>
             <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -93,28 +97,35 @@ export default function ServicesPage() {
                 <EmptyState title={t("common.noResults")} text={t("services.noResultsText")} />
               </div>
             )}
-            <div className="mt-10 space-y-12">
-              {serviceGroups.map(group => {
-                const entries = services.filter(service => getServiceGroupId(service.slug) === group.id);
-                return (
-                  <section key={group.id} aria-labelledby={group.id}>
-                    <ScrollReveal>
-                    <h2 id={group.id} tabIndex={-1} className="w-fit scroll-mt-24 rounded-sm text-2xl font-medium tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
-                      {t(group.titleKey)}
-                    </h2>
-                    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-soft">{t(group.descriptionKey)}</p>
-                    {entries.length > 0 ? (
+          </>
+        )}
+
+        {/* Keep the topic anchors available as soon as the route renders. */}
+        <div className="mt-10 space-y-12">
+          {serviceGroups.map(group => {
+            const entries = services.filter(service => getServiceGroupId(service.slug) === group.id);
+            return (
+              <section key={group.id} aria-labelledby={group.id}>
+                <ScrollReveal>
+                  <h2 id={group.id} tabIndex={-1} className="w-fit scroll-mt-24 rounded-sm text-2xl font-medium tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
+                    {t(group.titleKey)}
+                  </h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-soft">{t(group.descriptionKey)}</p>
+                  {!isLoading && !isError && (
+                    entries.length > 0 ? (
                       <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {entries.map(service => <ServicePreviewCard key={service.id} service={service} />)}
                       </div>
-                    ) : <p className="mt-4 text-sm text-ink-muted">{t("services.noGroupResults")}</p>}
-                    </ScrollReveal>
-                  </section>
-                );
-              })}
-            </div>
-          </>
-        )}
+                    ) : <p className="mt-4 text-sm text-ink-muted">{t("services.noGroupResults")}</p>
+                  )}
+                </ScrollReveal>
+              </section>
+            );
+          })}
+        </div>
+
+        {isLoading && <PageLoader compact />}
+        {isError && <ErrorState onRetry={() => void refetch()} />}
 
         <ScrollReveal className="mt-12 flex flex-col items-start justify-between gap-4 rounded-box border border-base-300 bg-base-200/60 p-6 sm:flex-row sm:items-center">
           <div>

@@ -9,7 +9,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Loader2, LogIn, ShieldCheck } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
-import { errorMessage } from "../lib/api";
+import { ApiError } from "../lib/api";
 
 const demos = [
   {
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
-export default function LoginPage() {
+function LoginPage() {
   const { user, login } = useAuth();
   const { t } = useI18n();
   const navigate = useNavigate();
@@ -69,7 +69,13 @@ export default function LoginPage() {
             : "/portal";
       await navigate({ to });
     } catch (caught) {
-      setError(errorMessage(caught, t("auth.invalid")));
+      if (caught instanceof ApiError && caught.status === 401) {
+        setError(t("auth.invalid"));
+      } else if (caught instanceof ApiError && caught.status < 500) {
+        setError(caught.message);
+      } else {
+        setError(t("common.error"));
+      }
     } finally {
       setLoading(false);
     }

@@ -13,6 +13,9 @@ import {
 } from "lucide-react";
 import { api } from "../lib/api";
 import type { Service } from "../lib/types";
+import { getServiceExampleKey, getServiceScopeKeys } from "../lib/serviceScope";
+import { getServiceGroupId } from "../lib/serviceGroups";
+import { siteContact } from "../lib/siteContact";
 import { useI18n } from "../i18n/I18nContext";
 import { ServiceIcon } from "../components/ServiceIcon";
 import { ServicePreviewCard } from "../components/ServicePreviewCard";
@@ -22,7 +25,13 @@ export const Route = createFileRoute("/services/$slug")({
   component: ServiceDetailPage,
 });
 
-export default function ServiceDetailPage() {
+const examplePhotos = {
+  "connected-teams": { src: "/catalog/service.webp", altKey: "services.technicianPhoto" },
+  "secure-systems": { src: "/site-photos/camera-installation.webp", altKey: "services.securityPhoto" },
+  "business-online": { src: "/site-photos/site-development.webp", altKey: "services.webPhoto" },
+} as const;
+
+function ServiceDetailPage() {
   const { slug } = useParams({ from: "/services/$slug" });
   const { t, pick, formatMoney } = useI18n();
 
@@ -49,6 +58,8 @@ export default function ServiceDetailPage() {
   }
 
   const service = serviceQuery.data.service;
+  const exampleKey = getServiceExampleKey(service.slug);
+  const photo = examplePhotos[getServiceGroupId(service.slug)];
   const related = (allQuery.data?.services ?? [])
     .filter((entry) => entry.id !== service.id)
     .slice(0, 3);
@@ -97,22 +108,20 @@ export default function ServiceDetailPage() {
             <div className="rounded-box border border-base-300 bg-base-100 p-6 shadow-lg">
               <h2 className="text-base font-bold">{t("services.included")}</h2>
               <ul className="mt-4 space-y-3">
-                {[1, 2, 3, 4].map((number) => (
-                  <li key={number} className="flex items-start gap-2.5 text-sm">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-                    <span>
-                      {t(`services.scope${number}` as "services.scope1")}
-                    </span>
+                {getServiceScopeKeys(service.slug).map((key) => (
+                  <li key={key} className="flex items-start gap-2.5 text-sm">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-hidden="true" />
+                    <span>{t(key)}</span>
                   </li>
                 ))}
               </ul>
               <div className="mt-5 space-y-2 border-t border-base-200 pt-4 text-xs text-base-content/70">
-                <p className="flex items-center gap-2">
-                  <Phone className="h-3.5 w-3.5" /> +49 30 5550 0100
-                </p>
-                <p className="flex items-center gap-2">
-                  <Mail className="h-3.5 w-3.5" /> hello@fia-it.de
-                </p>
+                <a href={siteContact.phoneHref} className="flex items-center gap-2 hover:text-primary">
+                  <Phone className="h-3.5 w-3.5" aria-hidden="true" /> {siteContact.phone}
+                </a>
+                <a href={siteContact.emailHref} className="flex items-center gap-2 hover:text-primary">
+                  <Mail className="h-3.5 w-3.5" aria-hidden="true" /> {siteContact.email}
+                </a>
                 <p className="flex items-center gap-2">
                   <Clock className="h-3.5 w-3.5" /> {t("quote.responseTime")}
                 </p>
@@ -121,6 +130,23 @@ export default function ServiceDetailPage() {
           </div>
         </div>
       </section>
+
+      {exampleKey && (
+        <section className="container-page py-12" aria-labelledby="service-example-title">
+          <div className="grid items-center gap-6 rounded-box border border-hairline bg-surface p-5 sm:p-8 lg:grid-cols-2">
+            <div>
+              <h2 id="service-example-title" className="text-2xl font-bold">{t("services.exampleTitle")}</h2>
+              <p className="mt-3 max-w-prose text-sm leading-relaxed text-ink-soft">{t(exampleKey)}</p>
+            </div>
+            <img
+              src={photo.src}
+              alt={t(photo.altKey)}
+              className="aspect-video w-full rounded-box object-cover"
+              loading="lazy"
+            />
+          </div>
+        </section>
+      )}
 
       {related.length > 0 && (
         <section className="container-page py-12" aria-labelledby="related-services-title">

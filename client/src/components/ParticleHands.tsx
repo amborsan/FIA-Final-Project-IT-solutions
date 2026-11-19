@@ -1,20 +1,43 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { creationHandsData } from "./creationHandsData";
 import { getHandsMotion } from "./particleHandsMotion";
+
+const glyphs = ".,:;=+*xX0#@";
+type HandData = typeof import("./creationHandsData").creationHandsData;
 
 export function ParticleHands() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [handData, setHandData] = useState<HandData>();
+
+  useEffect(() => {
+    let mounted = true;
+    // The canvas is present immediately. Its decorative data can load afterward.
+    void import("./creationHandsData").then(({ creationHandsData }) => {
+      if (mounted) setHandData(creationHandsData);
+    }).catch(() => {
+      // The hero remains usable if the artwork cannot be loaded.
+    });
+    return () => { mounted = false; };
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !handData) return;
     const context = canvas.getContext("2d");
     if (!context) return;
-    const points = creationHandsData.map(([x, y, shade]) => {
+    const points = handData.map(([x, y, shade]) => {
       const noise = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
-      return { x, y, shade, z: shade * 42, seed: noise - Math.floor(noise), side: x < 480 ? 0 : 1 };
+      const density = Math.min(1, 0.12 + shade * 1.2);
+      const left = x < 480;
+      return {
+        x, y, density, z: shade * 42, seed: noise - Math.floor(noise),
+        direction: left ? 1 : -1,
+        pivot: left ? 220 : 780,
+        glyph: glyphs[Math.min(glyphs.length - 1, Math.floor(density * glyphs.length))],
+      };
     });
+    let sampledPoints = points;
+    let glyphSize = 4.5;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     let width = 0;
     let height = 0;
@@ -42,36 +65,29 @@ export function ParticleHands() {
       context.translate(offsetX, offsetY);
       context.scale(scale, scale);
       context.fillStyle = color;
-      const glyphs = ".,:;=+*xX0#@";
-      // Keep characters legible on phones by sampling fewer, larger glyphs.
-      const glyphSize = Math.max(4.5, 4500 / width);
-      const columnStride = Math.max(1, Math.ceil(glyphSize * 0.6 / 4));
-      const rowStride = Math.max(1, Math.round(glyphSize / 4));
       context.font = `${glyphWeight} ${glyphSize}px monospace`;
       context.textAlign = "center";
       context.textBaseline = "middle";
       const { reach, dissolve, separation, time, pointerStrength } = getHandsMotion(reduced.matches ? 0 : elapsed);
       const turn = Math.sin(time * 0.22) * 0.025 + follow.x * 0.035 * pointerStrength;
+      const cosTurn = Math.cos(turn);
+      const sinTurn = Math.sin(turn);
+      const fade = 1 - dissolve * dissolveFade;
 
-      for (const point of points) {
-        if ((point.x / 4) % columnStride !== 0 || ((point.y - 200) / 4) % rowStride !== 0) continue;
-        const direction = point.side === 0 ? 1 : -1;
-        const pivot = point.side === 0 ? 220 : 780;
-        const rotation = turn * direction;
-        const localX = pivot + (point.x - pivot) * Math.cos(rotation) + point.z * Math.sin(rotation);
+      for (const point of sampledPoints) {
+        const { direction, pivot } = point;
+        const localX = pivot + (point.x - pivot) * cosTurn + point.z * sinTurn * direction;
         const spread = dissolve * (24 + point.seed * 110);
-        const driftX = Math.sin(point.seed * 30 + time * 0.2) * spread;
-        const driftY = Math.cos(point.seed * 27 + time * 0.25) * spread;
+        const driftX = spread ? Math.sin(point.seed * 30 + time * 0.2) * spread : 0;
+        const driftY = spread ? Math.cos(point.seed * 27 + time * 0.25) * spread : 0;
         const x = localX + direction * (reach - 32 - separation);
         const y = point.y;
         const wobble = Math.sin(time * 0.35 + point.x * 0.004) * 1.5;
-        const density = Math.min(1, 0.12 + point.shade * 1.2);
         // Preserve the silhouette even in lighter shading and the dissolve phase.
         const drawX = x + driftX;
         const drawY = y + wobble + driftY + follow.y * point.z * 0.1 * pointerStrength;
-        context.globalAlpha = (minOpacity + density * (1 - minOpacity)) * (1 - dissolve * dissolveFade);
-        const glyph = glyphs[Math.min(glyphs.length - 1, Math.floor(density * glyphs.length))];
-        context.fillText(glyph, drawX, drawY);
+        context.globalAlpha = (minOpacity + point.density * (1 - minOpacity)) * fade;
+        context.fillText(point.glyph, drawX, drawY);
       }
       context.restore();
     }
@@ -111,6 +127,11 @@ export function ParticleHands() {
       const bounds = canvas.getBoundingClientRect();
       width = bounds.width;
       height = bounds.height;
+      // The sampling grid changes with width, so resolve it once per resize.
+      glyphSize = Math.max(4.5, 4500 / width);
+      const columnStride = Math.max(1, Math.ceil(glyphSize * 0.6 / 4));
+      const rowStride = Math.max(1, Math.round(glyphSize / 4));
+      sampledPoints = points.filter(({ x, y }) => (x / 4) % columnStride === 0 && ((y - 200) / 4) % rowStride === 0);
       // The canvas extends below the layout, but the hand's position stays anchored to its artwork box.
       artworkHeight = canvas.parentElement?.clientHeight ?? height;
       const ratio = Math.min(window.devicePixelRatio || 1, 2);
@@ -146,7 +167,7 @@ export function ParticleHands() {
       canvas.removeEventListener("pointermove", move);
       canvas.removeEventListener("pointerleave", leave);
     };
-  }, []);
+  }, [handData]);
 
   return <canvas ref={canvasRef} className="hero-particle-hands" aria-hidden="true" />;
 }

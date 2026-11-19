@@ -17,7 +17,7 @@ export const Route = createFileRoute("/products/")({
   component: ProductsPage,
 });
 
-export default function ProductsPage() {
+function ProductsPage() {
   const { t } = useI18n();
   const [search, setSearch] = useState("");
   const { category = "" } = Route.useSearch();
@@ -35,6 +35,11 @@ export default function ProductsPage() {
     queryKey: ["categories"],
     queryFn: () => api<{ categories: ProductCategory[] }>("/categories"),
   });
+
+  function retryCatalog() {
+    if (productsQuery.isError) void productsQuery.refetch();
+    if (categoriesQuery.isError) void categoriesQuery.refetch();
+  }
 
   const products = (productsQuery.data?.products ?? []).filter((product) => {
     const matchesCategory = !category || product.category?.slug === category;
@@ -75,8 +80,12 @@ export default function ProductsPage() {
         </ScrollReveal>
 
         {productsQuery.isLoading && <PageLoader />}
-        {productsQuery.isError && (
-          <ErrorState onRetry={() => void productsQuery.refetch()} />
+        {(productsQuery.isError || categoriesQuery.isError) && (
+          <ErrorState
+            onRetry={retryCatalog}
+            retrying={(productsQuery.isError && productsQuery.isFetching) ||
+              (categoriesQuery.isError && categoriesQuery.isFetching)}
+          />
         )}
 
         {!productsQuery.isLoading && !productsQuery.isError && (

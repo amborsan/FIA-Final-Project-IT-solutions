@@ -17,9 +17,9 @@ for (const language of ["en", "de"] as const) {
     expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(innerRight);
     await page.screenshot({ path: `test-results/home-navbar-${language}-320.png` });
     await menu.click();
-    await expect(menu).toHaveAttribute("aria-expanded", "true");
-    const nav = page.getByRole("navigation", { name: t["nav.primary"], exact: true });
-    await expect(nav.getByRole("link", { name: t["nav.services"], exact: true })).toBeVisible();
+    const dialog = page.getByRole("dialog", { name: t["nav.menu"], exact: true });
+    const nav = dialog.getByRole("navigation", { name: t["nav.primary"], exact: true });
+    await expect(nav.locator("summary").filter({ hasText: t["nav.services"] })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
     await page.keyboard.press("Escape");
     await expect(menu).toBeFocused();

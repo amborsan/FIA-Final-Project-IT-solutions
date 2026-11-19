@@ -19,7 +19,7 @@ export const Route = createFileRoute("/cart")({
   component: CartPage,
 });
 
-export default function CartPage() {
+function CartPage() {
   const { items, subtotal, count, setQuantity, remove, clear } = useCart();
   const { user } = useAuth();
   const { t, pick, formatMoney } = useI18n();

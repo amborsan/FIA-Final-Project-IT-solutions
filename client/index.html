@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
     <link
       rel="preload"
       href="/fonts/geist/Geist-Variable.woff2"
@@ -13,34 +13,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="IT Solutions. - networks, servers, cybersecurity, web development and IT support for small and medium businesses in Berlin and Germany."
+      content="IT Solutions. is a bilingual graduation demo for IT services and equipment. Explore quotes, equipment orders and ongoing support."
     />
     <meta name="theme-color" content="#ffffff" />
     <meta property="og:title" content="IT Solutions." />
     <meta
       property="og:description"
-      content="IT services and equipment for small and medium businesses. English and German."
+      content="A bilingual IT services and equipment demo covering quotes, orders and customer support."
     />
     <meta property="og:type" content="website" />
     <title>IT Solutions. — IT services & equipment</title>
-    <script>
-      // Apply the saved theme before React renders to avoid a light flash.
-      (function () {
-        try {
-          var saved = localStorage.getItem("orbit_theme");
-          var dark = saved
-            ? saved === "dark"
-            : window.matchMedia("(prefers-color-scheme: dark)").matches;
-          document.documentElement.setAttribute(
-            "data-theme",
-            dark ? "orbit-dark" : "orbit",
-          );
-          document.documentElement.style.colorScheme = dark ? "dark" : "light";
-        } catch (error) {
-          // localStorage can be blocked; the default light theme still works.
-        }
-      })();
-    </script>
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <div id="root"></div>

@@ -195,22 +195,22 @@
     flex-shrink: 0;
     color: var(--ink-muted);
   }
-  :is(.home-hero-topic-mark, .brand-symbol, .process-marker) i {
+  :is(.home-hero-topic-mark, .process-marker) i {
     position: absolute;
     width: 33.333%;
     height: 33.333%;
     background: currentColor;
     transition: transform var(--duration-ui) var(--ease-ui), color var(--duration-ui) var(--ease-ui);
   }
-  :is(.home-hero-topic-mark, .brand-symbol, .process-marker) i:nth-child(1) { left: 33.333%; top: 0; }
-  :is(.home-hero-topic-mark, .brand-symbol, .process-marker) i:nth-child(2) { left: 0; top: 33.333%; }
-  :is(.home-hero-topic-mark, .brand-symbol, .process-marker) i:nth-child(3) { right: 0; top: 33.333%; }
-  :is(.home-hero-topic-mark, .brand-symbol, .process-marker) i:nth-child(4) { left: 33.333%; bottom: 0; }
+  :is(.home-hero-topic-mark, .process-marker) i:nth-child(1) { left: 33.333%; top: 0; }
+  :is(.home-hero-topic-mark, .process-marker) i:nth-child(2) { left: 0; top: 33.333%; }
+  :is(.home-hero-topic-mark, .process-marker) i:nth-child(3) { right: 0; top: 33.333%; }
+  :is(.home-hero-topic-mark, .process-marker) i:nth-child(4) { left: 33.333%; bottom: 0; }
   .home-hero-service[data-active="true"] .home-hero-topic-mark { color: var(--ink); }
-  .home-hero-service[data-active="true"] :is(.home-hero-topic-mark, .brand-symbol, .process-marker) i:nth-child(1) { transform: translate(50%, 0); }
-  .home-hero-service[data-active="true"] :is(.home-hero-topic-mark, .brand-symbol, .process-marker) i:nth-child(2) { transform: translate(0, -50%); }
-  .home-hero-service[data-active="true"] :is(.home-hero-topic-mark, .brand-symbol, .process-marker) i:nth-child(3) { transform: translate(0, 50%); }
-  .home-hero-service[data-active="true"] :is(.home-hero-topic-mark, .brand-symbol, .process-marker) i:nth-child(4) { transform: translate(-50%, 0); }
+  .home-hero-service[data-active="true"] :is(.home-hero-topic-mark, .process-marker) i:nth-child(1) { transform: translate(50%, 0); }
+  .home-hero-service[data-active="true"] :is(.home-hero-topic-mark, .process-marker) i:nth-child(2) { transform: translate(0, -50%); }
+  .home-hero-service[data-active="true"] :is(.home-hero-topic-mark, .process-marker) i:nth-child(3) { transform: translate(0, 50%); }
+  .home-hero-service[data-active="true"] :is(.home-hero-topic-mark, .process-marker) i:nth-child(4) { transform: translate(-50%, 0); }
   .home-hero-service-detail {
     position: absolute;
     inset-inline: 0;
@@ -228,7 +228,7 @@
   }
   .home-hero-service[data-active="true"] .home-hero-service-detail { visibility: visible; opacity: 1; transform: none; }
   @media (prefers-reduced-motion: reduce) {
-    :is(.home-hero-topic-mark, .brand-symbol, .process-marker) i, .home-hero-service-detail { transition: none; }
+    :is(.home-hero-topic-mark, .process-marker) i, .home-hero-service-detail { transition: none; }
     .home-hero-service-detail { transform: none; }
   }
 
@@ -444,19 +444,24 @@
     width: var(--brand-symbol-size);
     height: var(--brand-symbol-size);
     flex-shrink: 0;
-    position: relative;
   }
 
-  @media (hover: hover) and (pointer: fine) {
-    .site-header a:hover .brand-symbol i:nth-child(1) { transform: translate(50%, 0); }
-    .site-header a:hover .brand-symbol i:nth-child(2) { transform: translate(0, -50%); }
-    .site-header a:hover .brand-symbol i:nth-child(3) { transform: translate(0, 50%); }
-    .site-header a:hover .brand-symbol i:nth-child(4) { transform: translate(-50%, 0); }
+  .brand-symbol rect {
+    transform-box: fill-box;
   }
-  .site-header a:focus-visible .brand-symbol i:nth-child(1) { transform: translate(50%, 0); }
-  .site-header a:focus-visible .brand-symbol i:nth-child(2) { transform: translate(0, -50%); }
-  .site-header a:focus-visible .brand-symbol i:nth-child(3) { transform: translate(0, 50%); }
-  .site-header a:focus-visible .brand-symbol i:nth-child(4) { transform: translate(-50%, 0); }
+  @media (prefers-reduced-motion: no-preference) {
+    .brand-symbol rect { transition: transform var(--duration-ui) var(--ease-ui); }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .site-header a:hover .brand-symbol rect:nth-child(1) { transform: translate(50%, 0); }
+    .site-header a:hover .brand-symbol rect:nth-child(2) { transform: translate(0, -50%); }
+    .site-header a:hover .brand-symbol rect:nth-child(3) { transform: translate(0, 50%); }
+    .site-header a:hover .brand-symbol rect:nth-child(4) { transform: translate(-50%, 0); }
+  }
+  .site-header a:focus-visible .brand-symbol rect:nth-child(1) { transform: translate(50%, 0); }
+  .site-header a:focus-visible .brand-symbol rect:nth-child(2) { transform: translate(0, -50%); }
+  .site-header a:focus-visible .brand-symbol rect:nth-child(3) { transform: translate(0, 50%); }
+  .site-header a:focus-visible .brand-symbol rect:nth-child(4) { transform: translate(-50%, 0); }
 
   .brand-wordmark {
     font-family: var(--font-brand);

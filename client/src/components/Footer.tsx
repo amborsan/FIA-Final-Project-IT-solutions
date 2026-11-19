@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
 import { serviceGroups } from "../lib/serviceGroups";
+import { siteContact } from "../lib/siteContact";
 import { useI18n } from "../i18n/I18nContext";
 import { BrandLogo } from "./BrandLogo";
 import { buttonVariants } from "./ui/button";
@@ -41,9 +42,9 @@ export function Footer() {
           <Link to="/" className="footer-link inline-flex"><BrandLogo /></Link>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink-muted">{t("footer.tagline")}</p>
           <address className="mt-6 grid gap-3 text-sm not-italic text-ink-soft">
-            <p className="flex items-start gap-3"><MapPin aria-hidden="true" className="mt-0.5 size-4 shrink-0" /><span>Hauptstraße 12, 10115 Berlin</span></p>
-            <a href="tel:+493055500100" className="footer-link flex w-fit items-center gap-3"><Phone aria-hidden="true" className="size-4 shrink-0" />+49 30 5550 0100</a>
-            <a href="mailto:hello@fia-it.de" className="footer-link flex w-fit items-center gap-3"><Mail aria-hidden="true" className="size-4 shrink-0" />hello@fia-it.de</a>
+            <p className="flex items-start gap-3"><MapPin aria-hidden="true" className="mt-0.5 size-4 shrink-0" /><span>{siteContact.street}, {siteContact.city}</span></p>
+            <a href={siteContact.phoneHref} className="footer-link flex w-fit items-center gap-3"><Phone aria-hidden="true" className="size-4 shrink-0" />{siteContact.phone}</a>
+            <a href={siteContact.emailHref} className="footer-link flex w-fit items-center gap-3"><Mail aria-hidden="true" className="size-4 shrink-0" />{siteContact.email}</a>
           </address>
         </div>
         <div className="footer-navigation">

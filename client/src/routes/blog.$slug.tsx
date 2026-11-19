@@ -14,7 +14,7 @@ export const Route = createFileRoute("/blog/$slug")({
   component: BlogDetailPage,
 });
 
-export default function BlogDetailPage() {
+function BlogDetailPage() {
   const { slug } = useParams({ from: "/blog/$slug" });
   const { t, pick, formatDate } = useI18n();
   const { data, isLoading, isError } = useQuery({

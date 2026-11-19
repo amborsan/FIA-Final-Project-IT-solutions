@@ -15,7 +15,7 @@ export const Route = createFileRoute("/register")({
   component: RegisterPage,
 });
 
-export default function RegisterPage() {
+function RegisterPage() {
   const { user, register } = useAuth();
   const { t, language } = useI18n();
   const navigate = useNavigate();

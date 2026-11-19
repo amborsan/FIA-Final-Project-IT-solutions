@@ -19,12 +19,13 @@ import {
 } from "lucide-react";
 import { api, errorMessage } from "../lib/api";
 import { useI18n } from "../i18n/I18nContext";
+import { siteContact } from "../lib/siteContact";
 
 export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
-export default function ContactPage() {
+function ContactPage() {
   const { t, pick } = useI18n();
   const { notify } = useToast();
   const [form, setForm] = useState({
@@ -183,26 +184,26 @@ export default function ContactPage() {
 
         <aside className="space-y-4">
           <div className="rounded-box border border-base-300 bg-base-100 p-6">
-            <h2 className="text-base font-bold">IT Solutions.</h2>
+            <h2 className="text-base font-bold">{t("brand.name")}</h2>
             <div className="mt-4 space-y-4 text-sm">
               <p className="flex items-start gap-3">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                 <span>
-                  Hauptstraße 12
+                  {siteContact.street}
                   <br />
-                  10115 Berlin, Germany
+                  {siteContact.city}, {t("contact.country")}
                 </span>
               </p>
               <p className="flex items-center gap-3">
                 <Phone className="h-4 w-4 shrink-0 text-primary" />
-                <a href="tel:+493055500100" className="hover:text-primary">
-                  +49 30 5550 0100
+                <a href={siteContact.phoneHref} className="hover:text-primary">
+                  {siteContact.phone}
                 </a>
               </p>
               <p className="flex items-center gap-3">
                 <Mail className="h-4 w-4 shrink-0 text-primary" />
-                <a href="mailto:hello@fia-it.de" className="hover:text-primary">
-                  hello@fia-it.de
+                <a href={siteContact.emailHref} className="hover:text-primary">
+                  {siteContact.email}
                 </a>
               </p>
               <p className="flex items-start gap-3">

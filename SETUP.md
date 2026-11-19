@@ -1,439 +1,117 @@
-# Local setup and seeding guide
+# Set up the presentation demo from a fresh clone
 
-This guide is for every team member who clones the project and wants to run it
-locally with the demo data.
+Use the same Git revision and a fresh local demo database on each team member’s computer. The repository contains the seed, database migrations, and public images. Each computer runs its own copy of PostgreSQL.
 
-It covers:
+## 1. Install the prerequisites and clone
 
-1. creating the PostgreSQL database,
-2. configuring the server environment,
-3. applying migrations,
-4. generating the Prisma client,
-5. seeding the demo data,
-6. starting the backend and frontend,
-7. verifying everything works,
-8. fixing the most common setup errors.
-
-> The commands below are written for Linux/macOS. Windows notes are included at
-> the end. You must have Node.js 22+ and PostgreSQL 16+ installed.
-
----
-
-## 0. Go to the repository root
+Install Git, Node.js 24 with npm, and PostgreSQL 16 or newer. Start PostgreSQL and have the password for your local database user ready. Use either `psql` or pgAdmin to manage the database.
 
 ```bash
-cd path/to/FIA-Final-Project-IT-solutions
+git clone https://github.com/amborsan/FIA-Final-Project-IT-solutions.git
+cd FIA-Final-Project-IT-solutions
+git rev-parse --short HEAD
+node --version
+npm --version
 ```
 
-Replace `path/to` with the folder where you cloned the project.
-
----
-
-## 1. Create the PostgreSQL database
-
-Use the database name `fia` (or any name you prefer, as long as you use the same
-name in `server/.env`).
+For rehearsal, check out the branch or tag agreed by the team before installing. Compare the printed commit with a teammate’s. Run the following commands from the repository root. The three folders each have their own lockfile.
 
 ```bash
-createdb -h localhost -U postgres fia
+npm ci
+npm --prefix client ci
+npm --prefix server ci
 ```
 
-If `createdb` is not available, use `psql`:
+## 2. Create a local demo database
+
+Create an empty database named `fia_demo`. Adjust `postgres` if you use a different local user.
 
 ```bash
-psql -h localhost -U postgres -c "CREATE DATABASE fia;"
+psql -h localhost -U postgres -c "CREATE DATABASE fia_demo;"
 ```
 
-Check that it exists:
+On Windows, if PowerShell cannot find `psql`, connect in pgAdmin and create `fia_demo` under **Databases → Create → Database**. For a repeat rehearsal with a clean starting state, create another empty database and use its name in the connection string.
 
-```bash
-psql -h localhost -U postgres -lqt
-```
+## 3. Configure and seed the server
 
-You should see `fia` in the list.
+From the repository root, enter the server folder and copy the environment template. If you already have an environment file, check its database URL before applying migrations.
 
----
-
-## 2. Go into the server folder
-
-**Important:** all database and seed commands must run from `server/`, because
-that is where `package.json` and the Prisma configuration live.
+Linux or macOS:
 
 ```bash
 cd server
-```
-
-If you run `npm run db:seed` from the repository root, you will get:
-
-```text
-npm error enoent Could not read package.json
-```
-
-That is not a database problem. It only means you are in the wrong folder.
-
-> **Important — do not run `npx prisma` from the repository root.**
-> There is no root `package.json`, so `npx` may download a newer Prisma CLI
-> (for example Prisma 8 RC) instead of the Prisma 7 version pinned in `server/`.
-> That newer CLI prints errors such as `CLI.COMMAND_MOVED: migrate deploy has
-> been replaced` and suggests `prisma db migrate`, which does not exist in
-> Prisma 7.10.1.
->
-> Always run Prisma commands **from `server/`**, or use the npm scripts below.
-> Correct: `cd server && npm run db:deploy`
-> Wrong: `npx prisma migrate deploy` at the repository root.
-
----
-
-## 3. Create `server/.env`
-
-`.env` is intentionally not committed to Git, so every developer creates their
-own copy.
-
-```bash
 cp .env.example .env
 ```
 
-Open `server/.env` and set your database:
+Windows PowerShell:
 
-```env
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/fia?schema=public"
-PORT=3000
-HOST=localhost
-CLIENT_ORIGIN="http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000"
-NODE_ENV=development
+```powershell
+cd server
+Copy-Item .env.example .env
 ```
 
-Replace `postgres:postgres` with your PostgreSQL username and password if they
-are different.
+Edit `server/.env`. Replace `YOUR_LOCAL_PASSWORD` and, if needed, the username and port in this example. URL-encode any special characters in the credentials. Keep `PORT=3000` for the default Vite proxy and `NODE_ENV=development` for the local HTTP demo.
 
-> Each developer should use their **own** local database and their own `.env`.
-> Do not copy someone else’s `.env` blindly.
+```dotenv
+DATABASE_URL="postgresql://postgres:YOUR_LOCAL_PASSWORD@localhost:5432/fia_demo?schema=public"
+```
 
----
-
-## 4. Install server dependencies
+From `server/`, run the project’s Prisma commands with its committed config, then return to the root:
 
 ```bash
-npm install
+npm run db:deploy -- --config prisma7.config.ts
+npm run db:generate -- --config prisma7.config.ts
+npm run db:seed -- --config prisma7.config.ts
+cd ..
 ```
 
-If `node_modules` already exists, this still makes sure all packages are
-installed.
+A fresh database gets the catalog, users, sample requests and quotes, orders, tickets, reports, conversations, and CMS examples. Re-running the seed updates the catalog and can leave earlier logins and sample transaction state in place. Use an empty demo database to match your teammates’ starting point.
 
----
+## 4. Start and verify the demo
 
-## 5. Apply the database migrations
-
-```bash
-npm run db:deploy
-```
-
-Use `migrate deploy` for a new or existing database. It applies the committed
-migrations without creating new ones.
-
-If the database is empty, this creates all tables.
-
----
-
-## 6. Generate the Prisma client
-
-```bash
-npm run db:generate
-```
-
-`migrate deploy` does not always generate the type-safe Prisma client, so run
-this explicitly after installing or migrating.
-
----
-
-## 7. Seed the demo data
-
-```bash
-npm run db:seed
-```
-
-The seed prints progress and development-only login credentials. Newly created demo accounts use fia-it.de; existing demo users are not overwritten.
-
-### What the seed creates
-
-- 5 demo users
-- 10 services
-- 14 products and their categories
-- demo requests, quotes, orders, invoices
-- tickets, appointments and service reports
-- support and staff chat conversations
-- published and draft CMS pages
-- contact messages, notifications and activity entries
-
-### Re-running the seed
-
-The seed is designed to be safe to run again:
-
-- services and products are updated by their unique slug,
-- demo users are matched by fixed IDs,
-- sample transactions are only created when the database has no requests yet.
-
-If you changed the demo email domain, an already-seeded database will still have
-the old user emails because the seed does not overwrite existing users. To get
-the new demo accounts, use a **fresh database** or reset a development database
-(see section 8).
-
----
-
-## 8. Start the backend
-
-Keep this terminal open:
+From the repository root, start both processes with one command:
 
 ```bash
 npm run dev
 ```
 
-Expected:
+1. Open the [API health check](http://localhost:3000/api/health) and confirm it returns JSON with an OK status.
+2. Open the [website](http://localhost:5173) and check the services and products pages. Vite forwards `/api` to port 3000. The default setup uses no `client/.env` override.
+3. Check the service and product photos and sign in as an admin, technician, and customer. Sign out between roles or use separate browser profiles if you want multiple roles open.
+4. Rehearse the [demo workflow](docs/demo-script.md) using the agreed starting database.
 
-```text
-API running at http://localhost:3000
-```
+For the current seed, use the demo shortcuts on the login page or the local-only credentials printed by the seed. The existing accounts include `admin@fia-it.de`, `tech@fia-it.de`, and `customer@fia-it.de`. The three named team admin accounts are tracked in the [seed handoff](docs/handoffs/tickets/FE-20261119-presentation-seed.md).
 
-The API health check should return JSON:
+## 5. Share the demo data and images
 
-```bash
-curl http://localhost:3000/api/health
-```
+Keep the public website and service photos in [`client/public/site-photos`](client/public/site-photos/) and catalog photos in [`client/public/catalog`](client/public/catalog/). Keep the image credits and the source branding assets alongside the demo. These paths serve from the same origin on each computer and work offline once dependencies are installed. Files in `client/public` are also copied into the frontend build.
 
-Check that the response contains `"status": "ok"`. The backend may still return a legacy service label; it is not the current display brand.
+For a new, team-approved demo product photo, add the licensed image under `client/public/catalog/`. Use its same-origin path, for example `/catalog/my-product.webp`, as the product’s image URL. For everyone to see the same selection after seeding, the seed needs to reference the same URL. Dashboard edits stored only in a local database do not travel with a Git clone. The front end currently supplies shared fallback photos for seeded products without an image URL.
 
----
+Before the team push, review `git status --short` and `git diff --cached --name-status`. Keep the project READMEs, this guide, the architecture and ERD, the API contract, test and team workflow docs, handoffs, demo and presentation notes, lockfiles, and demo images with credits. Leave out scratch prompts, temporary exports, private report attachments, database dumps, local `.env` files, and old build output.
 
-## 9. Start the frontend (second terminal)
+## 6. Run the final build for rehearsal
 
-Open a new terminal:
-
-```bash
-cd path/to/FIA-Final-Project-IT-solutions/client
-npm install
-npm run dev
-```
-
-Expected:
-
-```text
-VITE ready
-Local: http://localhost:5173/
-```
-
-Open:
-
-```text
-http://localhost:5173
-```
-
-The Vite development server proxies `/api` to `http://localhost:3000`, so keep
-the backend running.
-
----
-
-## 10. Log in
-
-| Role | Email | Password |
-| --- | --- | --- |
-| Admin | `admin@fia-it.de` | `Admin12345!` |
-| Technician | `tech@fia-it.de` | `Tech12345!` |
-| Technician 2 | `tech2@fia-it.de` | `Tech12345!` |
-| Customer (individual) | `customer@fia-it.de` | `Customer12345!` |
-| Customer (business) | `business@fia-it.de` | `Customer12345!` |
-
-The login page also has demo cards that fill in these details.
-
----
-
-## 11. Verify the seed worked
-
-In any terminal:
+After the seed and demo assets are agreed, stop the development processes with **Ctrl+C**. From the repository root:
 
 ```bash
-psql -h localhost -U postgres -d fia -c "\dt"
+npm --prefix client run build
+npm --prefix server start
 ```
 
-You should see the project tables.
+Open the [presentation build](http://localhost:3000). Express serves the compiled frontend and API together. Run Lighthouse against this address. Verify the catalog images and roles on the presentation laptop before the live demo.
 
-Check the important counts:
+Record the Git revision used for the final build. To distribute the exact verified output, attach an archive of `client/dist` to a GitHub Release for that revision. Teammates can extract it into `client/dist` and start Express with the command above. They still need to complete the database setup. Keep older local builds out of the team push.
 
-```bash
-psql -h localhost -U postgres -d fia -c "SELECT count(*) FROM services;"
-psql -h localhost -U postgres -d fia -c "SELECT count(*) FROM products;"
-psql -h localhost -U postgres -d fia -c "SELECT count(*) FROM users;"
-```
+## Troubleshooting
 
-Expected:
-
-| Table | Expected count |
+| Symptom | Check |
 | --- | --- |
-| `services` | 10 |
-| `products` | 14 |
-| `users` | 5 |
-
-You can also open Prisma Studio:
-
-```bash
-cd server
-npx prisma studio
-```
-
----
-
-## 12. Production-style run (optional)
-
-If you want Express to serve the built frontend:
-
-```bash
-cd client
-npm install
-npm run build
-
-cd ../server
-npm start
-```
-
-Open:
-
-```text
-http://localhost:3000
-```
-
-For normal development, use the Vite server (`npm run dev` in `client/`) instead.
-
----
-
-## 13. Reset a development database
-
-Only do this if the database contains **no data you need**. It deletes all data.
-
-```bash
-cd server
-npx prisma migrate reset
-npm run db:seed
-```
-
-`migrate reset` is destructive. Never run it against a production database.
-
-If you only created the wrong database name, it is usually safer to create a new
-database and change `DATABASE_URL` instead of resetting anything.
-
----
-
-## 14. One-command setup after the first install
-
-Once `.env` exists and the database is created, the server setup can be repeated
-with:
-
-```bash
-cd server \
-  && npm install \
-  && npm run db:deploy \
-  && npm run db:generate \
-  && npm run db:seed \
-  && npm run dev
-```
-
-Then in a second terminal:
-
-```bash
-cd client \
-  && npm install \
-  && npm run dev
-```
-
----
-
-## 15. Common errors and fixes
-
-| Error | Cause | Fix |
-| --- | --- | --- |
-| `ENOENT ... package.json` | Ran npm from the repository root | `cd server` first |
-| `CLI.COMMAND_MOVED: migrate deploy has been replaced` | `npx prisma` ran at the repo root and downloaded Prisma 8 RC, not the local Prisma 7 | `cd server` and use `npm run db:deploy` |
-| `P1003: database "..." does not exist` | Wrong database name or DB not created | Create it and update `DATABASE_URL` |
-| `P1001: can't reach database server` | PostgreSQL is not running or wrong host/port | Start PostgreSQL; check host and port |
-| `P2021: table does not exist` | Migrations were not applied | `npm run db:deploy` |
-| `Cannot find module .../generated/prisma` | Prisma client missing | `npm run db:generate` |
-| Seed runs but old users remain | You used a previously seeded database; fixed-ID upserts do not change emails | Point `.env` to the new DB (e.g. `fia`) and seed the empty DB |
-| Seed runs but the frontend still shows old data | Backend is using a different database | Check `server/.env` and restart `npm run dev` |
-| `EADDRINUSE :3000` | Port 3000 is already used | Stop the old backend or change `PORT` |
-| Frontend requests fail | Backend is not running | Start `server` before `client` |
-| Login fails after seed | Wrong database or old seed | Verify `users` count and emails in the correct DB |
-
----
-
-## 16. Windows notes
-
-Use PowerShell:
-
-```powershell
-cd path\to\FIA-Final-Project-IT-solutions\server
-copy .env.example .env
-npm install
-npm run db:deploy
-npm run db:generate
-npm run db:seed
-npm run dev
-```
-
-Create the database with pgAdmin or:
-
-```powershell
-psql -h localhost -U postgres -c "CREATE DATABASE fia;"
-```
-
-In `server/.env`, keep the URL on one line:
-
-```env
-DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@localhost:5432/fia?schema=public"
-```
-
----
-
-## 17. What must never be committed
-
-- `server/.env`
-- `client/.env`
-- `node_modules/`
-- `client/dist/`
-- uploaded files in `server/storage/reports/`
-- database dumps or passwords
-
-Commit `server/.env.example` and `client/.env.example` only.
-
----
-
-## 18. Quick copy-paste block for the team
-
-Linux/macOS:
-
-```bash
-# 1. Create DB
-createdb -h localhost -U postgres fia
-
-# 2. Server setup (all Prisma commands run from server/)
-cd FIA-Final-Project-IT-solutions/server
-cp .env.example .env
-# edit DATABASE_URL in .env to use database "fia"
-npm install
-npm run db:deploy
-npm run db:generate
-npm run db:seed
-npm run dev
-```
-
-Second terminal:
-
-```bash
-cd FIA-Final-Project-IT-solutions/client
-npm install
-npm run dev
-```
-
-Open `http://localhost:5173`.
-
----
-
-If anything still fails, copy the **exact command and full error output** and
-check the troubleshooting table above before changing any files.
+| `P1001` or `P1003` | Start PostgreSQL and verify the host, port, database name, and credentials in `server/.env`. |
+| Prisma cannot find its config or seed command | Run the database scripts from `server/` with `--config prisma7.config.ts`. |
+| `P2021` or a missing table | Apply the committed migrations to the demo database before seeding. |
+| Missing generated Prisma client | Run the generate command in step 3. |
+| `EADDRINUSE` on port 3000 or Vite starts on a different port | Stop the old local server using that port, then restart the root launcher. |
+| API calls fail from the website | Check the health endpoint and use `localhost` consistently. Check for a stale `VITE_API_URL` override. |
+| Old accounts or demo records appear | Check which database `server/.env` points to, then restart the server after correcting it. |
+| Port 3000 serves only the API | Ensure `client/dist/index.html` exists before starting Express. Restart Express after building if it was already running. |

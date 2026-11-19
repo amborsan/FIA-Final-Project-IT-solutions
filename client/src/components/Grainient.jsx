@@ -337,12 +337,18 @@ export default function Grainient({
       gl.uniform1i(cu.uField, 0); gl.uniform1f(cu.uGrain, s.grainAmount);
       gl.uniform1f(cu.uGrainSize, s.grainSize * view.ratio); gl.uniform1f(cu.uFrame, frameSeed);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
-      canvas.dataset.ready = 'true';
+      if (canvas.dataset.ready !== 'true') canvas.dataset.ready = 'true';
     };
     const resize = () => {
       const s = settingsRef.current;
-      view.width = Math.max(1, container.clientWidth); view.height = Math.max(1, container.clientHeight);
-      view.ratio = Math.min(s.dpr || window.devicePixelRatio || 1, 2);
+      const nextWidth = Math.max(1, container.clientWidth);
+      const nextHeight = Math.max(1, container.clientHeight);
+      const nextRatio = Math.min(s.dpr || window.devicePixelRatio || 1, 2);
+      // The observer also fires after the initial setup. Keep the first rendered frame.
+      if (fieldSize.width && view.width === nextWidth && view.height === nextHeight && view.ratio === nextRatio) return;
+      view.width = nextWidth;
+      view.height = nextHeight;
+      view.ratio = nextRatio;
       canvas.width = Math.max(1, Math.round(view.width * view.ratio));
       canvas.height = Math.max(1, Math.round(view.height * view.ratio));
       const width = Math.max(1, Math.round(canvas.width / 2)), height = Math.max(1, Math.round(canvas.height / 2));
@@ -395,7 +401,12 @@ export default function Grainient({
     const frame = now => {
       raf = 0;
       if (!visible || document.hidden || gl.isContextLost()) return;
-      const s = settingsRef.current, dt = last ? clamp((now - last) / 1000, 0.001, 0.05) : 1 / 60;
+      // A soft background does not need to repaint at the display refresh rate.
+      if (last && now - last < 32) {
+        wake();
+        return;
+      }
+      const s = settingsRef.current, dt = last ? clamp((now - last) / 1000, 0.001, 0.05) : 1 / 30;
       last = now;
       if (!reduce) time += dt * s.speed * 0.16;
       if (introClock < 1) introClock = Math.min(1, introClock + dt / INTRO_SECONDS);

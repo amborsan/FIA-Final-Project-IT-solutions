@@ -26,6 +26,10 @@ If a task needs a new endpoint/field/permission/validation/database change:
 
 | Ticket | Page / area | Need | Priority | Status |
 | --- | --- | --- | --- | --- |
+| [FE-20261119-presentation-seed.md](tickets/FE-20261119-presentation-seed.md) | Presentation seed | Add the three named demo admins and reproduce the shared catalog and image URLs | `HIGH` | `PROPOSED` |
+| [FE-20261119-media-upload.md](tickets/FE-20261119-media-upload.md) | Catalog and branding | Upload public product, logo, and favicon images | `HIGH` | `PROPOSED` |
+| [FE-20261119-site-settings.md](tickets/FE-20261119-site-settings.md) | Site settings | Persist and publish editable site information and branding | `HIGH` | `PROPOSED` |
+| [FE-20261119-local-api-unavailable.md](tickets/FE-20261119-local-api-unavailable.md) | Local API | Restore the listener on port 3000 and verify Vite proxy requests | `BLOCKER` | `PROPOSED` |
 | [FE-20261110-demo-customer-login.md](tickets/FE-20261110-demo-customer-login.md) | `/login` | Confirm demo customer credentials; fresh login returns 401 | `MEDIUM` | `PROPOSED` |
 | [FE-20261106-archived-users.md](tickets/FE-20261106-archived-users.md) | `/admin/users` | Return deactivated users plus `active`/`deactivatedAt` so the users list can have an archive tab | `MEDIUM` | `PROPOSED` |
 

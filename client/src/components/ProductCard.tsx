@@ -9,51 +9,84 @@ import { Link } from "@tanstack/react-router";
 import {
   Check,
   ShoppingCart,
-  Router,
-  Cctv,
-  Laptop,
-  Server,
-  Phone,
-  Cable,
   Package,
-  type LucideIcon,
 } from "lucide-react";
 import type { Product } from "../lib/types";
 import { useCart } from "../context/CartContext";
 import { useI18n } from "../i18n/I18nContext";
 
-const categoryIcon: Record<string, LucideIcon> = {
-  network: Router,
-  surveillance: Cctv,
-  computers: Laptop,
-  servers: Server,
-  communication: Phone,
-  accessories: Cable,
-};
+const categoryPhotos = new Map([
+  ["network", "/catalog/network.webp"],
+  ["surveillance", "/catalog/surveillance.webp"],
+  ["computers", "/catalog/computers.webp"],
+  ["servers", "/catalog/servers.webp"],
+  ["communication", "/catalog/communication.webp"],
+  ["accessories", "/catalog/accessories.webp"],
+]);
+
+const productPhotos = new Map([
+  ["lenovo-thinkpad-e14", "/catalog/thinkpad-e14.webp"],
+  ["dell-optiplex-7010", "/catalog/dell-desktop.webp"],
+  ["fritzbox-7590-ax", "/catalog/wifi-router.webp"],
+  ["unifi-6-pro", "/catalog/unifi-access-point.webp"],
+  ["apc-ups-1500", "/catalog/battery-backup.webp"],
+  ["hp-laserjet-pro", "/catalog/laser-printer.webp"],
+]);
+
+const responsivePhotos = new Map([
+  ["/catalog/servers.webp", "/catalog/servers-400.webp 400w, /catalog/servers.webp 900w"],
+  ["/catalog/wifi-router.webp", "/catalog/wifi-router-400.webp 400w, /catalog/wifi-router.webp 900w"],
+]);
 
 export function ProductVisual({
   product,
   className = "h-44",
+  sizes = "(min-width: 1280px) 320px, (min-width: 640px) 50vw, 100vw",
 }: {
   product: Product;
   className?: string;
+  sizes?: string;
 }) {
-  if (product.imageUrl) {
+  const { t, pick } = useI18n();
+  const [failedImage, setFailedImage] = useState<string | null>(null);
+  const imageUrl = product.imageUrl;
+  const productPhoto = productPhotos.get(product.slug);
+  const illustrativePhoto = productPhoto ?? categoryPhotos.get(product.category?.slug ?? "");
+
+  if (imageUrl && imageUrl !== failedImage) {
     return (
       <img
-        src={product.imageUrl}
-        alt={product.nameEn}
+        src={imageUrl}
+        alt={pick(product.nameEn, product.nameDe)}
         className={`w-full rounded-t-box object-cover ${className}`}
         loading="lazy"
+        onError={() => setFailedImage(imageUrl)}
       />
     );
   }
-  const Icon = categoryIcon[product.category?.slug ?? ""] ?? Package;
+  if (illustrativePhoto) {
+    const srcSet = responsivePhotos.get(illustrativePhoto);
+    return (
+      <div className={`relative w-full overflow-hidden rounded-t-box bg-base-200 ${className}`}>
+        <img
+          src={illustrativePhoto}
+          srcSet={srcSet}
+          sizes={srcSet ? sizes : undefined}
+          alt=""
+          className={cn("h-full w-full", productPhoto ? "object-contain" : "object-cover")}
+          loading="lazy"
+        />
+        <span className="absolute bottom-2 right-2 rounded-box bg-base-100 px-2 py-1 text-xs text-base-content">
+          {t("products.illustrativeImage")}
+        </span>
+      </div>
+    );
+  }
   return (
     <div
       className={`flex w-full items-center justify-center rounded-t-box bg-accent-sky ${className}`}
     >
-      <Icon className="size-14 text-ink" strokeWidth={1} aria-hidden="true" />
+      <Package className="size-14 text-ink" strokeWidth={1} aria-hidden="true" />
     </div>
   );
 }

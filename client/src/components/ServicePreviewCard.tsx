@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, Clock } from "lucide-react";
 import { useI18n } from "../i18n/I18nContext";
 import type { Service } from "../lib/types";
+import { getServiceScopeKeys } from "../lib/serviceScope";
 import { buttonVariants } from "./ui/button";
 import { cn } from "../lib/utils";
 import { CenterMorphModal } from "./beui/CenterMorphModal";
@@ -16,9 +17,9 @@ export function ServicePreviewCard({ service }: { service: Service }) {
       <div className="mt-6 border-y border-hairline py-5">
         <h3 className="text-base font-medium">{t("services.included")}</h3>
         <ul className="mt-4 space-y-3 text-sm text-ink-soft">
-          {[1, 2, 3, 4].map(number => <li key={number} className="flex items-start gap-2.5">
+          {getServiceScopeKeys(service.slug).map(key => <li key={key} className="flex items-start gap-2.5">
             <CheckCircle2 aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-success" />
-            {t(`services.scope${number}` as "services.scope1")}
+            {t(key)}
           </li>)}
         </ul>
       </div>

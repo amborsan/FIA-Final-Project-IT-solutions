@@ -52,7 +52,7 @@ The team works against a shared API contract and uses documented handoffs for ch
 | Database | PostgreSQL, Prisma 7 with the PostgreSQL driver adapter |
 | Authentication | Server-side sessions, Argon2 password hashing, HTTP-only session cookies, CSRF protection |
 | Tests | Vitest, Testing Library, Playwright, and the Node.js test runner |
-| Package manager | npm, with separate lock files in `client/` and `server/` |
+| Package manager | npm, with lockfiles at the root and in `client/` and `server/` |
 
 ## Design Decisions
 
@@ -64,70 +64,15 @@ See the [architecture](docs/architecture.md) and [security and privacy notes](do
 
 ## Getting Started
 
-### Requirements
+Use Node.js 24, npm, Git, and PostgreSQL 16 or newer. Follow the [fresh-clone setup guide](SETUP.md) to install dependencies, create a local demo database, apply migrations, and load the sample data.
 
-- Node.js 22 or newer, as documented in the existing [setup guide](SETUP.md). The repository does not pin a Node.js version through `engines` or a version file.
-- PostgreSQL 16 or newer, as documented in the setup guide, with a local server running.
-- npm, Git, and PostgreSQL's `psql` command or pgAdmin. No npm version is pinned.
-
-### Installation
-
-1. Clone the repository:
+From the repository root, start the client and API together:
 
 ```bash
-git clone https://github.com/amborsan/FIA-Final-Project-IT-solutions.git
-cd FIA-Final-Project-IT-solutions
-```
-
-2. Create the local database. This command prompts for your PostgreSQL password:
-
-```bash
-psql -h localhost -U postgres -c "CREATE DATABASE fia;"
-```
-
-3. Install the backend dependencies and create its local environment file:
-
-```bash
-cd server
-npm ci
-```
-
-On macOS or Linux:
-
-```bash
-cp .env.example .env
-```
-
-On Windows PowerShell:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Edit `server/.env` so `DATABASE_URL` points to your local `fia` database using your own PostgreSQL credentials. Keep this file out of Git.
-
-4. From `server/`, apply the committed migrations, generate the Prisma client, and load demo data:
-
-```bash
-npm run db:deploy
-npm run db:generate
-npm run db:seed
 npm run dev
 ```
 
-Run all Prisma scripts from `server/`. The seed updates catalog entries and creates missing demo users; it skips sample transactions when service requests already exist. It does not update existing demo users' emails.
-
-5. Keep the API terminal open. In a second terminal, starting at the repository root:
-
-```bash
-cd client
-npm ci
-npm run dev
-```
-
-Open the [local web app](http://localhost:5173). The landing page should show services and products from the API at port 3000. Vite forwards `/api` requests to the backend. The frontend environment file is optional for this setup.
-
-For troubleshooting and additional setup details, see [SETUP.md](SETUP.md).
+Open the [development site](http://localhost:5173). Vite forwards API requests to Express on port 3000.
 
 ### Usage
 
@@ -165,17 +110,14 @@ Backend API tests use the configured development database and create short-lived
 
 ### Production-style run
 
-From the repository root, build the frontend, then check and start the backend:
+Stop the development processes with **Ctrl+C**, then build the frontend and start Express from the repository root:
 
 ```bash
-cd client
-npm run build
-cd ../server
-npm run build
-npm start
+npm --prefix client run build
+npm --prefix server start
 ```
 
-Open the [locally served build](http://localhost:3000). Express serves `client/dist` alongside the API. The backend build generates Prisma and checks TypeScript; `npm start` runs the TypeScript server through `tsx`.
+Open the [locally served build](http://localhost:3000). Express serves `client/dist` alongside the API. See the [presentation setup](SETUP.md#6-run-the-final-build-for-rehearsal) for the shared build and rehearsal checks.
 
 For deployment, configure HTTPS, production environment values, backups, and real company content. Review the [security notes](docs/security-privacy.md) and [German legal checklist](docs/legal-checklist-de.md).
 

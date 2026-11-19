@@ -2,8 +2,11 @@
   "name": "fia-final-project",
   "private": true,
   "scripts": {
-    "dev": "npm --prefix client run dev",
+    "dev": "concurrently --kill-others --names server,client \"npm run dev:server\" \"npm run dev:client\"",
     "dev:client": "npm --prefix client run dev",
     "dev:server": "npm --prefix server run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.7"
   }
 }
